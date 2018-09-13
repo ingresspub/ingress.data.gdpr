@@ -31,7 +31,7 @@ import java.time.format.DateTimeParseException;
  */
 public class ZonedDateTimeParserTest {
 
-    private static final ZonedDateTimeParser PARSER = ZonedDateTimeParser.getDefaultInstance();
+    private static final ZonedDateTimeParser PARSER = ZonedDateTimeParser.getDefault();
     
     @Test
     public void testParseFromIso8610() {

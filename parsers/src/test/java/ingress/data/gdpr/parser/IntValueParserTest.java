@@ -27,7 +27,7 @@ import org.junit.Test;
  */
 public class IntValueParserTest {
 
-    private static final IntValueParser PARSER = IntValueParser.getDefaultInstance();
+    private static final IntValueParser PARSER = IntValueParser.getDefault();
     
     @Test
     public void testParseFromValid() {

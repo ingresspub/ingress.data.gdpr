@@ -18,10 +18,12 @@
 package ingress.data.gdpr.parsers;
 
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.AGENTS_RECRUITED_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.DEVICES_TXT;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.KILOMETERS_WALKED_TSV;
 
 import ingress.data.gdpr.models.DeviceRecord;
 import ingress.data.gdpr.models.NumericBasedRecord;
-import ingress.data.gdpr.models.reports.CombatReport;
 import ingress.data.gdpr.models.reports.HealthReport;
 import ingress.data.gdpr.models.reports.MentoringReport;
 import ingress.data.gdpr.models.reports.ReportDetails;
@@ -32,8 +34,11 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -44,7 +49,13 @@ public class Summarizer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Summarizer.class);
 
-    private static final ZonedDateTimeParser TIME_PARSER = ZonedDateTimeParser.getDefaultInstance();
+    private static final ZonedDateTimeParser TIME_PARSER = ZonedDateTimeParser.getDefault();
+
+    private static Executor executor = new ThreadPoolExecutor(
+            Runtime.getRuntime().availableProcessors(), 50,
+            1, TimeUnit.MINUTES,
+            new ArrayBlockingQueue<>(50)
+    );
 
     public static SummarizedReport summarize(final List<Path> files) {
         notNull(files, "Missing files");
@@ -66,186 +77,80 @@ public class Summarizer {
 
     private static CompletableFuture<SummarizedReport> parseCombatReport(
             final SummarizedReport report, final List<Path> files) {
-        final CombatReport combatReport = new CombatReport();
-        return CompletableFuture
-                .allOf(
-                        parseResonatorsDestroyed(combatReport, files),
-                        parsePortalsNeutralized(combatReport, files),
-                        parseLinkssDestroyed(combatReport, files),
-                        parseFieldsDestroyed(combatReport, files)
-                )
-                .thenApplyAsync(v -> {
+        return new CombatReportParser().parse(files)
+                .thenApplyAsync(combatReport -> {
                     report.setCombat(combatReport);
-                    return report;
-                });
-    }
-
-    private static CompletableFuture<CombatReport> parseResonatorsDestroyed(
-            final CombatReport report, final List<Path> files) {
-        final String reportName = "resonators_destroyed";
-        return CompletableFuture
-                .supplyAsync(() -> {
-                    Optional<Path> dataFile = files.stream()
-                            .filter(file -> file.getFileName().toString().startsWith(reportName))
-                            .findFirst();
-                    if (!dataFile.isPresent()) {
-                        LOGGER.warn("Can not find report named '{}', skipping ...", reportName);
-                        return report;
-                    }
-                    final NumericBasedRecordParser<Float> parser = new NumericBasedRecordParser<>(TIME_PARSER, FloatValueParser.getDefaultInstance());
-                    final ReportDetails<List<NumericBasedRecord<Float>>> details = parser.parse(dataFile.get());
-                    if (!details.isOk()) {
-                        LOGGER.warn("Ran into error when parsing {}: {}", reportName, details.getError());
-                        return report;
-                    }
-                    LOGGER.info("Parsed {} records in {}", details.getData().size(), reportName);
-                    report.setResonatorsDestroyed(details);
-                    return report;
-                });
-    }
-
-    private static CompletableFuture<CombatReport> parsePortalsNeutralized(
-            final CombatReport report, final List<Path> files) {
-        final String reportName = "portals_neutralized";
-        return CompletableFuture
-                .supplyAsync(() -> {
-                    Optional<Path> dataFile = files.stream()
-                            .filter(file -> file.getFileName().toString().startsWith(reportName))
-                            .findFirst();
-                    if (!dataFile.isPresent()) {
-                        LOGGER.warn("Can not find report named '{}', skipping ...", reportName);
-                        return report;
-                    }
-                    final NumericBasedRecordParser<Integer> parser = new NumericBasedRecordParser<>(TIME_PARSER, IntValueParser.getDefaultInstance());
-                    final ReportDetails<List<NumericBasedRecord<Integer>>> details = parser.parse(dataFile.get());
-                    if (!details.isOk()) {
-                        LOGGER.warn("Ran into error when parsing {}: {}", reportName, details.getError());
-                        return report;
-                    }
-                    LOGGER.info("Parsed {} records in {}", details.getData().size(), reportName);
-                    report.setPortalsNeutralized(details);
-                    return report;
-                });
-    }
-
-    private static CompletableFuture<CombatReport> parseLinkssDestroyed(
-            final CombatReport report, final List<Path> files) {
-        final String reportName = "link_destroyed";
-        return CompletableFuture
-                .supplyAsync(() -> {
-                    Optional<Path> dataFile = files.stream()
-                            .filter(file -> file.getFileName().toString().startsWith(reportName))
-                            .findFirst();
-                    if (!dataFile.isPresent()) {
-                        LOGGER.warn("Can not find report named '{}', skipping ...", reportName);
-                        return report;
-                    }
-                    final NumericBasedRecordParser<Float> parser = new NumericBasedRecordParser<>(TIME_PARSER, FloatValueParser.getDefaultInstance());
-                    final ReportDetails<List<NumericBasedRecord<Float>>> details = parser.parse(dataFile.get());
-                    if (!details.isOk()) {
-                        LOGGER.warn("Ran into error when parsing {}: {}", reportName, details.getError());
-                        return report;
-                    }
-                    LOGGER.info("Parsed {} records in {}", details.getData().size(), reportName);
-                    report.setLinksDestroyed(details);
-                    return report;
-                });
-    }
-
-    private static CompletableFuture<CombatReport> parseFieldsDestroyed(
-            final CombatReport report, final List<Path> files) {
-        final String reportName = "fields_destroyed";
-        return CompletableFuture
-                .supplyAsync(() -> {
-                    Optional<Path> dataFile = files.stream()
-                            .filter(file -> file.getFileName().toString().startsWith(reportName))
-                            .findFirst();
-                    if (!dataFile.isPresent()) {
-                        LOGGER.warn("Can not find report named '{}', skipping ...", reportName);
-                        return report;
-                    }
-                    final NumericBasedRecordParser<Float> parser = new NumericBasedRecordParser<>(TIME_PARSER, FloatValueParser.getDefaultInstance());
-                    final ReportDetails<List<NumericBasedRecord<Float>>> details = parser.parse(dataFile.get());
-                    if (!details.isOk()) {
-                        LOGGER.warn("Ran into error when parsing {}: {}", reportName, details.getError());
-                        return report;
-                    }
-                    LOGGER.info("Parsed {} records in {}", details.getData().size(), reportName);
-                    report.setFieldsDestroyed(details);
                     return report;
                 });
     }
 
     private static CompletableFuture<SummarizedReport> parseUsedDevices(
             final SummarizedReport report, final List<Path> files) {
-        final String reportName = "devices";
         return CompletableFuture
                 .supplyAsync(() -> {
                     Optional<Path> dataFile = files.stream()
-                            .filter(file -> file.getFileName().toString().startsWith(reportName))
+                            .filter(file -> file.getFileName().toString().equals(DEVICES_TXT))
                             .findFirst();
                     if (!dataFile.isPresent()) {
-                        LOGGER.warn("Can not find report named '{}', skipping ...", reportName);
+                        LOGGER.warn("Can not find report named '{}', skipping ...", DEVICES_TXT);
                         return report;
                     }
                     final DeviceRecordsParser parser = new DeviceRecordsParser();
                     final ReportDetails<List<DeviceRecord>> details = parser.parse(dataFile.get());
                     if (!details.isOk()) {
-                        LOGGER.warn("Ran into error when parsing {}: {}", reportName, details.getError());
+                        LOGGER.warn("Ran into error when parsing {}: {}", DEVICES_TXT, details.getError());
                         return report;
                     }
-                    LOGGER.info("Parsed {} records in {}", details.getData().size(), reportName);
+                    LOGGER.info("Parsed {} records in {}", details.getData().size(), DEVICES_TXT);
                     report.setUsedDevices(details.getData());
                     return report;
-                });
+                }, executor);
     }
 
     private static CompletableFuture<SummarizedReport> parseMentoringReport(
             final SummarizedReport report, final List<Path> files) {
-        final String reportName = "agents_recruited";
         return CompletableFuture
                 .supplyAsync(() -> {
                     Optional<Path> dataFile = files.stream()
-                            .filter(file -> file.getFileName().toString().startsWith(reportName))
+                            .filter(file -> file.getFileName().toString().startsWith(AGENTS_RECRUITED_TSV))
                             .findFirst();
                     if (!dataFile.isPresent()) {
-                        LOGGER.warn("Can not find report named '{}', skipping ...", reportName);
+                        LOGGER.warn("Can not find report named '{}', skipping ...", AGENTS_RECRUITED_TSV);
                         return report;
                     }
-                    final NumericBasedRecordParser<Integer> parser = new NumericBasedRecordParser<>(TIME_PARSER, IntValueParser.getDefaultInstance());
+                    final NumericBasedRecordParser<Integer> parser = new NumericBasedRecordParser<>(TIME_PARSER, IntValueParser.getDefault());
                     final ReportDetails<List<NumericBasedRecord<Integer>>> details = parser.parse(dataFile.get());
                     if (!details.isOk()) {
-                        LOGGER.warn("Ran into error when parsing {}: {}", reportName, details.getError());
+                        LOGGER.warn("Ran into error when parsing {}: {}", AGENTS_RECRUITED_TSV, details.getError());
                         return report;
                     }
-                    LOGGER.info("Parsed {} records in {}", details.getData().size(), reportName);
+                    LOGGER.info("Parsed {} records in {}", details.getData().size(), AGENTS_RECRUITED_TSV);
                     report.setMentoring(new MentoringReport(details));
                     return report;
-                });
+                }, executor);
     }
 
     private static CompletableFuture<SummarizedReport> parseHealthReport(
             final SummarizedReport report, final List<Path> files) {
-        final String reportName = "kilometers_walked";
         return CompletableFuture
                 .supplyAsync(() -> {
                     Optional<Path> dataFile = files.stream()
-                            .filter(file -> file.getFileName().toString().startsWith(reportName))
+                            .filter(file -> file.getFileName().toString().startsWith(KILOMETERS_WALKED_TSV))
                             .findFirst();
                     if (!dataFile.isPresent()) {
-                        LOGGER.warn("Can not find report named '{}', skipping ...", reportName);
+                        LOGGER.warn("Can not find report named '{}', skipping ...", KILOMETERS_WALKED_TSV);
                         return report;
                     }
-                    final NumericBasedRecordParser<Float> parser = new NumericBasedRecordParser<>(TIME_PARSER, FloatValueParser.getDefaultInstance());
+                    final NumericBasedRecordParser<Float> parser = new NumericBasedRecordParser<>(TIME_PARSER, FloatValueParser.getDefault());
                     final ReportDetails<List<NumericBasedRecord<Float>>> details = parser.parse(dataFile.get());
                     if (!details.isOk()) {
-                        LOGGER.warn("Ran into error when parsing {}: {}", reportName, details.getError());
+                        LOGGER.warn("Ran into error when parsing {}: {}", KILOMETERS_WALKED_TSV, details.getError());
                         return report;
                     }
-                    LOGGER.info("Parsed {} records in {}", details.getData().size(), reportName);
+                    LOGGER.info("Parsed {} records in {}", details.getData().size(), KILOMETERS_WALKED_TSV);
                     report.setHealth(new HealthReport(details));
                     return report;
-                });
+                }, executor);
     }
 
 }

@@ -19,7 +19,6 @@ package ingress.data.gdpr.parser;
 
 import static org.junit.Assert.assertEquals;
 
-import ingress.data.gdpr.parsers.DoubleValueParser;
 import ingress.data.gdpr.parsers.FloatValueParser;
 import org.junit.Test;
 
@@ -28,7 +27,7 @@ import org.junit.Test;
  */
 public class FloatValueParserTest {
 
-    private static final FloatValueParser PARSER = FloatValueParser.getDefaultInstance();
+    private static final FloatValueParser PARSER = FloatValueParser.getDefault();
     
     @Test
     public void testParseFromValid() {

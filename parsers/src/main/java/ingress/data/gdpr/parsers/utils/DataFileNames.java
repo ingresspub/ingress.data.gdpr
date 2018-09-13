@@ -15,24 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.parsers;
-
-import static ingress.data.gdpr.models.utils.Preconditions.notEmptyString;
+package ingress.data.gdpr.parsers.utils;
 
 /**
  * @author SgrAlpha
  */
-public class IntValueParser implements ValueParser<Integer> {
-
-    private static final IntValueParser INSTANCE = new IntValueParser();
-
-    @Override public Integer parse(final String value) {
-        notEmptyString(value, "Missing value to parse from");
-        return Integer.parseInt(value);
-    }
-
-    public static IntValueParser getDefault() {
-        return INSTANCE;
-    }
-
+public class DataFileNames {
+    public static final String RESONATORS_DESTROYED_TSV = "resonators_destroyed.tsv";
+    public static final String PORTALS_NEUTRALIZED_TSV = "portals_neutralized.tsv";
+    public static final String LINK_DESTROYED_TSV = "link_destroyed.tsv";
+    public static final String FIELDS_DESTROYED_TSV = "fields_destroyed.tsv";
+    public static final String DEVICES_TXT = "devices.txt";
+    public static final String AGENTS_RECRUITED_TSV = "agents_recruited.tsv";
+    public static final String KILOMETERS_WALKED_TSV = "kilometers_walked.tsv";
 }

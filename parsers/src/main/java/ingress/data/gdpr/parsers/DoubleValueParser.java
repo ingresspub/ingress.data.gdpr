@@ -31,7 +31,7 @@ public class DoubleValueParser implements ValueParser<Double> {
         return Double.parseDouble(value);
     }
 
-    public static DoubleValueParser getDefaultInstance() {
+    public static DoubleValueParser getDefault() {
         return INSTANCE;
     }
 

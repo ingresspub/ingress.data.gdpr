@@ -44,7 +44,7 @@ import java.util.List;
 public class NumericBasedRecordParserTest {
 
     private static final NumericBasedRecordParser<Integer> PARSER = new NumericBasedRecordParser<>(
-            ZonedDateTimeParser.getDefaultInstance(), IntValueParser.getDefaultInstance());
+            ZonedDateTimeParser.getDefault(), IntValueParser.getDefault());
 
     @Test
     public void testParseFromWrongTimeFormat() throws URISyntaxException {

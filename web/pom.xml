@@ -23,11 +23,11 @@
 
     <parent>
         <groupId>ingress.data.gdpr</groupId>
-        <artifactId>gdpr.root</artifactId>
+        <artifactId>data.gdpr</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>gdpr.web</artifactId>
+    <artifactId>data.gdpr.web</artifactId>
 
     <properties>
         <basepom.check.skip-dependency>true</basepom.check.skip-dependency>
@@ -35,8 +35,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>ingress.data.gdpr</groupId>
-            <artifactId>gdpr.parsers</artifactId>
+            <groupId>ingress.data</groupId>
+            <artifactId>data.gdpr.parsers</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.validation.Valid;
@@ -67,7 +68,7 @@ public class FileUploadController {
             File tempZipFile = Files.createTempFile("ingress-data-" + uploaded.getOriginalFilename(), null).toFile();
             uploaded.transferTo(tempZipFile);
             final Stream<Path> files = ZipFileExtractor.extract(tempZipFile, unzipPassword);
-            final SummarizedReport report = Summarizer.summarize(files);
+            final SummarizedReport report = Summarizer.summarize(files.collect(Collectors.toList()));
             redirectAttributes.addFlashAttribute("message", "You successfully uploaded " + uploaded.getOriginalFilename() + "!");
             return "redirect:/";
         };

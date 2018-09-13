@@ -31,7 +31,7 @@ public class FloatValueParser implements ValueParser<Float> {
         return Float.parseFloat(value);
     }
 
-    public static FloatValueParser getDefaultInstance() {
+    public static FloatValueParser getDefault() {
         return INSTANCE;
     }
 

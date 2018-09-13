@@ -17,27 +17,17 @@
 
 package ingress.data.gdpr.parsers;
 
-import static ingress.data.gdpr.models.utils.Preconditions.notEmptyString;
-
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
+ * @param <T> type of report
+ *
  * @author SgrAlpha
  */
-public class ZonedDateTimeParser implements ValueParser<ZonedDateTime> {
+public interface MultipleFilesParser<T> {
 
-    private static final String GDPR_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss zz";
-
-    private static final ZonedDateTimeParser INSTANCE = new ZonedDateTimeParser();
-
-    @Override public ZonedDateTime parse(final String time) {
-        notEmptyString(time, "Missing time info to parse from");
-        return ZonedDateTime.parse(time, DateTimeFormatter.ofPattern(GDPR_TIME_PATTERN));
-    }
-
-    public static ZonedDateTimeParser getDefault() {
-        return INSTANCE;
-    }
+    CompletableFuture<T> parse(List<Path> dataFiles);
 
 }

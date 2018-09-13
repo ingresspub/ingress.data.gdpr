@@ -27,7 +27,7 @@ import org.junit.Test;
  */
 public class DoubleValueParserTest {
 
-    private static final DoubleValueParser PARSER = DoubleValueParser.getDefaultInstance();
+    private static final DoubleValueParser PARSER = DoubleValueParser.getDefault();
     
     @Test
     public void testParseFromValid() {

@@ -31,7 +31,7 @@ public class LongValueParser implements ValueParser<Long> {
         return Long.parseLong(value);
     }
 
-    public static LongValueParser getDefaultInstance() {
+    public static LongValueParser getDefault() {
         return INSTANCE;
     }
 
