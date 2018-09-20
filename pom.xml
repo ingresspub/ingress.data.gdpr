@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2014-2018 SgrAlpha
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.basepom</groupId>
+        <artifactId>basepom-minimal</artifactId>
+        <version>26</version>
+    </parent>
+
+    <groupId>ingress.data.gdpr</groupId>
+    <artifactId>gdpr.root</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
+        <!-- Frameworks -->
+        <dep.spring.boot.version>2.0.5.RELEASE</dep.spring.boot.version>
+        <dep.spring.framework.version>5.0.9.RELEASE</dep.spring.framework.version>
+        <dep.hibernate.validator.version>6.0.13.Final</dep.hibernate.validator.version>
+        <dep.thymeleaf.version>3.0.9.RELEASE</dep.thymeleaf.version>
+        <dep.thymeleaf.layout.version>2.3.0</dep.thymeleaf.layout.version>
+
+        <dep.tomcat.version>8.5.34</dep.tomcat.version>
+
+        <!-- Java APIs-->
+        <dep.javax.validation.version>2.0.1.Final</dep.javax.validation.version>
+
+        <!-- Regular dependencies -->
+        <dep.jackson.version>2.9.7</dep.jackson.version>
+        <dep.slf4j.version>1.7.25</dep.slf4j.version>
+
+        <!-- For tests -->
+        <dep.junit.version>4.12</dep.junit.version>
+        <dep.mockito.version>2.22.0</dep.mockito.version>
+    </properties>
+
+    <modules>
+        <module>models</module>
+        <module>parsers</module>
+        <module>web</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>ingress.data.gdpr</groupId>
+                <artifactId>gdpr.models</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ingress.data.gdpr</groupId>
+                <artifactId>gdpr.parsers</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${dep.spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.thymeleaf</groupId>
+                <artifactId>thymeleaf-spring5</artifactId>
+                <version>${dep.thymeleaf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nz.net.ultraq.thymeleaf</groupId>
+                <artifactId>thymeleaf-layout-dialect</artifactId>
+                <version>${dep.thymeleaf.layout.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${dep.jackson.version}</version>
+                <type>pom</type>
+            </dependency>
+
+            <dependency>
+                <groupId>net.lingala.zip4j</groupId>
+                <artifactId>zip4j</artifactId>
+                <version>1.3.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${dep.slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${dep.junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${dep.mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.7.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${dep.spring.boot.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-maven-plugin</artifactId>
+                    <version>9.4.11.v20180605</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>
