@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.parser.utils;
+package ingress.data.gdpr.parser;
 
 import static org.junit.Assert.assertEquals;
 
-import ingress.data.gdpr.parsers.utils.TimeUtil;
+import ingress.data.gdpr.parsers.ZonedDateTimeParser;
 import org.junit.Test;
 
 import java.time.ZoneId;
@@ -29,27 +29,29 @@ import java.time.format.DateTimeParseException;
 /**
  * @author SgrAlpha
  */
-public class TimeUtilTest {
+public class ZonedDateTimeParserTest {
 
+    private static final ZonedDateTimeParser PARSER = ZonedDateTimeParser.getDefaultInstance();
+    
     @Test
     public void testParseFromIso8610() {
-        ZonedDateTime time = TimeUtil.toZonedDataTime("2016-03-05 08:29:21 PST");
+        ZonedDateTime time = PARSER.parse("2016-03-05 08:29:21 PST");
         assertEquals(2016, time.getYear());
         assertEquals(ZoneId.of("America/Los_Angeles"), time.getZone());
     }
 
     @Test(expected = DateTimeParseException.class)
     public void testParseFromInvalid() {
-        TimeUtil.toZonedDataTime("asdfg");
+        PARSER.parse("asdfg");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testParseFromBlank() {
-        TimeUtil.toZonedDataTime("");
+        PARSER.parse("");
     }
     @Test(expected = IllegalArgumentException.class)
     public void testParseFromNull() {
-        TimeUtil.toZonedDataTime(null);
+        PARSER.parse(null);
     }
 
 }

@@ -15,19 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.parsers.utils;
+package ingress.data.gdpr.parsers;
 
-import ingress.data.gdpr.models.reports.ReportDetails;
-
-import java.nio.file.Path;
+import static ingress.data.gdpr.models.utils.Preconditions.notEmptyString;
 
 /**
- * @param <T> type of data
- *
  * @author SgrAlpha
  */
-public interface SingleFileParser<T> {
+public class LongValueParser implements ValueParser<Long> {
 
-    ReportDetails<T> parse(Path dataFile);
+    private static final LongValueParser INSTANCE = new LongValueParser();
+
+    @Override public Long parse(final String value) {
+        notEmptyString(value, "Missing value to parse from");
+        return Long.parseLong(value);
+    }
+
+    public static LongValueParser getDefaultInstance() {
+        return INSTANCE;
+    }
 
 }

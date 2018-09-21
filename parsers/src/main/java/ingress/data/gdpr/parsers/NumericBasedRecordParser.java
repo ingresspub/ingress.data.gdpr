@@ -20,11 +20,9 @@ package ingress.data.gdpr.parsers;
 import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 
-import ingress.data.gdpr.models.CountBasedRecord;
+import ingress.data.gdpr.models.NumericBasedRecord;
 import ingress.data.gdpr.models.reports.ReportDetails;
-import ingress.data.gdpr.parsers.utils.SingleFileParser;
 import ingress.data.gdpr.parsers.utils.ErrorConstants;
-import ingress.data.gdpr.parsers.utils.TimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,11 +36,19 @@ import java.util.List;
 /**
  * @author SgrAlpha
  */
-public class CountBasedParser implements SingleFileParser<List<CountBasedRecord>> {
+public class NumericBasedRecordParser<T> implements SingleFileParser<List<NumericBasedRecord<T>>> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CountBasedParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NumericBasedRecordParser.class);
 
-    @Override public ReportDetails<List<CountBasedRecord>> parse(final Path dataFile) {
+    private final ZonedDateTimeParser timeParser;
+    private final ValueParser<T> valueParser;
+
+    public NumericBasedRecordParser(final ZonedDateTimeParser timeParser, final ValueParser<T> valueParser) {
+        this.timeParser = timeParser;
+        this.valueParser = valueParser;
+    }
+
+    @Override public ReportDetails<List<NumericBasedRecord<T>>> parse(final Path dataFile) {
         notNull(dataFile, "Data file needs to be specified");
         if (!Files.isRegularFile(dataFile)) {
             return ReportDetails.error(ErrorConstants.NOT_REGULAR_FILE);
@@ -58,7 +64,7 @@ public class CountBasedParser implements SingleFileParser<List<CountBasedRecord>
             return ReportDetails.error(e.getMessage());
         }
         try {
-            List<CountBasedRecord> records = new LinkedList<>();
+            List<NumericBasedRecord<T>> data = new LinkedList<>();
             for (int i = 1; i < lines.size(); i++) {    // Skip first line (header)
                 final String line = lines.get(i);
                 if (isEmptyString(line)) {
@@ -70,19 +76,19 @@ public class CountBasedParser implements SingleFileParser<List<CountBasedRecord>
                 }
                 final ZonedDateTime time;
                 try {
-                    time = TimeUtil.toZonedDataTime(columns[0]);
+                    time = timeParser.parse(columns[0]);
                 } catch (Exception e) {
                     return ReportDetails.error(String.format("Found mal-formatted timestamp at line %d: %s", i, columns[0]));
                 }
-                final long count;
+                final T value;
                 try {
-                    count = Long.parseLong(columns[1]);
+                    value = valueParser.parse(columns[1]);
                 } catch (Exception e) {
-                    return ReportDetails.error(String.format("Found mal-formatted count at line %d, expecting a numeric value but got: %s", i, columns[1]));
+                    return ReportDetails.error(String.format("Found mal-formatted value at line %d, expecting a numeric value but got: %s", i, columns[1]));
                 }
-                records.add(new CountBasedRecord(time, count));
+                data.add(new NumericBasedRecord<>(time, value));
             }
-            return ReportDetails.ok(records);
+            return ReportDetails.ok(data);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return ReportDetails.error(e.getMessage());

@@ -15,37 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.models;
+package ingress.data.gdpr.parsers;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ingress.data.gdpr.models.utils.JsonUtil;
+import ingress.data.gdpr.models.reports.ReportDetails;
 
-import java.time.ZonedDateTime;
+import java.nio.file.Path;
 
 /**
+ * @param <T> type of data
+ *
  * @author SgrAlpha
  */
-public class NumericBasedRecord<T> implements TimestampedRecord {
+public interface SingleFileParser<T> {
 
-    private final ZonedDateTime time;
-    private final T value;
+    ReportDetails<T> parse(Path dataFile);
 
-    public NumericBasedRecord(final ZonedDateTime time, final T value) {
-        this.time = time;
-        this.value = value;
-    }
-
-    @JsonProperty("time")
-    @Override public ZonedDateTime getTime() {
-        return time;
-    }
-
-    @JsonProperty("value")
-    public T getValue() {
-        return value;
-    }
-
-    @Override public String toString() {
-        return JsonUtil.toJson(this);
-    }
 }

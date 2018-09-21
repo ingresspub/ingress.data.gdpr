@@ -19,7 +19,6 @@ package ingress.data.gdpr.models.reports;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ingress.data.gdpr.models.DataType;
 
 /**
  * @author SgrAlpha
@@ -31,7 +30,6 @@ public class ReportDetails<T> {
     private final T data;
     private final String error;
 
-    private DataType dataType;
 
     private ReportDetails(final boolean ok, final T data, final String error) {
         this.ok = ok;
@@ -62,12 +60,4 @@ public class ReportDetails<T> {
         return error;
     }
 
-    @JsonProperty("data_type")
-    public DataType getDataType() {
-        return dataType;
-    }
-
-    public void setDataType(final DataType dataType) {
-        this.dataType = dataType;
-    }
 }

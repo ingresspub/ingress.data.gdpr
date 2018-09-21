@@ -17,27 +17,13 @@
 
 package ingress.data.gdpr.models.reports;
 
-import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+public enum ReportCategory {
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ingress.data.gdpr.models.NumericBasedRecord;
-
-import java.util.List;
-
-/**
- * @author SgrAlpha
- */
-public class MentoringReport {
-
-    private final ReportDetails<List<NumericBasedRecord<Integer>>> agentsRecruited;
-
-    public MentoringReport(final ReportDetails<List<NumericBasedRecord<Integer>>> agentsRecruited) {
-        notNull(agentsRecruited, "Missing details about agents recruited");
-        this.agentsRecruited = agentsRecruited;
-    }
-
-    @JsonProperty("agents_recruited")
-    public ReportDetails<List<NumericBasedRecord<Integer>>> getAgentsRecruited() {
-        return agentsRecruited;
-    }
+    BUILDING,
+    COMBAT,
+    DEFENSE,
+    DISCOVERY,
+    EVENTS,
+    RESOURCE_GATHERING,
+    ;
 }

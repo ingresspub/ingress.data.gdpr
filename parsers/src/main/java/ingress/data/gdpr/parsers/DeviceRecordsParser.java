@@ -22,7 +22,6 @@ import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 
 import ingress.data.gdpr.models.DeviceRecord;
 import ingress.data.gdpr.models.reports.ReportDetails;
-import ingress.data.gdpr.parsers.utils.SingleFileParser;
 import ingress.data.gdpr.parsers.utils.ErrorConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

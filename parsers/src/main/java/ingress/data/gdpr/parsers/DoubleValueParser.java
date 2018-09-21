@@ -15,13 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.models;
+package ingress.data.gdpr.parsers;
 
-public enum DataType {
+import static ingress.data.gdpr.models.utils.Preconditions.notEmptyString;
 
-    DOTTED,
-    COUNTER,
-    TABLE,
-    ;
+/**
+ * @author SgrAlpha
+ */
+public class DoubleValueParser implements ValueParser<Double> {
+
+    private static final DoubleValueParser INSTANCE = new DoubleValueParser();
+
+    @Override public Double parse(final String value) {
+        notEmptyString(value, "Missing value to parse from");
+        return Double.parseDouble(value);
+    }
+
+    public static DoubleValueParser getDefaultInstance() {
+        return INSTANCE;
+    }
 
 }

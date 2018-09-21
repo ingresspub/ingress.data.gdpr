@@ -15,29 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.models.reports;
+package ingress.data.gdpr.parsers;
 
-import static ingress.data.gdpr.models.utils.Preconditions.notNull;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ingress.data.gdpr.models.NumericBasedRecord;
-
-import java.util.List;
+import static ingress.data.gdpr.models.utils.Preconditions.notEmptyString;
 
 /**
  * @author SgrAlpha
  */
-public class MentoringReport {
+public class FloatValueParser implements ValueParser<Float> {
 
-    private final ReportDetails<List<NumericBasedRecord<Integer>>> agentsRecruited;
+    private static final FloatValueParser INSTANCE = new FloatValueParser();
 
-    public MentoringReport(final ReportDetails<List<NumericBasedRecord<Integer>>> agentsRecruited) {
-        notNull(agentsRecruited, "Missing details about agents recruited");
-        this.agentsRecruited = agentsRecruited;
+    @Override public Float parse(final String value) {
+        notEmptyString(value, "Missing value to parse from");
+        return Float.parseFloat(value);
     }
 
-    @JsonProperty("agents_recruited")
-    public ReportDetails<List<NumericBasedRecord<Integer>>> getAgentsRecruited() {
-        return agentsRecruited;
+    public static FloatValueParser getDefaultInstance() {
+        return INSTANCE;
     }
+
 }

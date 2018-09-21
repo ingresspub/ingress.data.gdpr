@@ -23,9 +23,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import ingress.data.gdpr.models.DeviceRecord;
+import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.parsers.DeviceRecordsParser;
 import ingress.data.gdpr.parsers.utils.ErrorConstants;
-import ingress.data.gdpr.models.reports.ReportDetails;
 import org.junit.Test;
 
 import java.io.IOException;

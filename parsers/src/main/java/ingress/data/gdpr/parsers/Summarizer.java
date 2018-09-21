@@ -19,7 +19,7 @@ package ingress.data.gdpr.parsers;
 
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 
-import ingress.data.gdpr.models.CountBasedRecord;
+import ingress.data.gdpr.models.NumericBasedRecord;
 import ingress.data.gdpr.models.reports.MentoringReport;
 import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.models.reports.SummarizedReport;
@@ -42,6 +42,8 @@ public class Summarizer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Summarizer.class);
 
+    private static final ZonedDateTimeParser TIME_PARSER = ZonedDateTimeParser.getDefaultInstance();
+
     public static SummarizedReport summarize(final Stream<Path> files) {
         notNull(files, "Missing files");
         final SummarizedReport report = new SummarizedReport();
@@ -57,16 +59,19 @@ public class Summarizer {
         return report;
     }
 
-    private static CompletableFuture<SummarizedReport> parseMentoringReport(final SummarizedReport report, final Stream<Path> files) {
+    private static CompletableFuture<SummarizedReport> parseMentoringReport(
+            final SummarizedReport report, final Stream<Path> files) {
+        final String reportName = "agents_recruited";
         return CompletableFuture
                 .supplyAsync(() -> {
                     Optional<Path> dataFile = files
-                            .filter(file -> file.getFileName().startsWith("agents_recruited"))
+                            .filter(file -> file.getFileName().startsWith(reportName))
                             .findFirst();
                     if (!dataFile.isPresent()) {
                         return report;
                     }
-                    final ReportDetails<List<CountBasedRecord>> details = new CountBasedParser().parse(dataFile.get());
+                    final NumericBasedRecordParser<Integer> parser = new NumericBasedRecordParser<>(TIME_PARSER, IntValueParser.getDefaultInstance());
+                    final ReportDetails<List<NumericBasedRecord<Integer>>> details = parser.parse(dataFile.get());
                     if (!details.isOk()) {
                         return report;
                     }

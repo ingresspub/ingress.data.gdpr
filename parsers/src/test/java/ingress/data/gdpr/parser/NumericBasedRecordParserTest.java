@@ -23,10 +23,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import ingress.data.gdpr.models.CountBasedRecord;
-import ingress.data.gdpr.parsers.CountBasedParser;
-import ingress.data.gdpr.parsers.utils.ErrorConstants;
+import ingress.data.gdpr.models.NumericBasedRecord;
 import ingress.data.gdpr.models.reports.ReportDetails;
+import ingress.data.gdpr.parsers.IntValueParser;
+import ingress.data.gdpr.parsers.NumericBasedRecordParser;
+import ingress.data.gdpr.parsers.ZonedDateTimeParser;
+import ingress.data.gdpr.parsers.utils.ErrorConstants;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -39,14 +41,15 @@ import java.util.List;
 /**
  * @author SgrAlpha
  */
-public class CountBasedParserTest {
+public class NumericBasedRecordParserTest {
 
-    private static final CountBasedParser PARSER = new CountBasedParser();
+    private static final NumericBasedRecordParser<Integer> PARSER = new NumericBasedRecordParser<>(
+            ZonedDateTimeParser.getDefaultInstance(), IntValueParser.getDefaultInstance());
 
     @Test
     public void testParseFromWrongTimeFormat() throws URISyntaxException {
-        final Path temp = Paths.get(CountBasedParserTest.class.getResource("test_count_based_wrong_time_format.tsv").toURI());
-        ReportDetails<List<CountBasedRecord>> result = PARSER.parse(temp);
+        final Path temp = Paths.get(NumericBasedRecordParserTest.class.getResource("test_count_based_wrong_time_format.tsv").toURI());
+        ReportDetails<List<NumericBasedRecord<Integer>>> result = PARSER.parse(temp);
         assertNotNull(result);
         assertFalse(result.isOk());
         assertNull(result.getData());
@@ -54,8 +57,8 @@ public class CountBasedParserTest {
 
     @Test
     public void testParseFromWrongColumns() throws URISyntaxException {
-        final Path temp = Paths.get(CountBasedParserTest.class.getResource("test_count_based_wrong_columns.tsv").toURI());
-        ReportDetails<List<CountBasedRecord>> result = PARSER.parse(temp);
+        final Path temp = Paths.get(NumericBasedRecordParserTest.class.getResource("test_count_based_wrong_columns.tsv").toURI());
+        ReportDetails<List<NumericBasedRecord<Integer>>> result = PARSER.parse(temp);
         assertNotNull(result);
         assertFalse(result.isOk());
         assertNull(result.getData());
@@ -64,10 +67,10 @@ public class CountBasedParserTest {
     @Test
     public void testParseFromBlankFile() throws IOException {
         final Path temp = Files.createTempFile("test-file-", null);
-        ReportDetails<List<CountBasedRecord>> result = PARSER.parse(temp);
+        ReportDetails<List<NumericBasedRecord<Integer>>> result = PARSER.parse(temp);
         assertNotNull(result);
         assertTrue(result.isOk());
-        final List<CountBasedRecord> data = result.getData();
+        final List<NumericBasedRecord<Integer>> data = result.getData();
         assertNotNull(data);
         assertEquals(0, data.size());
         Files.delete(temp);
@@ -76,7 +79,7 @@ public class CountBasedParserTest {
     @Test
     public void testParseFromFolder() throws IOException {
         final Path temp = Files.createTempDirectory("test-dir-");
-        ReportDetails<List<CountBasedRecord>> result = PARSER.parse(temp);
+        ReportDetails<List<NumericBasedRecord<Integer>>> result = PARSER.parse(temp);
         assertNotNull(result);
         assertFalse(result.isOk());
         assertEquals(ErrorConstants.NOT_REGULAR_FILE, result.getError());

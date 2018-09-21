@@ -15,37 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.models;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import ingress.data.gdpr.models.utils.JsonUtil;
-
-import java.time.ZonedDateTime;
+package ingress.data.gdpr.parsers;
 
 /**
+ * @param <T> target type of value
+ *
  * @author SgrAlpha
  */
-public class CountBasedRecord implements TimestampedRecord {
+public interface ValueParser<T> {
 
-    private final ZonedDateTime time;
-    private final long count;
+    T parse(String value) throws Exception;
 
-    public CountBasedRecord(final ZonedDateTime time, final long count) {
-        this.time = time;
-        this.count = count;
-    }
-
-    @JsonProperty("time")
-    @Override public ZonedDateTime getTime() {
-        return time;
-    }
-
-    @JsonProperty("count")
-    public long getCount() {
-        return count;
-    }
-
-    @Override public String toString() {
-        return JsonUtil.toJson(this);
-    }
 }

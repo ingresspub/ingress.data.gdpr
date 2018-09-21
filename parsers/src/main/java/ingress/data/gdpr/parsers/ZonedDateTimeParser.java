@@ -15,24 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.parsers.utils;
+package ingress.data.gdpr.parsers;
 
 import static ingress.data.gdpr.models.utils.Preconditions.notEmptyString;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 /**
  * @author SgrAlpha
  */
-public class TimeUtil {
+public class ZonedDateTimeParser implements ValueParser<ZonedDateTime> {
 
-    public static final String GDPR_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss zz";
+    private static final String GDPR_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss zz";
 
-    public static ZonedDateTime toZonedDataTime(final String timeStr) throws DateTimeParseException {
-        notEmptyString(timeStr, "Missing time info to parse from");
-        return ZonedDateTime.parse(timeStr, DateTimeFormatter.ofPattern(GDPR_TIME_PATTERN));
+    private static final ZonedDateTimeParser INSTANCE = new ZonedDateTimeParser();
+
+    @Override public ZonedDateTime parse(final String time) {
+        notEmptyString(time, "Missing time info to parse from");
+        return ZonedDateTime.parse(time, DateTimeFormatter.ofPattern(GDPR_TIME_PATTERN));
+    }
+
+    public static ZonedDateTimeParser getDefaultInstance() {
+        return INSTANCE;
     }
 
 }
