@@ -21,6 +21,7 @@ import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ingress.data.gdpr.models.NumericBasedRecord;
+import ingress.data.gdpr.models.utils.JsonUtil;
 
 import java.util.List;
 
@@ -40,4 +41,9 @@ public class MentoringReport {
     public ReportDetails<List<NumericBasedRecord<Integer>>> getAgentsRecruited() {
         return agentsRecruited;
     }
+
+    @Override public String toString() {
+        return JsonUtil.toJson(this);
+    }
+
 }

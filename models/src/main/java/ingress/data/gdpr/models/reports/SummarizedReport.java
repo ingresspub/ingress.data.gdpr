@@ -18,8 +18,11 @@
 package ingress.data.gdpr.models.reports;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ingress.data.gdpr.models.DeviceRecord;
+import ingress.data.gdpr.models.utils.JsonUtil;
 
 import java.time.Clock;
+import java.util.List;
 
 /**
  * @author SgrAlpha
@@ -28,7 +31,9 @@ public class SummarizedReport {
 
     private final long generatedTimeInMs;
 
+    private List<DeviceRecord> usedDevices;
     private MentoringReport mentoring;
+    private HealthReport health;
 
     public SummarizedReport() {
         generatedTimeInMs = Clock.systemUTC().millis();
@@ -39,6 +44,15 @@ public class SummarizedReport {
         return generatedTimeInMs;
     }
 
+    @JsonProperty("devices")
+    public List<DeviceRecord> getUsedDevices() {
+        return usedDevices;
+    }
+
+    public void setUsedDevices(final List<DeviceRecord> usedDevices) {
+        this.usedDevices = usedDevices;
+    }
+
     @JsonProperty("mentoring")
     public MentoringReport getMentoring() {
         return mentoring;
@@ -47,4 +61,18 @@ public class SummarizedReport {
     public void setMentoring(final MentoringReport mentoring) {
         this.mentoring = mentoring;
     }
+
+    @JsonProperty("health")
+    public HealthReport getHealth() {
+        return health;
+    }
+
+    public void setHealth(final HealthReport health) {
+        this.health = health;
+    }
+
+    @Override public String toString() {
+        return JsonUtil.toJson(this);
+    }
+
 }

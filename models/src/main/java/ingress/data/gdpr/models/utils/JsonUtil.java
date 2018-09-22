@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 /**
  * @author SgrAlpha
@@ -32,6 +33,7 @@ public class JsonUtil {
 
     static {
         OBJECT_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        OBJECT_MAPPER.registerModule(new JavaTimeModule());
     }
 
     /**

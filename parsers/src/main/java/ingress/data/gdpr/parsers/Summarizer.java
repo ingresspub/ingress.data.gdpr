@@ -19,7 +19,9 @@ package ingress.data.gdpr.parsers;
 
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 
+import ingress.data.gdpr.models.DeviceRecord;
 import ingress.data.gdpr.models.NumericBasedRecord;
+import ingress.data.gdpr.models.reports.HealthReport;
 import ingress.data.gdpr.models.reports.MentoringReport;
 import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.models.reports.SummarizedReport;
@@ -33,7 +35,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Stream;
 
 /**
  * @author SgrAlpha
@@ -44,13 +45,15 @@ public class Summarizer {
 
     private static final ZonedDateTimeParser TIME_PARSER = ZonedDateTimeParser.getDefaultInstance();
 
-    public static SummarizedReport summarize(final Stream<Path> files) {
+    public static SummarizedReport summarize(final List<Path> files) {
         notNull(files, "Missing files");
         final SummarizedReport report = new SummarizedReport();
         try {
             CompletableFuture
                     .allOf(
-                            parseMentoringReport(report, files)
+                            parseUsedDevices(report, files),
+                            parseMentoringReport(report, files),
+                            parseHealthReport(report, files)
                     )
                     .get(10, TimeUnit.MINUTES);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
@@ -59,13 +62,34 @@ public class Summarizer {
         return report;
     }
 
-    private static CompletableFuture<SummarizedReport> parseMentoringReport(
-            final SummarizedReport report, final Stream<Path> files) {
-        final String reportName = "agents_recruited";
+    private static CompletableFuture<SummarizedReport> parseUsedDevices(
+            final SummarizedReport report, final List<Path> files) {
+        final String reportName = "devices.txt";
         return CompletableFuture
                 .supplyAsync(() -> {
-                    Optional<Path> dataFile = files
-                            .filter(file -> file.getFileName().startsWith(reportName))
+                    Optional<Path> dataFile = files.stream()
+                            .filter(file -> file.getFileName().toString().equals(reportName))
+                            .findFirst();
+                    if (!dataFile.isPresent()) {
+                        return report;
+                    }
+                    final DeviceRecordsParser parser = new DeviceRecordsParser();
+                    final ReportDetails<List<DeviceRecord>> details = parser.parse(dataFile.get());
+                    if (!details.isOk()) {
+                        return report;
+                    }
+                    report.setUsedDevices(details.getData());
+                    return report;
+                });
+    }
+
+    private static CompletableFuture<SummarizedReport> parseMentoringReport(
+            final SummarizedReport report, final List<Path> files) {
+        final String reportName = "agents_recruited.tsv";
+        return CompletableFuture
+                .supplyAsync(() -> {
+                    Optional<Path> dataFile = files.stream()
+                            .filter(file -> file.getFileName().toString().equals(reportName))
                             .findFirst();
                     if (!dataFile.isPresent()) {
                         return report;
@@ -76,6 +100,27 @@ public class Summarizer {
                         return report;
                     }
                     report.setMentoring(new MentoringReport(details));
+                    return report;
+                });
+    }
+
+    private static CompletableFuture<SummarizedReport> parseHealthReport(
+            final SummarizedReport report, final List<Path> files) {
+        final String reportName = "kilometers_walked.tsv";
+        return CompletableFuture
+                .supplyAsync(() -> {
+                    Optional<Path> dataFile = files.stream()
+                            .filter(file -> file.getFileName().toString().equals(reportName))
+                            .findFirst();
+                    if (!dataFile.isPresent()) {
+                        return report;
+                    }
+                    final NumericBasedRecordParser<Float> parser = new NumericBasedRecordParser<>(TIME_PARSER, FloatValueParser.getDefaultInstance());
+                    final ReportDetails<List<NumericBasedRecord<Float>>> details = parser.parse(dataFile.get());
+                    if (!details.isOk()) {
+                        return report;
+                    }
+                    report.setHealth(new HealthReport(details));
                     return report;
                 });
     }
