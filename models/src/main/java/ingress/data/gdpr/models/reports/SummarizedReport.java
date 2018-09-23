@@ -17,6 +17,7 @@
 
 package ingress.data.gdpr.models.reports;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ingress.data.gdpr.models.DeviceRecord;
 import ingress.data.gdpr.models.utils.JsonUtil;
@@ -27,11 +28,13 @@ import java.util.List;
 /**
  * @author SgrAlpha
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SummarizedReport {
 
     private final long generatedTimeInMs;
 
     private List<DeviceRecord> usedDevices;
+    private CombatReport combat;
     private MentoringReport mentoring;
     private HealthReport health;
 
@@ -51,6 +54,15 @@ public class SummarizedReport {
 
     public void setUsedDevices(final List<DeviceRecord> usedDevices) {
         this.usedDevices = usedDevices;
+    }
+
+    @JsonProperty("combat")
+    public CombatReport getCombat() {
+        return combat;
+    }
+
+    public void setCombat(final CombatReport combat) {
+        this.combat = combat;
     }
 
     @JsonProperty("mentoring")

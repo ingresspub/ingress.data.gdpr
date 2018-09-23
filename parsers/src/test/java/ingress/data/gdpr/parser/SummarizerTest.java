@@ -18,8 +18,11 @@
 package ingress.data.gdpr.parser;
 
 import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import ingress.data.gdpr.models.reports.CombatReport;
 import ingress.data.gdpr.models.reports.SummarizedReport;
 import ingress.data.gdpr.parsers.Summarizer;
 import org.junit.Test;
@@ -50,10 +53,27 @@ public class SummarizerTest {
         final List<Path> files = Files.list(Paths.get(basePath)).collect(Collectors.toList());
         SummarizedReport rpt = Summarizer.summarize(files);
         assertNotNull(rpt);
+        final CombatReport combatReport = rpt.getCombat();
+        assertNotNull(combatReport);
+        assertNotNull(combatReport.getResonatorsDestroyed());
+        assertTrue(combatReport.getResonatorsDestroyed().isOk());
+        assertNotNull(combatReport.getResonatorsDestroyed().getData());
+        assertFalse(combatReport.getResonatorsDestroyed().getData().isEmpty());
+        assertNotNull(combatReport.getPortalsNeutralized());
+        assertTrue(combatReport.getPortalsNeutralized().isOk());
+        assertNotNull(combatReport.getPortalsNeutralized().getData());
+        assertFalse(combatReport.getPortalsNeutralized().getData().isEmpty());
+        assertNotNull(combatReport.getLinksDestroyed());
+        assertTrue(combatReport.getLinksDestroyed().isOk());
+        assertNotNull(combatReport.getLinksDestroyed().getData());
+        assertFalse(combatReport.getLinksDestroyed().getData().isEmpty());
+        assertNotNull(combatReport.getFieldsDestroyed());
+        assertTrue(combatReport.getFieldsDestroyed().isOk());
+        assertNotNull(combatReport.getFieldsDestroyed().getData());
+        assertFalse(combatReport.getFieldsDestroyed().getData().isEmpty());
         assertNotNull(rpt.getUsedDevices());
         assertNotNull(rpt.getHealth());
         assertNotNull(rpt.getMentoring());
-        LOGGER.info(rpt.toString());
     }
 
 }
