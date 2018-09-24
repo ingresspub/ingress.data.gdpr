@@ -50,6 +50,7 @@
         <!-- Regular dependencies -->
         <dep.jackson.version>2.9.6</dep.jackson.version>
         <dep.slf4j.version>1.7.25</dep.slf4j.version>
+        <dep.log4j2.version>2.11.1</dep.log4j2.version>
 
         <!-- For tests -->
         <dep.junit.version>4.12</dep.junit.version>
@@ -116,6 +117,11 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${dep.slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${dep.log4j2.version}</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
