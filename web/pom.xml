@@ -35,7 +35,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>ingress.data</groupId>
+            <groupId>ingress.data.gdpr</groupId>
             <artifactId>data.gdpr.parsers</artifactId>
         </dependency>
         <dependency>

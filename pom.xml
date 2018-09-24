@@ -65,12 +65,12 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>ingress.data</groupId>
+                <groupId>ingress.data.gdpr</groupId>
                 <artifactId>data.gdpr.models</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>ingress.data</groupId>
+                <groupId>ingress.data.gdpr</groupId>
                 <artifactId>data.gdpr.parsers</artifactId>
                 <version>${project.version}</version>
             </dependency>
