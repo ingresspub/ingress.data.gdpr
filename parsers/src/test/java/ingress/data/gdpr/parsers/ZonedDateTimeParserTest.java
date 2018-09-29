@@ -15,26 +15,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.parser;
+package ingress.data.gdpr.parsers;
 
 import static org.junit.Assert.assertEquals;
 
-import ingress.data.gdpr.parsers.IntValueParser;
 import org.junit.Test;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 
 /**
  * @author SgrAlpha
  */
-public class IntValueParserTest {
+public class ZonedDateTimeParserTest {
 
-    private static final IntValueParser PARSER = IntValueParser.getDefault();
+    private static final ZonedDateTimeParser PARSER = ZonedDateTimeParser.getDefault();
     
     @Test
-    public void testParseFromValid() {
-        assertEquals(10, PARSER.parse("10").intValue());
+    public void testParseFromIso8610() {
+        ZonedDateTime time = PARSER.parse("2016-03-05 08:29:21 PST");
+        assertEquals(2016, time.getYear());
+        assertEquals(ZoneId.of("America/Los_Angeles"), time.getZone());
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test(expected = DateTimeParseException.class)
     public void testParseFromInvalid() {
         PARSER.parse("asdfg");
     }

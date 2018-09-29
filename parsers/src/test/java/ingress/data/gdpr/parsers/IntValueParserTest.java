@@ -15,23 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.parser;
+package ingress.data.gdpr.parsers;
 
 import static org.junit.Assert.assertEquals;
 
-import ingress.data.gdpr.parsers.FloatValueParser;
 import org.junit.Test;
 
 /**
  * @author SgrAlpha
  */
-public class FloatValueParserTest {
+public class IntValueParserTest {
 
-    private static final FloatValueParser PARSER = FloatValueParser.getDefault();
+    private static final IntValueParser PARSER = IntValueParser.getDefault();
     
     @Test
     public void testParseFromValid() {
-        assertEquals(0.00636792043224f, PARSER.parse("0.00636792043224"), 0);
+        assertEquals(10, PARSER.parse("10").intValue());
     }
 
     @Test(expected = NumberFormatException.class)

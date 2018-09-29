@@ -15,16 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.parser;
+package ingress.data.gdpr.parsers;
 
 import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import ingress.data.gdpr.models.reports.BuildingReport;
 import ingress.data.gdpr.models.reports.CombatReport;
 import ingress.data.gdpr.models.reports.SummarizedReport;
-import ingress.data.gdpr.parsers.Summarizer;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,7 @@ public class SummarizerTest {
         final List<Path> files = Files.list(Paths.get(basePath)).collect(Collectors.toList());
         SummarizedReport rpt = Summarizer.summarize(files);
         assertNotNull(rpt);
+
         final CombatReport combatReport = rpt.getCombat();
         assertNotNull(combatReport);
         assertNotNull(combatReport.getResonatorsDestroyed());
@@ -71,6 +73,46 @@ public class SummarizerTest {
         assertTrue(combatReport.getFieldsDestroyed().isOk());
         assertNotNull(combatReport.getFieldsDestroyed().getData());
         assertFalse(combatReport.getFieldsDestroyed().getData().isEmpty());
+
+        final BuildingReport buildingReport = rpt.getBuilding();
+        assertNotNull(buildingReport);
+        assertNotNull(buildingReport.getMindUnitsControlled());
+        assertTrue(buildingReport.getMindUnitsControlled().isOk());
+        assertFalse(buildingReport.getMindUnitsControlled().getData().isEmpty());
+        assertNotNull(buildingReport.getMindUnitsControlledActive());
+        assertNotNull(buildingReport.getMindUnitsControlledActive().getData());
+        assertEquals(1, buildingReport.getMindUnitsControlledActive().getData().size());
+        assertNotNull(buildingReport.getFieldsCreated());
+        assertTrue(buildingReport.getFieldsCreated().isOk());
+        assertFalse(buildingReport.getFieldsCreated().getData().isEmpty());
+        assertNotNull(buildingReport.getFieldsCreatedActive());
+        assertNotNull(buildingReport.getFieldsCreatedActive().getData());
+        assertEquals(1, buildingReport.getFieldsCreatedActive().getData().size());
+        assertNotNull(buildingReport.getLinksCreated());
+        assertTrue(buildingReport.getLinksCreated().isOk());
+        assertFalse(buildingReport.getLinksCreated().getData().isEmpty());
+        assertNotNull(buildingReport.getLinkLengthInKm());
+        assertTrue(buildingReport.getLinkLengthInKm().isOk());
+        assertFalse(buildingReport.getLinkLengthInKm().getData().isEmpty());
+        assertNotNull(buildingReport.getLinksCreatedActive());
+        assertNotNull(buildingReport.getLinksCreatedActive().getData());
+        assertEquals(1, buildingReport.getLinksCreatedActive().getData().size());
+        assertNotNull(buildingReport.getPortalsCaptured());
+        assertTrue(buildingReport.getPortalsCaptured().isOk());
+        assertFalse(buildingReport.getPortalsCaptured().getData().isEmpty());
+        assertNotNull(buildingReport.getPortalsOwned());
+        assertNotNull(buildingReport.getPortalsOwned().getData());
+        assertEquals(1, buildingReport.getPortalsOwned().getData().size());
+        assertNotNull(buildingReport.getResonatorsDeployed());
+        assertTrue(buildingReport.getResonatorsDeployed().isOk());
+        assertFalse(buildingReport.getResonatorsDeployed().getData().isEmpty());
+        assertNotNull(buildingReport.getModsDeployed());
+        assertTrue(buildingReport.getModsDeployed().isOk());
+        assertFalse(buildingReport.getModsDeployed().getData().isEmpty());
+        assertNotNull(buildingReport.getXmRecharged());
+        assertTrue(buildingReport.getXmRecharged().isOk());
+        assertFalse(buildingReport.getXmRecharged().getData().isEmpty());
+
         assertNotNull(rpt.getUsedDevices());
         assertNotNull(rpt.getHealth());
         assertNotNull(rpt.getMentoring());

@@ -64,6 +64,7 @@ public class Summarizer {
             CompletableFuture
                     .allOf(
                             parseUsedDevices(report, files),
+                            parseBuildingReport(report, files),
                             parseCombatReport(report, files),
                             parseMentoringReport(report, files),
                             parseHealthReport(report, files)
@@ -73,6 +74,15 @@ public class Summarizer {
             LOGGER.error(e.getMessage(), e);
         }
         return report;
+    }
+
+    private static CompletableFuture<SummarizedReport> parseBuildingReport(
+            final SummarizedReport report, final List<Path> files) {
+        return new BuildingReportParser().parse(files)
+                .thenApplyAsync(buildingReport -> {
+                    report.setBuilding(buildingReport);
+                    return report;
+                });
     }
 
     private static CompletableFuture<SummarizedReport> parseCombatReport(

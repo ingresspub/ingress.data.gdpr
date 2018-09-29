@@ -15,19 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.parser;
+package ingress.data.gdpr.parsers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import ingress.data.gdpr.models.NumericBasedRecord;
+import ingress.data.gdpr.models.DeviceRecord;
 import ingress.data.gdpr.models.reports.ReportDetails;
-import ingress.data.gdpr.parsers.IntValueParser;
-import ingress.data.gdpr.parsers.NumericBasedRecordParser;
-import ingress.data.gdpr.parsers.ZonedDateTimeParser;
 import ingress.data.gdpr.parsers.utils.ErrorConstants;
 import org.junit.Test;
 
@@ -41,36 +37,32 @@ import java.util.List;
 /**
  * @author SgrAlpha
  */
-public class NumericBasedRecordParserTest {
+public class DeviceRecordsParserTest {
 
-    private static final NumericBasedRecordParser<Integer> PARSER = new NumericBasedRecordParser<>(
-            ZonedDateTimeParser.getDefault(), IntValueParser.getDefault());
-
-    @Test
-    public void testParseFromWrongTimeFormat() throws URISyntaxException {
-        final Path temp = Paths.get(NumericBasedRecordParserTest.class.getResource("test_count_based_wrong_time_format.tsv").toURI());
-        ReportDetails<List<NumericBasedRecord<Integer>>> result = PARSER.parse(temp);
-        assertNotNull(result);
-        assertFalse(result.isOk());
-        assertNull(result.getData());
-    }
+    private static final DeviceRecordsParser PARSER = new DeviceRecordsParser();
 
     @Test
-    public void testParseFromWrongColumns() throws URISyntaxException {
-        final Path temp = Paths.get(NumericBasedRecordParserTest.class.getResource("test_count_based_wrong_columns.tsv").toURI());
-        ReportDetails<List<NumericBasedRecord<Integer>>> result = PARSER.parse(temp);
+    public void testParseFromValidFile() throws URISyntaxException {
+        final Path temp = Paths.get(DeviceRecordsParserTest.class.getResource("test_devices.txt").toURI());
+        ReportDetails<List<DeviceRecord>> result = PARSER.parse(temp);
         assertNotNull(result);
-        assertFalse(result.isOk());
-        assertNull(result.getData());
+        assertTrue(result.isOk());
+        final List<DeviceRecord> data = result.getData();
+        assertNotNull(data);
+        assertEquals(4, data.size());
+        assertEquals("Apple iPhone X", data.get(0).getDeviceName());
+        assertEquals("Apple iPhone 8", data.get(1).getDeviceName());
+        assertEquals("Apple iPhone 7", data.get(2).getDeviceName());
+        assertEquals("Apple iPhone 6", data.get(3).getDeviceName());
     }
 
     @Test
     public void testParseFromBlankFile() throws IOException {
         final Path temp = Files.createTempFile("test-file-", null);
-        ReportDetails<List<NumericBasedRecord<Integer>>> result = PARSER.parse(temp);
+        ReportDetails<List<DeviceRecord>> result = PARSER.parse(temp);
         assertNotNull(result);
         assertTrue(result.isOk());
-        final List<NumericBasedRecord<Integer>> data = result.getData();
+        final List<DeviceRecord> data = result.getData();
         assertNotNull(data);
         assertEquals(0, data.size());
         Files.delete(temp);
@@ -79,7 +71,7 @@ public class NumericBasedRecordParserTest {
     @Test
     public void testParseFromFolder() throws IOException {
         final Path temp = Files.createTempDirectory("test-dir-");
-        ReportDetails<List<NumericBasedRecord<Integer>>> result = PARSER.parse(temp);
+        ReportDetails<List<DeviceRecord>> result = PARSER.parse(temp);
         assertNotNull(result);
         assertFalse(result.isOk());
         assertEquals(ErrorConstants.NOT_REGULAR_FILE, result.getError());

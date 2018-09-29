@@ -28,4 +28,16 @@ public class DataFileNames {
     public static final String DEVICES_TXT = "devices.txt";
     public static final String AGENTS_RECRUITED_TSV = "agents_recruited.tsv";
     public static final String KILOMETERS_WALKED_TSV = "kilometers_walked.tsv";
+    public static final String MIND_UNITS_CONTROLLED_TSV = "mind_units_controlled.tsv";
+    public static final String LINKS_CREATED_TSV = "links_created.tsv";
+    public static final String MIND_UNITS_CONTROLLED_ACTIVE_TSV = "mind_units_controlled_active.tsv";
+    public static final String LINKS_CREATED_ACTIVE_TSV = "links_active.tsv";
+    public static final String LINK_LENGTH_IN_KILOMETERS_TSV = "link_length_kilometers.tsv";
+    public static final String FIELDS_CREATED_TSV = "fields_created.tsv";
+    public static final String FIELDS_CREATED_ACTIVE_TSV = "fields_active.tsv";
+    public static final String PORTALS_CAPTURED_TSV = "portals_captured.tsv";
+    public static final String PORTALS_OWNED_TSV = "portals_owned.tsv";
+    public static final String RESONATORS_DEPLOYED_TSV = "deploys.tsv";
+    public static final String MODS_DEPLOYED_TSV = "mods_deployed.tsv";
+    public static final String XM_RECHARGED_TSV = "xm_recharged.tsv";
 }

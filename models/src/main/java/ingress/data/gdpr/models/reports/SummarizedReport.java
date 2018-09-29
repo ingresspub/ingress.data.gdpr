@@ -23,6 +23,7 @@ import ingress.data.gdpr.models.DeviceRecord;
 import ingress.data.gdpr.models.utils.JsonUtil;
 
 import java.time.Clock;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,6 +35,7 @@ public class SummarizedReport {
     private final long generatedTimeInMs;
 
     private List<DeviceRecord> usedDevices;
+    private BuildingReport building;
     private CombatReport combat;
     private MentoringReport mentoring;
     private HealthReport health;
@@ -53,7 +55,16 @@ public class SummarizedReport {
     }
 
     public void setUsedDevices(final List<DeviceRecord> usedDevices) {
-        this.usedDevices = usedDevices;
+        this.usedDevices = Collections.unmodifiableList(usedDevices);
+    }
+
+    @JsonProperty("building")
+    public BuildingReport getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(final BuildingReport building) {
+        this.building = building;
     }
 
     @JsonProperty("combat")

@@ -51,9 +51,9 @@ public class CombatReportParser implements MultipleFilesParser<CombatReport> {
     public CombatReportParser() {
         final int cores = Runtime.getRuntime().availableProcessors();
         this.executor = new ThreadPoolExecutor(
-                cores, Math.max(4, cores),
+                cores, cores,
                 1, TimeUnit.MINUTES,
-                new ArrayBlockingQueue<>(1)
+                new ArrayBlockingQueue<>(4)
         );
     }
 
