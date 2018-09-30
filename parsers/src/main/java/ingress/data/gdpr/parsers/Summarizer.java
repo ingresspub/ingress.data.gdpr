@@ -66,6 +66,7 @@ public class Summarizer {
                             parseUsedDevices(report, files),
                             parseBuildingReport(report, files),
                             parseCombatReport(report, files),
+                            parseDefenseReport(report, files),
                             parseMentoringReport(report, files),
                             parseHealthReport(report, files)
                     )
@@ -90,6 +91,15 @@ public class Summarizer {
         return new CombatReportParser().parse(files)
                 .thenApplyAsync(combatReport -> {
                     report.setCombat(combatReport);
+                    return report;
+                });
+    }
+
+    private static CompletableFuture<?> parseDefenseReport(
+            final SummarizedReport report, final List<Path> files) {
+        return new DefenseReportParser().parse(files)
+                .thenApplyAsync(defenseReport -> {
+                    report.setDefense(defenseReport);
                     return report;
                 });
     }

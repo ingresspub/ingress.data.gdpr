@@ -37,6 +37,7 @@ public class SummarizedReport {
     private List<DeviceRecord> usedDevices;
     private BuildingReport building;
     private CombatReport combat;
+    private DefenseReport defense;
     private MentoringReport mentoring;
     private HealthReport health;
 
@@ -74,6 +75,15 @@ public class SummarizedReport {
 
     public void setCombat(final CombatReport combat) {
         this.combat = combat;
+    }
+
+    @JsonProperty("defense")
+    public DefenseReport getDefense() {
+        return defense;
+    }
+
+    public void setDefense(final DefenseReport defense) {
+        this.defense = defense;
     }
 
     @JsonProperty("mentoring")

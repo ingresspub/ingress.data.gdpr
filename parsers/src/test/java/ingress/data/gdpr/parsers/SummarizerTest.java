@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 
 import ingress.data.gdpr.models.reports.BuildingReport;
 import ingress.data.gdpr.models.reports.CombatReport;
+import ingress.data.gdpr.models.reports.DefenseReport;
 import ingress.data.gdpr.models.reports.SummarizedReport;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -112,6 +113,24 @@ public class SummarizerTest {
         assertNotNull(buildingReport.getXmRecharged());
         assertTrue(buildingReport.getXmRecharged().isOk());
         assertFalse(buildingReport.getXmRecharged().getData().isEmpty());
+
+        final DefenseReport defenseReport = rpt.getDefense();
+        assertNotNull(defenseReport);
+        assertNotNull(defenseReport.getPortalHeldDays());
+        assertTrue(defenseReport.getPortalHeldDays().isOk());
+        assertFalse(defenseReport.getPortalHeldDays().getData().isEmpty());
+        assertNotNull(defenseReport.getLinkHeldDays());
+        assertTrue(defenseReport.getLinkHeldDays().isOk());
+        assertFalse(defenseReport.getLinkHeldDays().getData().isEmpty());
+        assertNotNull(defenseReport.getLinkLengthInKmTimesDaysHeld());
+        assertTrue(defenseReport.getLinkLengthInKmTimesDaysHeld().isOk());
+        assertFalse(defenseReport.getLinkLengthInKmTimesDaysHeld().getData().isEmpty());
+        assertNotNull(defenseReport.getFieldHeldDays());
+        assertTrue(defenseReport.getFieldHeldDays().isOk());
+        assertFalse(defenseReport.getFieldHeldDays().getData().isEmpty());
+        assertNotNull(defenseReport.getMindUnitsTimesDaysHeld());
+        assertTrue(defenseReport.getMindUnitsTimesDaysHeld().isOk());
+        assertFalse(defenseReport.getMindUnitsTimesDaysHeld().getData().isEmpty());
 
         assertNotNull(rpt.getUsedDevices());
         assertNotNull(rpt.getHealth());

@@ -20,6 +20,7 @@ package ingress.data.gdpr.models.reports;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ingress.data.gdpr.models.NumericBasedRecord;
+import ingress.data.gdpr.models.utils.JsonUtil;
 
 import java.util.List;
 
@@ -149,4 +150,9 @@ public class BuildingReport {
     public void setXmRecharged(final ReportDetails<List<NumericBasedRecord<Float>>> xmRecharged) {
         this.xmRecharged = xmRecharged;
     }
+
+    @Override public String toString() {
+        return JsonUtil.toJson(this);
+    }
+
 }

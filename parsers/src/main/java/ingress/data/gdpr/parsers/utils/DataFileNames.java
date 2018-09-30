@@ -40,4 +40,9 @@ public class DataFileNames {
     public static final String RESONATORS_DEPLOYED_TSV = "deploys.tsv";
     public static final String MODS_DEPLOYED_TSV = "mods_deployed.tsv";
     public static final String XM_RECHARGED_TSV = "xm_recharged.tsv";
+    public static final String MIND_UNITS_TIMES_DAYS_HELD_TSV = "mind_units_times_days_held.tsv";
+    public static final String FIELD_HELD_DAYS_TSV = "field_held_days.tsv";
+    public static final String LINK_LENGTH__IN_KILOMETERS_TIMES_DAYS_HELD_TSV = "link_length_kilometers_times_days_held.tsv";
+    public static final String LINK_HELD_DAYS_TSV = "link_held_days.tsv";
+    public static final String PORTAL_HELD_DAYS_TSV = "portal_held_days.tsv";
 }
