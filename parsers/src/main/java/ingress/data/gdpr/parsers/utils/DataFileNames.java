@@ -45,4 +45,11 @@ public class DataFileNames {
     public static final String LINK_LENGTH__IN_KILOMETERS_TIMES_DAYS_HELD_TSV = "link_length_kilometers_times_days_held.tsv";
     public static final String LINK_HELD_DAYS_TSV = "link_held_days.tsv";
     public static final String PORTAL_HELD_DAYS_TSV = "portal_held_days.tsv";
+    public static final String HACKS_TSV = "hacks.tsv";
+    public static final String GLYPH_HACK_POINTS_TSV = "glyph_hack_points.tsv";
+    public static final String GLYPH_HACK_1_PERFECT_TSV = "glyph_hack_1_perfect.tsv";
+    public static final String GLYPH_HACK_2_PERFECT_TSV = "glyph_hack_2_perfect.tsv";
+    public static final String GLYPH_HACK_3_PERFECT_TSV = "glyph_hack_3_perfect.tsv";
+    public static final String GLYPH_HACK_4_PERFECT_TSV = "glyph_hack_4_perfect.tsv";
+    public static final String GLYPH_HACK_5_PERFECT_TSV = "glyph_hack_5_perfect.tsv";
 }

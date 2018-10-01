@@ -21,11 +21,16 @@ import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import ingress.data.gdpr.models.DeviceRecord;
 import ingress.data.gdpr.models.reports.BuildingReport;
 import ingress.data.gdpr.models.reports.CombatReport;
 import ingress.data.gdpr.models.reports.DefenseReport;
+import ingress.data.gdpr.models.reports.HealthReport;
+import ingress.data.gdpr.models.reports.MentoringReport;
+import ingress.data.gdpr.models.reports.ResourceGatheringReport;
 import ingress.data.gdpr.models.reports.SummarizedReport;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -55,6 +60,16 @@ public class SummarizerTest {
         final List<Path> files = Files.list(Paths.get(basePath)).collect(Collectors.toList());
         SummarizedReport rpt = Summarizer.summarize(files);
         assertNotNull(rpt);
+
+        final List<DeviceRecord> usedDevices = rpt.getUsedDevices();
+        assertNotNull(usedDevices);
+
+        final HealthReport healthReport = rpt.getHealth();
+        assertNotNull(healthReport);
+        assertNotNull(healthReport.getKilometersWalked());
+        assertTrue(healthReport.getKilometersWalked().isOk());
+        assertNotNull(healthReport.getKilometersWalked().getData());
+        assertFalse(healthReport.getKilometersWalked().getData().isEmpty());
 
         final CombatReport combatReport = rpt.getCombat();
         assertNotNull(combatReport);
@@ -132,9 +147,43 @@ public class SummarizerTest {
         assertTrue(defenseReport.getMindUnitsTimesDaysHeld().isOk());
         assertFalse(defenseReport.getMindUnitsTimesDaysHeld().getData().isEmpty());
 
-        assertNotNull(rpt.getUsedDevices());
-        assertNotNull(rpt.getHealth());
-        assertNotNull(rpt.getMentoring());
+        final ResourceGatheringReport resourceGatheringReport = rpt.getResourceGathering();
+        assertNotNull(resourceGatheringReport);
+        assertNotNull(resourceGatheringReport.getHacks());
+        assertTrue(resourceGatheringReport.getHacks().isOk());
+        assertNotNull(resourceGatheringReport.getHacks().getData());
+        assertFalse(resourceGatheringReport.getHacks().getData().isEmpty());
+        assertNotNull(resourceGatheringReport.getGlyphHackPoints());
+        assertTrue(resourceGatheringReport.getGlyphHackPoints().isOk());
+        assertNotNull(resourceGatheringReport.getGlyphHackPoints().getData());
+        assertFalse(resourceGatheringReport.getGlyphHackPoints().getData().isEmpty());
+        assertNotNull(resourceGatheringReport.getGlyphHackOnePerfect());
+        assertTrue(resourceGatheringReport.getGlyphHackOnePerfect().isOk());
+        assertNotNull(resourceGatheringReport.getGlyphHackOnePerfect().getData());
+        assertFalse(resourceGatheringReport.getGlyphHackOnePerfect().getData().isEmpty());
+        assertNotNull(resourceGatheringReport.getGlyphHackTwoPerfect());
+        assertFalse(resourceGatheringReport.getGlyphHackTwoPerfect().isOk());
+        assertNull(resourceGatheringReport.getGlyphHackTwoPerfect().getData());
+        assertNotNull(resourceGatheringReport.getGlyphHackTwoPerfect().getError());
+        assertNotNull(resourceGatheringReport.getGlyphHackThreePerfect());
+        assertTrue(resourceGatheringReport.getGlyphHackThreePerfect().isOk());
+        assertNotNull(resourceGatheringReport.getGlyphHackThreePerfect().getData());
+        assertFalse(resourceGatheringReport.getGlyphHackThreePerfect().getData().isEmpty());
+        assertNotNull(resourceGatheringReport.getGlyphHackFourPerfect());
+        assertTrue(resourceGatheringReport.getGlyphHackFourPerfect().isOk());
+        assertNotNull(resourceGatheringReport.getGlyphHackFourPerfect().getData());
+        assertFalse(resourceGatheringReport.getGlyphHackFourPerfect().getData().isEmpty());
+        assertNotNull(resourceGatheringReport.getGlyphHackFivePerfect());
+        assertTrue(resourceGatheringReport.getGlyphHackFivePerfect().isOk());
+        assertNotNull(resourceGatheringReport.getGlyphHackFivePerfect().getData());
+        assertFalse(resourceGatheringReport.getGlyphHackFivePerfect().getData().isEmpty());
+
+        final MentoringReport mentoringReport = rpt.getMentoring();
+        assertNotNull(mentoringReport);
+        assertNotNull(mentoringReport.getAgentsRecruited());
+        assertTrue(mentoringReport.getAgentsRecruited().isOk());
+        assertNotNull(mentoringReport.getAgentsRecruited().getData());
+        assertFalse(mentoringReport.getAgentsRecruited().getData().isEmpty());
     }
 
 }

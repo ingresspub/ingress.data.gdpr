@@ -27,4 +27,5 @@ public class ErrorConstants {
 
     public static final String MALFORMATTED_DATA = "malformatted_data";
 
+    public static final String FILE_NOT_FOUND = "file_not_found";
 }

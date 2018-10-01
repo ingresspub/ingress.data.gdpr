@@ -35,11 +35,12 @@ public class SummarizedReport {
     private final long generatedTimeInMs;
 
     private List<DeviceRecord> usedDevices;
+    private HealthReport health;
     private BuildingReport building;
     private CombatReport combat;
     private DefenseReport defense;
+    private ResourceGatheringReport resourceGathering;
     private MentoringReport mentoring;
-    private HealthReport health;
 
     public SummarizedReport() {
         generatedTimeInMs = Clock.systemUTC().millis();
@@ -57,6 +58,15 @@ public class SummarizedReport {
 
     public void setUsedDevices(final List<DeviceRecord> usedDevices) {
         this.usedDevices = Collections.unmodifiableList(usedDevices);
+    }
+
+    @JsonProperty("health")
+    public HealthReport getHealth() {
+        return health;
+    }
+
+    public void setHealth(final HealthReport health) {
+        this.health = health;
     }
 
     @JsonProperty("building")
@@ -86,6 +96,15 @@ public class SummarizedReport {
         this.defense = defense;
     }
 
+    @JsonProperty("resourceGathering")
+    public ResourceGatheringReport getResourceGathering() {
+        return resourceGathering;
+    }
+
+    public void setResourceGathering(final ResourceGatheringReport resourceGathering) {
+        this.resourceGathering = resourceGathering;
+    }
+
     @JsonProperty("mentoring")
     public MentoringReport getMentoring() {
         return mentoring;
@@ -93,15 +112,6 @@ public class SummarizedReport {
 
     public void setMentoring(final MentoringReport mentoring) {
         this.mentoring = mentoring;
-    }
-
-    @JsonProperty("health")
-    public HealthReport getHealth() {
-        return health;
-    }
-
-    public void setHealth(final HealthReport health) {
-        this.health = health;
     }
 
     @Override public String toString() {

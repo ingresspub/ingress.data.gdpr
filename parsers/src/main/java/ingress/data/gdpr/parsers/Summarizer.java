@@ -64,17 +64,64 @@ public class Summarizer {
             CompletableFuture
                     .allOf(
                             parseUsedDevices(report, files),
+                            parseHealthReport(report, files),
                             parseBuildingReport(report, files),
                             parseCombatReport(report, files),
                             parseDefenseReport(report, files),
-                            parseMentoringReport(report, files),
-                            parseHealthReport(report, files)
+                            parseResourceGathering(report, files),
+                            parseMentoringReport(report, files)
                     )
                     .get(10, TimeUnit.MINUTES);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             LOGGER.error(e.getMessage(), e);
         }
         return report;
+    }
+
+    private static CompletableFuture<SummarizedReport> parseUsedDevices(
+            final SummarizedReport report, final List<Path> files) {
+        return CompletableFuture
+                .supplyAsync(() -> {
+                    Optional<Path> dataFile = files.stream()
+                            .filter(file -> file.getFileName().toString().equals(DEVICES_TXT))
+                            .findFirst();
+                    if (!dataFile.isPresent()) {
+                        LOGGER.warn("Can not find report named '{}', skipping ...", DEVICES_TXT);
+                        return report;
+                    }
+                    final DeviceRecordsParser parser = new DeviceRecordsParser();
+                    final ReportDetails<List<DeviceRecord>> details = parser.parse(dataFile.get());
+                    if (!details.isOk()) {
+                        LOGGER.warn("Ran into error when parsing {}: {}", DEVICES_TXT, details.getError());
+                        return report;
+                    }
+                    LOGGER.info("Parsed {} records in {}", details.getData().size(), DEVICES_TXT);
+                    report.setUsedDevices(details.getData());
+                    return report;
+                }, executor);
+    }
+
+    private static CompletableFuture<SummarizedReport> parseHealthReport(
+            final SummarizedReport report, final List<Path> files) {
+        return CompletableFuture
+                .supplyAsync(() -> {
+                    Optional<Path> dataFile = files.stream()
+                            .filter(file -> file.getFileName().toString().startsWith(KILOMETERS_WALKED_TSV))
+                            .findFirst();
+                    if (!dataFile.isPresent()) {
+                        LOGGER.warn("Can not find report named '{}', skipping ...", KILOMETERS_WALKED_TSV);
+                        return report;
+                    }
+                    final NumericBasedRecordParser<Float> parser = new NumericBasedRecordParser<>(TIME_PARSER, FloatValueParser.getDefault());
+                    final ReportDetails<List<NumericBasedRecord<Float>>> details = parser.parse(dataFile.get());
+                    if (!details.isOk()) {
+                        LOGGER.warn("Ran into error when parsing {}: {}", KILOMETERS_WALKED_TSV, details.getError());
+                        return report;
+                    }
+                    LOGGER.info("Parsed {} records in {}", details.getData().size(), KILOMETERS_WALKED_TSV);
+                    report.setHealth(new HealthReport(details));
+                    return report;
+                }, executor);
     }
 
     private static CompletableFuture<SummarizedReport> parseBuildingReport(
@@ -104,27 +151,13 @@ public class Summarizer {
                 });
     }
 
-    private static CompletableFuture<SummarizedReport> parseUsedDevices(
+    private static CompletableFuture<?> parseResourceGathering(
             final SummarizedReport report, final List<Path> files) {
-        return CompletableFuture
-                .supplyAsync(() -> {
-                    Optional<Path> dataFile = files.stream()
-                            .filter(file -> file.getFileName().toString().equals(DEVICES_TXT))
-                            .findFirst();
-                    if (!dataFile.isPresent()) {
-                        LOGGER.warn("Can not find report named '{}', skipping ...", DEVICES_TXT);
-                        return report;
-                    }
-                    final DeviceRecordsParser parser = new DeviceRecordsParser();
-                    final ReportDetails<List<DeviceRecord>> details = parser.parse(dataFile.get());
-                    if (!details.isOk()) {
-                        LOGGER.warn("Ran into error when parsing {}: {}", DEVICES_TXT, details.getError());
-                        return report;
-                    }
-                    LOGGER.info("Parsed {} records in {}", details.getData().size(), DEVICES_TXT);
-                    report.setUsedDevices(details.getData());
+        return new ResourceGatheringReportParser().parse(files)
+                .thenApplyAsync(resourceGatheringReport -> {
+                    report.setResourceGathering(resourceGatheringReport);
                     return report;
-                }, executor);
+                });
     }
 
     private static CompletableFuture<SummarizedReport> parseMentoringReport(
@@ -146,29 +179,6 @@ public class Summarizer {
                     }
                     LOGGER.info("Parsed {} records in {}", details.getData().size(), AGENTS_RECRUITED_TSV);
                     report.setMentoring(new MentoringReport(details));
-                    return report;
-                }, executor);
-    }
-
-    private static CompletableFuture<SummarizedReport> parseHealthReport(
-            final SummarizedReport report, final List<Path> files) {
-        return CompletableFuture
-                .supplyAsync(() -> {
-                    Optional<Path> dataFile = files.stream()
-                            .filter(file -> file.getFileName().toString().startsWith(KILOMETERS_WALKED_TSV))
-                            .findFirst();
-                    if (!dataFile.isPresent()) {
-                        LOGGER.warn("Can not find report named '{}', skipping ...", KILOMETERS_WALKED_TSV);
-                        return report;
-                    }
-                    final NumericBasedRecordParser<Float> parser = new NumericBasedRecordParser<>(TIME_PARSER, FloatValueParser.getDefault());
-                    final ReportDetails<List<NumericBasedRecord<Float>>> details = parser.parse(dataFile.get());
-                    if (!details.isOk()) {
-                        LOGGER.warn("Ran into error when parsing {}: {}", KILOMETERS_WALKED_TSV, details.getError());
-                        return report;
-                    }
-                    LOGGER.info("Parsed {} records in {}", details.getData().size(), KILOMETERS_WALKED_TSV);
-                    report.setHealth(new HealthReport(details));
                     return report;
                 }, executor);
     }

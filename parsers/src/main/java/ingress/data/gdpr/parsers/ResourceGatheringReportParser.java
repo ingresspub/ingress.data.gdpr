@@ -17,16 +17,18 @@
 
 package ingress.data.gdpr.parsers;
 
-import static ingress.data.gdpr.parsers.utils.DataFileNames.FIELD_HELD_DAYS_TSV;
-import static ingress.data.gdpr.parsers.utils.DataFileNames.LINK_HELD_DAYS_TSV;
-import static ingress.data.gdpr.parsers.utils.DataFileNames.LINK_LENGTH__IN_KILOMETERS_TIMES_DAYS_HELD_TSV;
-import static ingress.data.gdpr.parsers.utils.DataFileNames.MIND_UNITS_TIMES_DAYS_HELD_TSV;
-import static ingress.data.gdpr.parsers.utils.DataFileNames.PORTAL_HELD_DAYS_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.GLYPH_HACK_1_PERFECT_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.GLYPH_HACK_2_PERFECT_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.GLYPH_HACK_3_PERFECT_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.GLYPH_HACK_4_PERFECT_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.GLYPH_HACK_5_PERFECT_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.GLYPH_HACK_POINTS_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.HACKS_TSV;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.FILE_NOT_FOUND;
 
 import ingress.data.gdpr.models.NumericBasedRecord;
-import ingress.data.gdpr.models.reports.DefenseReport;
 import ingress.data.gdpr.models.reports.ReportDetails;
+import ingress.data.gdpr.models.reports.ResourceGatheringReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,62 +44,74 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author SgrAlpha
  */
-public class DefenseReportParser implements MultipleFilesParser<DefenseReport> {
+public class ResourceGatheringReportParser implements MultipleFilesParser<ResourceGatheringReport> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefenseReportParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceGatheringReportParser.class);
 
     private static final ZonedDateTimeParser TIME_PARSER = ZonedDateTimeParser.getDefault();
 
     private final Executor executor;
 
-    public DefenseReportParser() {
+    public ResourceGatheringReportParser() {
         final int cores = Runtime.getRuntime().availableProcessors();
         this.executor = new ThreadPoolExecutor(
                 cores, cores,
                 1, TimeUnit.MINUTES,
-                new ArrayBlockingQueue<>(5)
+                new ArrayBlockingQueue<>(7)
         );
     }
 
-    @Override public CompletableFuture<DefenseReport> parse(final List<Path> files) {
-        final DefenseReport report = new DefenseReport();
+    @Override public CompletableFuture<ResourceGatheringReport> parse(final List<Path> files) {
+        final ResourceGatheringReport report = new ResourceGatheringReport();
         return CompletableFuture
                 .allOf(
                         CompletableFuture
                                 .supplyAsync(() -> {
-                                    final ReportDetails<List<NumericBasedRecord<Double>>> details = parse(PORTAL_HELD_DAYS_TSV, files);
-                                    report.setPortalHeldDays(details);
+                                    final ReportDetails<List<NumericBasedRecord<Float>>> details = parse(HACKS_TSV ,files);
+                                    report.setHacks(details);
                                     return report;
                                 }, executor),
                         CompletableFuture
                                 .supplyAsync(() -> {
-                                    final ReportDetails<List<NumericBasedRecord<Double>>> details = parse(LINK_HELD_DAYS_TSV, files);
-                                    report.setLinkHeldDays(details);
+                                    final ReportDetails<List<NumericBasedRecord<Float>>> details = parse(GLYPH_HACK_POINTS_TSV, files);
+                                    report.setGlyphHackPoints(details);
                                     return report;
                                 }, executor),
                         CompletableFuture
                                 .supplyAsync(() -> {
-                                    final ReportDetails<List<NumericBasedRecord<Double>>> details = parse(LINK_LENGTH__IN_KILOMETERS_TIMES_DAYS_HELD_TSV, files);
-                                    report.setLinkLengthInKmTimesDaysHeld(details);
+                                    final ReportDetails<List<NumericBasedRecord<Float>>> details = parse(GLYPH_HACK_1_PERFECT_TSV, files);
+                                    report.setGlyphHackOnePerfect(details);
                                     return report;
                                 }, executor),
                         CompletableFuture
                                 .supplyAsync(() -> {
-                                    final ReportDetails<List<NumericBasedRecord<Double>>> details = parse(FIELD_HELD_DAYS_TSV, files);
-                                    report.setFieldHeldDays(details);
+                                    final ReportDetails<List<NumericBasedRecord<Float>>> details = parse(GLYPH_HACK_2_PERFECT_TSV, files);
+                                    report.setGlyphHackTwoPerfect(details);
                                     return report;
                                 }, executor),
                         CompletableFuture
                                 .supplyAsync(() -> {
-                                    final ReportDetails<List<NumericBasedRecord<Double>>> details = parse(MIND_UNITS_TIMES_DAYS_HELD_TSV, files);
-                                    report.setMindUnitsTimesDaysHeld(details);
+                                    final ReportDetails<List<NumericBasedRecord<Float>>> details = parse(GLYPH_HACK_3_PERFECT_TSV, files);
+                                    report.setGlyphHackThreePerfect(details);
+                                    return report;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<NumericBasedRecord<Float>>> details = parse(GLYPH_HACK_4_PERFECT_TSV, files);
+                                    report.setGlyphHackFourPerfect(details);
+                                    return report;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<NumericBasedRecord<Float>>> details = parse(GLYPH_HACK_5_PERFECT_TSV, files);
+                                    report.setGlyphHackFivePerfect(details);
                                     return report;
                                 }, executor)
                 )
                 .thenApplyAsync(unused -> report);
     }
 
-    private static ReportDetails<List<NumericBasedRecord<Double>>> parse(final String targetFileName, final List<Path> files) {
+    private static ReportDetails<List<NumericBasedRecord<Float>>> parse(final String targetFileName, final List<Path> files) {
         Optional<Path> dataFile = files.stream()
                 .filter(file -> file.getFileName().toString().equals(targetFileName))
                 .findFirst();
@@ -105,8 +119,8 @@ public class DefenseReportParser implements MultipleFilesParser<DefenseReport> {
             LOGGER.warn("Can not find report named '{}', skipping ...", targetFileName);
             return ReportDetails.error(FILE_NOT_FOUND);
         }
-        final NumericBasedRecordParser<Double> parser = new NumericBasedRecordParser<>(TIME_PARSER, DoubleValueParser.getDefault());
-        final ReportDetails<List<NumericBasedRecord<Double>>> details = parser.parse(dataFile.get());
+        final NumericBasedRecordParser<Float> parser = new NumericBasedRecordParser<>(TIME_PARSER, FloatValueParser.getDefault());
+        final ReportDetails<List<NumericBasedRecord<Float>>> details = parser.parse(dataFile.get());
         if (details.isOk()) {
             LOGGER.info("Parsed {} records in {}", details.getData().size(), targetFileName);
         } else {
