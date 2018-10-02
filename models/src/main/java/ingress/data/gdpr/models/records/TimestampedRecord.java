@@ -15,21 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.models;
+package ingress.data.gdpr.models.records;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ingress.data.gdpr.models.utils.JsonUtil;
 
-public class DeviceRecord {
+import java.time.ZonedDateTime;
 
-    private final String deviceName;
+/**
+ * @author SgrAlpha
+ */
+public class TimestampedRecord<T> {
 
-    public DeviceRecord(final String deviceName) {
-        this.deviceName = deviceName;
+    private final ZonedDateTime time;
+    private final T value;
+
+    public TimestampedRecord(final ZonedDateTime time, final T value) {
+        this.time = time;
+        this.value = value;
     }
 
-    @JsonProperty("deviceName")
-    public String getDeviceName() {
-        return deviceName;
+    @JsonProperty("time")
+    public ZonedDateTime getTime() {
+        return time;
     }
 
+    @JsonProperty("value")
+    public T getValue() {
+        return value;
+    }
+
+    @Override public String toString() {
+        return JsonUtil.toJson(this);
+    }
 }

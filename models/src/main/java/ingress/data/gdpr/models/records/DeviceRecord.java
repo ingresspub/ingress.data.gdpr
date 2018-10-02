@@ -15,7 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.models.events;
+package ingress.data.gdpr.models.records;
 
-public class MagnusBuilderDeploymentRecord {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class DeviceRecord {
+
+    private final String deviceName;
+
+    public DeviceRecord(final String deviceName) {
+        this.deviceName = deviceName;
+    }
+
+    @JsonProperty("deviceName")
+    public String getDeviceName() {
+        return deviceName;
+    }
+
 }

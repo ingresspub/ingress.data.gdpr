@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.models.discovery;
+package ingress.data.gdpr.models.records.opr;
 
 public class OprProfile {
 }

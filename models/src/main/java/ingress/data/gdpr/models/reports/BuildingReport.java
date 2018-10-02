@@ -19,7 +19,7 @@ package ingress.data.gdpr.models.reports;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ingress.data.gdpr.models.TimestampedRecord;
+import ingress.data.gdpr.models.records.TimestampedRecord;
 import ingress.data.gdpr.models.utils.JsonUtil;
 
 import java.util.List;

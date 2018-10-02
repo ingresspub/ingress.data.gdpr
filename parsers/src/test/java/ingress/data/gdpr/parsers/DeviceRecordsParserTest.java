@@ -22,7 +22,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import ingress.data.gdpr.models.DeviceRecord;
+import ingress.data.gdpr.models.records.DeviceRecord;
 import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.parsers.utils.ErrorConstants;
 import org.junit.Test;

@@ -15,7 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.models.discovery;
+package ingress.data.gdpr.parsers.exceptions;
 
-public class OprSkippedRecord {
+/**
+ * @author SgrAlpha
+ */
+public class MalformattedRecordException extends Exception {
+
+    public MalformattedRecordException(final String message) {
+        super(message);
+    }
+
+    public MalformattedRecordException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
 }

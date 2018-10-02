@@ -20,7 +20,7 @@ package ingress.data.gdpr.parsers;
 import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 
-import ingress.data.gdpr.models.DeviceRecord;
+import ingress.data.gdpr.models.records.DeviceRecord;
 import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.parsers.utils.ErrorConstants;
 import org.slf4j.Logger;

@@ -19,7 +19,7 @@ package ingress.data.gdpr.models.reports;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ingress.data.gdpr.models.TimestampedRecord;
+import ingress.data.gdpr.models.records.TimestampedRecord;
 import ingress.data.gdpr.models.utils.JsonUtil;
 
 import java.util.List;
@@ -33,7 +33,6 @@ public class ResourceGatheringReport {
     private ReportDetails<List<TimestampedRecord<Float>>> hacks;
     private ReportDetails<List<TimestampedRecord<Float>>> glyphHackPoints;
     private ReportDetails<List<TimestampedRecord<Float>>> glyphHackOnePerfect;
-    private ReportDetails<List<TimestampedRecord<Float>>> glyphHackTwoPerfect;
     private ReportDetails<List<TimestampedRecord<Float>>> glyphHackThreePerfect;
     private ReportDetails<List<TimestampedRecord<Float>>> glyphHackFourPerfect;
     private ReportDetails<List<TimestampedRecord<Float>>> glyphHackFivePerfect;
@@ -63,15 +62,6 @@ public class ResourceGatheringReport {
 
     public void setGlyphHackOnePerfect(final ReportDetails<List<TimestampedRecord<Float>>> glyphHackOnePerfect) {
         this.glyphHackOnePerfect = glyphHackOnePerfect;
-    }
-
-    @JsonProperty("glyph_hack_2_perfect")
-    public ReportDetails<List<TimestampedRecord<Float>>> getGlyphHackTwoPerfect() {
-        return glyphHackTwoPerfect;
-    }
-
-    public void setGlyphHackTwoPerfect(final ReportDetails<List<TimestampedRecord<Float>>> glyphHackTwoPerfect) {
-        this.glyphHackTwoPerfect = glyphHackTwoPerfect;
     }
 
     @JsonProperty("glyph_hack_3_perfect")

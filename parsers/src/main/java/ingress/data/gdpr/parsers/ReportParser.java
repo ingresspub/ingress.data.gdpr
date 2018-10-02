@@ -18,11 +18,13 @@
 package ingress.data.gdpr.parsers;
 
 import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
+import static ingress.data.gdpr.models.utils.Preconditions.notEmptyString;
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.FILE_NOT_FOUND;
 
-import ingress.data.gdpr.models.TimestampedRecord;
+import ingress.data.gdpr.models.records.TimestampedRecord;
 import ingress.data.gdpr.models.reports.ReportDetails;
+import ingress.data.gdpr.parsers.exceptions.MalformattedRecordException;
 import ingress.data.gdpr.parsers.utils.ErrorConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +32,13 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author SgrAlpha
+ */
 public class ReportParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportParser.class);
@@ -43,8 +46,14 @@ public class ReportParser {
     public static <T> ReportDetails<List<TimestampedRecord<T>>> parse(
             final List<Path> files,
             final String targetFileName,
-            final SingleLineValueParser<ZonedDateTime> timeParser,
-            final SingleLineValueParser<T> valueParser) {
+            final SingleLineRecordParser<TimestampedRecord<T>> recordParser) {
+        notNull(files, "Missing files to parse from");
+        if (files.isEmpty()) {
+            throw new IllegalArgumentException("No files to parse from");
+        }
+        notEmptyString(targetFileName, "Missing target file name");
+        notNull(recordParser, "Missing record parser");
+
         Optional<Path> dataFile = files.stream()
                 .filter(file -> file.getFileName().toString().equals(targetFileName))
                 .findFirst();
@@ -52,26 +61,29 @@ public class ReportParser {
             LOGGER.warn("Can not find report named '{}', skipping ...", targetFileName);
             return ReportDetails.error(FILE_NOT_FOUND);
         }
-        final ReportDetails<List<TimestampedRecord<T>>> details = parse(dataFile.get(), timeParser, valueParser);
+
+        final ReportDetails<List<TimestampedRecord<T>>> details = parse(dataFile.get(), recordParser);
         if (details.isOk()) {
             LOGGER.info("Parsed {} records in {}", details.getData().size(), targetFileName);
         } else {
             LOGGER.warn("Ran into error when parsing {}: {}", targetFileName, details.getError());
         }
+
         return details;
     }
 
     public static <T> ReportDetails<List<TimestampedRecord<T>>> parse(
             final Path dataFile,
-            final SingleLineValueParser<ZonedDateTime> timeParser,
-            final SingleLineValueParser<T> singleLineValueParser) {
+            final SingleLineRecordParser<TimestampedRecord<T>> recordParser) {
         notNull(dataFile, "Data file needs to be specified");
+        notNull(recordParser, "Missing record parser");
         if (!Files.isRegularFile(dataFile)) {
             return ReportDetails.error(ErrorConstants.NOT_REGULAR_FILE);
         }
         if (!Files.isReadable(dataFile)) {
             return ReportDetails.error(ErrorConstants.UNREADABLE_FILE);
         }
+
         final List<String> lines;
         try {
             lines = Files.readAllLines(dataFile);
@@ -79,6 +91,7 @@ public class ReportParser {
             LOGGER.error(e.getMessage(), e);
             return ReportDetails.error(e.getMessage());
         }
+
         try {
             List<TimestampedRecord<T>> data = new LinkedList<>();
             for (int i = 1; i < lines.size(); i++) {    // Skip first line (header)
@@ -87,23 +100,12 @@ public class ReportParser {
                     continue;
                 }
                 final String[] columns = line.split("\t");
-                if (columns.length != 2) {
-                    return ReportDetails.error(String.format("Found mal-formatted data at line %d, expecting %d columns but found %d", i, 2, columns.length));
-                }
-                final ZonedDateTime time;
                 try {
-                    time = timeParser.parse(columns[0]);
-                } catch (Exception e) {
-                    return ReportDetails.error(String.format("Found mal-formatted timestamp at line %d: %s", i, columns[0]));
+                    final TimestampedRecord<T> record = recordParser.parse(columns);
+                    data.add(record);
+                } catch (MalformattedRecordException e) {
+                    return ReportDetails.error(String.format("Found mal-formatted record at line %d: %s", i, e.getMessage()));
                 }
-                final T value;
-                try {
-                    final String[] valueColumns = Arrays.copyOfRange(columns, 1, columns.length);
-                    value = singleLineValueParser.parse(valueColumns);
-                } catch (Exception e) {
-                    return ReportDetails.error(String.format("Found mal-formatted value at line %d, expecting a numeric value but got: %s", i, columns[1]));
-                }
-                data.add(new TimestampedRecord<>(time, value));
             }
             return ReportDetails.ok(data);
         } catch (Exception e) {

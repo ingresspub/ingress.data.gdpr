@@ -21,13 +21,14 @@ import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import ingress.data.gdpr.models.DeviceRecord;
+import ingress.data.gdpr.models.records.DeviceRecord;
 import ingress.data.gdpr.models.reports.BuildingReport;
 import ingress.data.gdpr.models.reports.CombatReport;
 import ingress.data.gdpr.models.reports.DefenseReport;
+import ingress.data.gdpr.models.reports.DiscoveryReport;
+import ingress.data.gdpr.models.reports.EventsReport;
 import ingress.data.gdpr.models.reports.HealthReport;
 import ingress.data.gdpr.models.reports.MentoringReport;
 import ingress.data.gdpr.models.reports.ResourceGatheringReport;
@@ -64,31 +65,35 @@ public class SummarizerTest {
         final List<DeviceRecord> usedDevices = rpt.getUsedDevices();
         assertNotNull(usedDevices);
 
+        final DiscoveryReport discoveryReport = rpt.getDiscovery();
+        assertNotNull(discoveryReport);
+        assertNotNull(discoveryReport.getOprAgreements());
+        assertTrue(discoveryReport.getOprAgreements().isOk());
+        assertNotNull(discoveryReport.getOprAgreements().getData());
+        assertFalse(discoveryReport.getOprAgreements().getData().isEmpty());
+        assertNotNull(discoveryReport.getAllPortalsApproved());
+        assertTrue(discoveryReport.getAllPortalsApproved().isOk());
+        assertNotNull(discoveryReport.getAllPortalsApproved().getData());
+        assertFalse(discoveryReport.getAllPortalsApproved().getData().isEmpty());
+        assertNotNull(discoveryReport.getSeerPortals());
+        assertTrue(discoveryReport.getSeerPortals().isOk());
+        assertNotNull(discoveryReport.getSeerPortals().getData());
+        assertFalse(discoveryReport.getSeerPortals().getData().isEmpty());
+        assertNotNull(discoveryReport.getPortalsVisited());
+        assertTrue(discoveryReport.getPortalsVisited().isOk());
+        assertNotNull(discoveryReport.getPortalsVisited().getData());
+        assertFalse(discoveryReport.getPortalsVisited().getData().isEmpty());
+        assertNotNull(discoveryReport.getXmCollected());
+        assertTrue(discoveryReport.getXmCollected().isOk());
+        assertNotNull(discoveryReport.getXmCollected().getData());
+        assertFalse(discoveryReport.getXmCollected().getData().isEmpty());
+
         final HealthReport healthReport = rpt.getHealth();
         assertNotNull(healthReport);
         assertNotNull(healthReport.getKilometersWalked());
         assertTrue(healthReport.getKilometersWalked().isOk());
         assertNotNull(healthReport.getKilometersWalked().getData());
         assertFalse(healthReport.getKilometersWalked().getData().isEmpty());
-
-        final CombatReport combatReport = rpt.getCombat();
-        assertNotNull(combatReport);
-        assertNotNull(combatReport.getResonatorsDestroyed());
-        assertTrue(combatReport.getResonatorsDestroyed().isOk());
-        assertNotNull(combatReport.getResonatorsDestroyed().getData());
-        assertFalse(combatReport.getResonatorsDestroyed().getData().isEmpty());
-        assertNotNull(combatReport.getPortalsNeutralized());
-        assertTrue(combatReport.getPortalsNeutralized().isOk());
-        assertNotNull(combatReport.getPortalsNeutralized().getData());
-        assertFalse(combatReport.getPortalsNeutralized().getData().isEmpty());
-        assertNotNull(combatReport.getLinksDestroyed());
-        assertTrue(combatReport.getLinksDestroyed().isOk());
-        assertNotNull(combatReport.getLinksDestroyed().getData());
-        assertFalse(combatReport.getLinksDestroyed().getData().isEmpty());
-        assertNotNull(combatReport.getFieldsDestroyed());
-        assertTrue(combatReport.getFieldsDestroyed().isOk());
-        assertNotNull(combatReport.getFieldsDestroyed().getData());
-        assertFalse(combatReport.getFieldsDestroyed().getData().isEmpty());
 
         final BuildingReport buildingReport = rpt.getBuilding();
         assertNotNull(buildingReport);
@@ -129,6 +134,25 @@ public class SummarizerTest {
         assertTrue(buildingReport.getXmRecharged().isOk());
         assertFalse(buildingReport.getXmRecharged().getData().isEmpty());
 
+        final CombatReport combatReport = rpt.getCombat();
+        assertNotNull(combatReport);
+        assertNotNull(combatReport.getResonatorsDestroyed());
+        assertTrue(combatReport.getResonatorsDestroyed().isOk());
+        assertNotNull(combatReport.getResonatorsDestroyed().getData());
+        assertFalse(combatReport.getResonatorsDestroyed().getData().isEmpty());
+        assertNotNull(combatReport.getPortalsNeutralized());
+        assertTrue(combatReport.getPortalsNeutralized().isOk());
+        assertNotNull(combatReport.getPortalsNeutralized().getData());
+        assertFalse(combatReport.getPortalsNeutralized().getData().isEmpty());
+        assertNotNull(combatReport.getLinksDestroyed());
+        assertTrue(combatReport.getLinksDestroyed().isOk());
+        assertNotNull(combatReport.getLinksDestroyed().getData());
+        assertFalse(combatReport.getLinksDestroyed().getData().isEmpty());
+        assertNotNull(combatReport.getFieldsDestroyed());
+        assertTrue(combatReport.getFieldsDestroyed().isOk());
+        assertNotNull(combatReport.getFieldsDestroyed().getData());
+        assertFalse(combatReport.getFieldsDestroyed().getData().isEmpty());
+
         final DefenseReport defenseReport = rpt.getDefense();
         assertNotNull(defenseReport);
         assertNotNull(defenseReport.getPortalHeldDays());
@@ -161,10 +185,6 @@ public class SummarizerTest {
         assertTrue(resourceGatheringReport.getGlyphHackOnePerfect().isOk());
         assertNotNull(resourceGatheringReport.getGlyphHackOnePerfect().getData());
         assertFalse(resourceGatheringReport.getGlyphHackOnePerfect().getData().isEmpty());
-        assertNotNull(resourceGatheringReport.getGlyphHackTwoPerfect());
-        assertFalse(resourceGatheringReport.getGlyphHackTwoPerfect().isOk());
-        assertNull(resourceGatheringReport.getGlyphHackTwoPerfect().getData());
-        assertNotNull(resourceGatheringReport.getGlyphHackTwoPerfect().getError());
         assertNotNull(resourceGatheringReport.getGlyphHackThreePerfect());
         assertTrue(resourceGatheringReport.getGlyphHackThreePerfect().isOk());
         assertNotNull(resourceGatheringReport.getGlyphHackThreePerfect().getData());
@@ -184,6 +204,26 @@ public class SummarizerTest {
         assertTrue(mentoringReport.getAgentsRecruited().isOk());
         assertNotNull(mentoringReport.getAgentsRecruited().getData());
         assertFalse(mentoringReport.getAgentsRecruited().getData().isEmpty());
+
+        final EventsReport eventsReport = rpt.getEvents();
+        assertNotNull(eventsReport);
+        assertNotNull(eventsReport.getExo5ControlFieldsCreated());
+        assertTrue(eventsReport.getExo5ControlFieldsCreated().isOk());
+        assertNotNull(eventsReport.getExo5ControlFieldsCreated().getData());
+        assertFalse(eventsReport.getExo5ControlFieldsCreated().getData().isEmpty());
+        assertNotNull(eventsReport.getMagusBuilderSlotsDeployed());
+        assertTrue(eventsReport.getMagusBuilderSlotsDeployed().isOk());
+        assertNotNull(eventsReport.getMagusBuilderSlotsDeployed().getData());
+        assertFalse(eventsReport.getMagusBuilderSlotsDeployed().getData().isEmpty());
+        assertNotNull(eventsReport.getNeutralizerUniquePortalsDestroyed());
+        assertTrue(eventsReport.getNeutralizerUniquePortalsDestroyed().isOk());
+        assertNotNull(eventsReport.getNeutralizerUniquePortalsDestroyed().getData());
+        assertFalse(eventsReport.getNeutralizerUniquePortalsDestroyed().getData().isEmpty());
+        assertNotNull(eventsReport.getMissionDayPoints());
+        assertTrue(eventsReport.getMissionDayPoints().isOk());
+        assertNotNull(eventsReport.getMissionDayPoints().getData());
+        assertFalse(eventsReport.getMissionDayPoints().getData().isEmpty());
+
     }
 
 }

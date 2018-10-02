@@ -15,7 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.models.discovery;
+package ingress.data.gdpr.parsers;
 
-public class OprSubmissionRecord {
+import ingress.data.gdpr.parsers.exceptions.MalformattedRecordException;
+
+/**
+ * @author SgrAlpha
+ */
+public interface SingleLineRecordParser<T> {
+
+    T parse(final String... columns) throws MalformattedRecordException;
 }

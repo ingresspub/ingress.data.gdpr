@@ -48,8 +48,16 @@ public class DataFileNames {
     public static final String HACKS_TSV = "hacks.tsv";
     public static final String GLYPH_HACK_POINTS_TSV = "glyph_hack_points.tsv";
     public static final String GLYPH_HACK_1_PERFECT_TSV = "glyph_hack_1_perfect.tsv";
-    public static final String GLYPH_HACK_2_PERFECT_TSV = "glyph_hack_2_perfect.tsv";
     public static final String GLYPH_HACK_3_PERFECT_TSV = "glyph_hack_3_perfect.tsv";
     public static final String GLYPH_HACK_4_PERFECT_TSV = "glyph_hack_4_perfect.tsv";
     public static final String GLYPH_HACK_5_PERFECT_TSV = "glyph_hack_5_perfect.tsv";
+    public static final String EXO_5_CONTROLLER_FIELDS_CREATED_TSV = "exo5_controller_fields_created.tsv";
+    public static final String MAGNUS_BUILDER_SLOTS_DEPLOYED_TSV = "magnus_builder_slots_deployed.tsv";
+    public static final String NEUTRALIZER_UNIQUE_PORTALS_NEUTRALIZED_TSV = "neutralizer_unique_portals_neutralized.tsv";
+    public static final String MISSION_DAY_POINTS_TSV = "mission_day_points.tsv";
+    public static final String OPR_AGREEMENTS_TSV = "opr_agreements.tsv";
+    public static final String ALL_PORTALS_APPROVED_TSV = "all_portals_approved.tsv";
+    public static final String SEER_PORTALS_TSV = "seer_portals.tsv";
+    public static final String PORTALS_VISITED_TSV = "portals_visited.tsv";
+    public static final String XM_COLLECTED_TSV = "xm_collected.tsv";
 }

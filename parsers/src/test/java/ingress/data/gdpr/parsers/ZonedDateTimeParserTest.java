@@ -48,6 +48,7 @@ public class ZonedDateTimeParserTest {
     public void testParseFromBlank() {
         PARSER.parse("");
     }
+
     @Test(expected = IllegalArgumentException.class)
     public void testParseFromNull() {
         PARSER.parse(null);

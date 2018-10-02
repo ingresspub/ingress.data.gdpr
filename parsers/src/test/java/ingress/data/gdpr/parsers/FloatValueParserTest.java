@@ -42,6 +42,7 @@ public class FloatValueParserTest {
     public void testParseFromBlank() {
         PARSER.parse("");
     }
+
     @Test(expected = IllegalArgumentException.class)
     public void testParseFromNull() {
         PARSER.parse();
