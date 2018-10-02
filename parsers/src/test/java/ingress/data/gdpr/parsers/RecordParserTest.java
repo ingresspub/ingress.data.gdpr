@@ -23,7 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import ingress.data.gdpr.models.NumericBasedRecord;
+import ingress.data.gdpr.models.TimestampedRecord;
 import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.parsers.utils.ErrorConstants;
 import org.junit.Test;
@@ -38,15 +38,15 @@ import java.util.List;
 /**
  * @author SgrAlpha
  */
-public class NumericBasedRecordParserTest {
+public class RecordParserTest {
 
-    private static final NumericBasedRecordParser<Integer> PARSER = new NumericBasedRecordParser<>(
-            ZonedDateTimeParser.getDefault(), IntValueParser.getDefault());
+    private static final ZonedDateTimeParser TIME_PARSER = ZonedDateTimeParser.getDefault();
+    private static final IntValueParser INT_PARSER = IntValueParser.getDefault();
 
     @Test
     public void testParseFromWrongTimeFormat() throws URISyntaxException {
-        final Path temp = Paths.get(NumericBasedRecordParserTest.class.getResource("test_count_based_wrong_time_format.tsv").toURI());
-        ReportDetails<List<NumericBasedRecord<Integer>>> result = PARSER.parse(temp);
+        final Path temp = Paths.get(RecordParserTest.class.getResource("test_count_based_wrong_time_format.tsv").toURI());
+        ReportDetails<List<TimestampedRecord<Integer>>> result = ReportParser.parse(temp, TIME_PARSER, INT_PARSER);
         assertNotNull(result);
         assertFalse(result.isOk());
         assertNull(result.getData());
@@ -54,8 +54,8 @@ public class NumericBasedRecordParserTest {
 
     @Test
     public void testParseFromWrongColumns() throws URISyntaxException {
-        final Path temp = Paths.get(NumericBasedRecordParserTest.class.getResource("test_count_based_wrong_columns.tsv").toURI());
-        ReportDetails<List<NumericBasedRecord<Integer>>> result = PARSER.parse(temp);
+        final Path temp = Paths.get(RecordParserTest.class.getResource("test_count_based_wrong_columns.tsv").toURI());
+        ReportDetails<List<TimestampedRecord<Integer>>> result = ReportParser.parse(null, TIME_PARSER, INT_PARSER);
         assertNotNull(result);
         assertFalse(result.isOk());
         assertNull(result.getData());
@@ -64,10 +64,10 @@ public class NumericBasedRecordParserTest {
     @Test
     public void testParseFromBlankFile() throws IOException {
         final Path temp = Files.createTempFile("test-file-", null);
-        ReportDetails<List<NumericBasedRecord<Integer>>> result = PARSER.parse(temp);
+        ReportDetails<List<TimestampedRecord<Integer>>> result = ReportParser.parse(null, TIME_PARSER, INT_PARSER);
         assertNotNull(result);
         assertTrue(result.isOk());
-        final List<NumericBasedRecord<Integer>> data = result.getData();
+        final List<TimestampedRecord<Integer>> data = result.getData();
         assertNotNull(data);
         assertEquals(0, data.size());
         Files.delete(temp);
@@ -76,7 +76,7 @@ public class NumericBasedRecordParserTest {
     @Test
     public void testParseFromFolder() throws IOException {
         final Path temp = Files.createTempDirectory("test-dir-");
-        ReportDetails<List<NumericBasedRecord<Integer>>> result = PARSER.parse(temp);
+        ReportDetails<List<TimestampedRecord<Integer>>> result = ReportParser.parse(null, TIME_PARSER, INT_PARSER);
         assertNotNull(result);
         assertFalse(result.isOk());
         assertEquals(ErrorConstants.NOT_REGULAR_FILE, result.getError());
@@ -85,6 +85,6 @@ public class NumericBasedRecordParserTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testParseFromNull() {
-        PARSER.parse(null);
+        ReportParser.parse(null, TIME_PARSER, INT_PARSER);
     }
 }

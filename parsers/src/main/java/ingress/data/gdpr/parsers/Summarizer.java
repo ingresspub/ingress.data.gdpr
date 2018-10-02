@@ -20,13 +20,45 @@ package ingress.data.gdpr.parsers;
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.AGENTS_RECRUITED_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.DEVICES_TXT;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.FIELDS_CREATED_ACTIVE_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.FIELDS_CREATED_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.FIELDS_DESTROYED_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.FIELD_HELD_DAYS_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.GLYPH_HACK_1_PERFECT_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.GLYPH_HACK_2_PERFECT_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.GLYPH_HACK_3_PERFECT_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.GLYPH_HACK_4_PERFECT_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.GLYPH_HACK_5_PERFECT_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.GLYPH_HACK_POINTS_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.HACKS_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.KILOMETERS_WALKED_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.LINKS_CREATED_ACTIVE_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.LINKS_CREATED_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.LINK_DESTROYED_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.LINK_HELD_DAYS_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.LINK_LENGTH_IN_KILOMETERS_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.LINK_LENGTH__IN_KILOMETERS_TIMES_DAYS_HELD_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.MIND_UNITS_CONTROLLED_ACTIVE_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.MIND_UNITS_CONTROLLED_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.MIND_UNITS_TIMES_DAYS_HELD_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.MODS_DEPLOYED_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.PORTALS_CAPTURED_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.PORTALS_NEUTRALIZED_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.PORTALS_OWNED_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.PORTAL_HELD_DAYS_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.RESONATORS_DEPLOYED_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.RESONATORS_DESTROYED_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.XM_RECHARGED_TSV;
 
 import ingress.data.gdpr.models.DeviceRecord;
-import ingress.data.gdpr.models.NumericBasedRecord;
+import ingress.data.gdpr.models.TimestampedRecord;
+import ingress.data.gdpr.models.reports.BuildingReport;
+import ingress.data.gdpr.models.reports.CombatReport;
+import ingress.data.gdpr.models.reports.DefenseReport;
 import ingress.data.gdpr.models.reports.HealthReport;
 import ingress.data.gdpr.models.reports.MentoringReport;
 import ingress.data.gdpr.models.reports.ReportDetails;
+import ingress.data.gdpr.models.reports.ResourceGatheringReport;
 import ingress.data.gdpr.models.reports.SummarizedReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,11 +81,9 @@ public class Summarizer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Summarizer.class);
 
-    private static final ZonedDateTimeParser TIME_PARSER = ZonedDateTimeParser.getDefault();
-
     private static Executor executor = new ThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors(), 50,
-            1, TimeUnit.MINUTES,
+            Runtime.getRuntime().availableProcessors(), Runtime.getRuntime().availableProcessors() * 2,
+            30, TimeUnit.SECONDS,
             new ArrayBlockingQueue<>(50)
     );
 
@@ -64,12 +94,26 @@ public class Summarizer {
             CompletableFuture
                     .allOf(
                             parseUsedDevices(report, files),
-                            parseHealthReport(report, files),
+                            CompletableFuture
+                                    .supplyAsync(() -> {
+                                        final ReportDetails<List<TimestampedRecord<Float>>> details = ReportParser.parse(
+                                                files, KILOMETERS_WALKED_TSV,
+                                                ZonedDateTimeParser.getDefault(), FloatValueParser.getDefault());
+                                        report.setHealth(new HealthReport(details));
+                                        return report;
+                                    }, executor),
                             parseBuildingReport(report, files),
                             parseCombatReport(report, files),
                             parseDefenseReport(report, files),
                             parseResourceGathering(report, files),
-                            parseMentoringReport(report, files)
+                            CompletableFuture
+                                    .supplyAsync(() -> {
+                                        final ReportDetails<List<TimestampedRecord<Integer>>> details = ReportParser.parse(
+                                                files, AGENTS_RECRUITED_TSV,
+                                                ZonedDateTimeParser.getDefault(), IntValueParser.getDefault());
+                                        report.setMentoring(new MentoringReport(details));
+                                        return report;
+                                    }, executor)
                     )
                     .get(10, TimeUnit.MINUTES);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
@@ -101,86 +145,280 @@ public class Summarizer {
                 }, executor);
     }
 
-    private static CompletableFuture<SummarizedReport> parseHealthReport(
-            final SummarizedReport report, final List<Path> files) {
-        return CompletableFuture
-                .supplyAsync(() -> {
-                    Optional<Path> dataFile = files.stream()
-                            .filter(file -> file.getFileName().toString().startsWith(KILOMETERS_WALKED_TSV))
-                            .findFirst();
-                    if (!dataFile.isPresent()) {
-                        LOGGER.warn("Can not find report named '{}', skipping ...", KILOMETERS_WALKED_TSV);
-                        return report;
-                    }
-                    final NumericBasedRecordParser<Float> parser = new NumericBasedRecordParser<>(TIME_PARSER, FloatValueParser.getDefault());
-                    final ReportDetails<List<NumericBasedRecord<Float>>> details = parser.parse(dataFile.get());
-                    if (!details.isOk()) {
-                        LOGGER.warn("Ran into error when parsing {}: {}", KILOMETERS_WALKED_TSV, details.getError());
-                        return report;
-                    }
-                    LOGGER.info("Parsed {} records in {}", details.getData().size(), KILOMETERS_WALKED_TSV);
-                    report.setHealth(new HealthReport(details));
-                    return report;
-                }, executor);
-    }
-
     private static CompletableFuture<SummarizedReport> parseBuildingReport(
             final SummarizedReport report, final List<Path> files) {
-        return new BuildingReportParser().parse(files)
-                .thenApplyAsync(buildingReport -> {
-                    report.setBuilding(buildingReport);
+        final BuildingReport buildingReport = new BuildingReport();
+        return CompletableFuture
+                .allOf(
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Float>>> details = ReportParser.parse(
+                                            files, MIND_UNITS_CONTROLLED_TSV,
+                                            ZonedDateTimeParser.getDefault(), FloatValueParser.getDefault());
+                                    buildingReport.setMindUnitsControlled(details);
+                                    return buildingReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Integer>>> details = ReportParser.parse(
+                                            files, MIND_UNITS_CONTROLLED_ACTIVE_TSV,
+                                            ZonedDateTimeParser.getDefault(), IntValueParser.getDefault());
+                                    buildingReport.setMindUnitsControlledActive(details);
+                                    return buildingReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Float>>> details = ReportParser.parse(
+                                            files, FIELDS_CREATED_TSV,
+                                            ZonedDateTimeParser.getDefault(), FloatValueParser.getDefault());
+                                    buildingReport.setFieldsCreated(details);
+                                    return buildingReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Integer>>> details = ReportParser.parse(
+                                            files, FIELDS_CREATED_ACTIVE_TSV,
+                                            ZonedDateTimeParser.getDefault(), IntValueParser.getDefault());
+                                    buildingReport.setFieldsCreatedActive(details);
+                                    return buildingReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Float>>> details = ReportParser.parse(
+                                            files, LINKS_CREATED_TSV,
+                                            ZonedDateTimeParser.getDefault(), FloatValueParser.getDefault());
+                                    buildingReport.setLinksCreated(details);
+                                    return buildingReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Double>>> details = ReportParser.parse(
+                                            files, LINK_LENGTH_IN_KILOMETERS_TSV,
+                                            ZonedDateTimeParser.getDefault(), DoubleValueParser.getDefault());
+                                    buildingReport.setLinkLengthInKm(details);
+                                    return buildingReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Integer>>> details = ReportParser.parse(
+                                            files, LINKS_CREATED_ACTIVE_TSV,
+                                            ZonedDateTimeParser.getDefault(), IntValueParser.getDefault());
+                                    buildingReport.setLinksCreatedActive(details);
+                                    return buildingReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Integer>>> details = ReportParser.parse(
+                                            files, PORTALS_CAPTURED_TSV,
+                                            ZonedDateTimeParser.getDefault(), IntValueParser.getDefault());
+                                    buildingReport.setPortalsCaptured(details);
+                                    return buildingReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Integer>>> details = ReportParser.parse(
+                                            files, PORTALS_OWNED_TSV,
+                                            ZonedDateTimeParser.getDefault(), IntValueParser.getDefault());
+                                    buildingReport.setPortalsOwned(details);
+                                    return buildingReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Float>>> details = ReportParser.parse(
+                                            files, RESONATORS_DEPLOYED_TSV,
+                                            ZonedDateTimeParser.getDefault(), FloatValueParser.getDefault());
+                                    buildingReport.setResonatorsDeployed(details);
+                                    return buildingReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Float>>> details = ReportParser.parse(
+                                            files, MODS_DEPLOYED_TSV,
+                                            ZonedDateTimeParser.getDefault(), FloatValueParser.getDefault());
+                                    buildingReport.setModsDeployed(details);
+                                    return buildingReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Float>>> details = ReportParser.parse(
+                                            files, XM_RECHARGED_TSV,
+                                            ZonedDateTimeParser.getDefault(), FloatValueParser.getDefault());
+                                    buildingReport.setXmRecharged(details);
+                                    return buildingReport;
+                                }, executor)
+                )
+                .thenApplyAsync(unused -> buildingReport)
+                .thenApplyAsync(building -> {
+                    report.setBuilding(building);
                     return report;
                 });
     }
 
     private static CompletableFuture<SummarizedReport> parseCombatReport(
             final SummarizedReport report, final List<Path> files) {
-        return new CombatReportParser().parse(files)
-                .thenApplyAsync(combatReport -> {
-                    report.setCombat(combatReport);
+        final CombatReport combatReport = new CombatReport();
+        return CompletableFuture
+                .allOf(
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Float>>> details = ReportParser.parse(
+                                            files, RESONATORS_DESTROYED_TSV,
+                                            ZonedDateTimeParser.getDefault(), FloatValueParser.getDefault());
+                                    combatReport.setResonatorsDestroyed(details);
+                                    return combatReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Integer>>> details = ReportParser.parse(
+                                            files, PORTALS_NEUTRALIZED_TSV,
+                                            ZonedDateTimeParser.getDefault(), IntValueParser.getDefault());
+                                    combatReport.setPortalsNeutralized(details);
+                                    return combatReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Float>>> details = ReportParser.parse(
+                                            files, LINK_DESTROYED_TSV,
+                                            ZonedDateTimeParser.getDefault(), FloatValueParser.getDefault());
+                                    combatReport.setLinksDestroyed(details);
+                                    return combatReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Float>>> details = ReportParser.parse(
+                                            files, FIELDS_DESTROYED_TSV,
+                                            ZonedDateTimeParser.getDefault(), FloatValueParser.getDefault());
+                                    combatReport.setFieldsDestroyed(details);
+                                    return combatReport;
+                                }, executor)
+                )
+                .thenApplyAsync(unused -> combatReport)
+                .thenApplyAsync(combat -> {
+                    report.setCombat(combat);
                     return report;
                 });
     }
 
     private static CompletableFuture<?> parseDefenseReport(
             final SummarizedReport report, final List<Path> files) {
-        return new DefenseReportParser().parse(files)
-                .thenApplyAsync(defenseReport -> {
-                    report.setDefense(defenseReport);
+        final DefenseReport defenseReport = new DefenseReport();
+        return CompletableFuture
+                .allOf(
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Double>>> details = ReportParser.parse(
+                                            files, PORTAL_HELD_DAYS_TSV,
+                                            ZonedDateTimeParser.getDefault(), DoubleValueParser.getDefault());
+                                    defenseReport.setPortalHeldDays(details);
+                                    return defenseReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Double>>> details = ReportParser.parse(
+                                            files, LINK_HELD_DAYS_TSV,
+                                            ZonedDateTimeParser.getDefault(), DoubleValueParser.getDefault());
+                                    defenseReport.setLinkHeldDays(details);
+                                    return defenseReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Double>>> details = ReportParser.parse(
+                                            files, LINK_LENGTH__IN_KILOMETERS_TIMES_DAYS_HELD_TSV,
+                                            ZonedDateTimeParser.getDefault(), DoubleValueParser.getDefault());
+                                    defenseReport.setLinkLengthInKmTimesDaysHeld(details);
+                                    return defenseReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Double>>> details = ReportParser.parse(
+                                            files, FIELD_HELD_DAYS_TSV,
+                                            ZonedDateTimeParser.getDefault(), DoubleValueParser.getDefault());
+                                    defenseReport.setFieldHeldDays(details);
+                                    return defenseReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Double>>> details = ReportParser.parse(
+                                            files, MIND_UNITS_TIMES_DAYS_HELD_TSV,
+                                            ZonedDateTimeParser.getDefault(), DoubleValueParser.getDefault());
+                                    defenseReport.setMindUnitsTimesDaysHeld(details);
+                                    return defenseReport;
+                                }, executor)
+                )
+                .thenApplyAsync(unused -> defenseReport)
+                .thenApplyAsync(defense -> {
+                    report.setDefense(defense);
                     return report;
                 });
     }
 
     private static CompletableFuture<?> parseResourceGathering(
             final SummarizedReport report, final List<Path> files) {
-        return new ResourceGatheringReportParser().parse(files)
-                .thenApplyAsync(resourceGatheringReport -> {
-                    report.setResourceGathering(resourceGatheringReport);
+        final ResourceGatheringReport resourceGatheringReport = new ResourceGatheringReport();
+        return CompletableFuture
+                .allOf(
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Float>>> details = ReportParser.parse(
+                                            files, HACKS_TSV,
+                                            ZonedDateTimeParser.getDefault(), FloatValueParser.getDefault());
+                                    resourceGatheringReport.setHacks(details);
+                                    return resourceGatheringReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Float>>> details = ReportParser.parse(
+                                            files, GLYPH_HACK_POINTS_TSV,
+                                            ZonedDateTimeParser.getDefault(), FloatValueParser.getDefault());
+                                    resourceGatheringReport.setGlyphHackPoints(details);
+                                    return resourceGatheringReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Float>>> details = ReportParser.parse(
+                                            files, GLYPH_HACK_1_PERFECT_TSV,
+                                            ZonedDateTimeParser.getDefault(), FloatValueParser.getDefault());
+                                    resourceGatheringReport.setGlyphHackOnePerfect(details);
+                                    return resourceGatheringReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Float>>> details = ReportParser.parse(
+                                            files, GLYPH_HACK_2_PERFECT_TSV,
+                                            ZonedDateTimeParser.getDefault(), FloatValueParser.getDefault());
+                                    resourceGatheringReport.setGlyphHackTwoPerfect(details);
+                                    return resourceGatheringReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Float>>> details = ReportParser.parse(
+                                            files, GLYPH_HACK_3_PERFECT_TSV,
+                                            ZonedDateTimeParser.getDefault(), FloatValueParser.getDefault());
+                                    resourceGatheringReport.setGlyphHackThreePerfect(details);
+                                    return resourceGatheringReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Float>>> details = ReportParser.parse(
+                                            files, GLYPH_HACK_4_PERFECT_TSV,
+                                            ZonedDateTimeParser.getDefault(), FloatValueParser.getDefault());
+                                    resourceGatheringReport.setGlyphHackFourPerfect(details);
+                                    return resourceGatheringReport;
+                                }, executor),
+                        CompletableFuture
+                                .supplyAsync(() -> {
+                                    final ReportDetails<List<TimestampedRecord<Float>>> details = ReportParser.parse(
+                                            files, GLYPH_HACK_5_PERFECT_TSV,
+                                            ZonedDateTimeParser.getDefault(), FloatValueParser.getDefault());
+                                    resourceGatheringReport.setGlyphHackFivePerfect(details);
+                                    return resourceGatheringReport;
+                                }, executor)
+                )
+                .thenApplyAsync(unused -> resourceGatheringReport)
+                .thenApplyAsync(resourceGathering -> {
+                    report.setResourceGathering(resourceGathering);
                     return report;
                 });
-    }
-
-    private static CompletableFuture<SummarizedReport> parseMentoringReport(
-            final SummarizedReport report, final List<Path> files) {
-        return CompletableFuture
-                .supplyAsync(() -> {
-                    Optional<Path> dataFile = files.stream()
-                            .filter(file -> file.getFileName().toString().startsWith(AGENTS_RECRUITED_TSV))
-                            .findFirst();
-                    if (!dataFile.isPresent()) {
-                        LOGGER.warn("Can not find report named '{}', skipping ...", AGENTS_RECRUITED_TSV);
-                        return report;
-                    }
-                    final NumericBasedRecordParser<Integer> parser = new NumericBasedRecordParser<>(TIME_PARSER, IntValueParser.getDefault());
-                    final ReportDetails<List<NumericBasedRecord<Integer>>> details = parser.parse(dataFile.get());
-                    if (!details.isOk()) {
-                        LOGGER.warn("Ran into error when parsing {}: {}", AGENTS_RECRUITED_TSV, details.getError());
-                        return report;
-                    }
-                    LOGGER.info("Parsed {} records in {}", details.getData().size(), AGENTS_RECRUITED_TSV);
-                    report.setMentoring(new MentoringReport(details));
-                    return report;
-                }, executor);
     }
 
 }

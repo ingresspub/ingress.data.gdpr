@@ -18,15 +18,21 @@
 package ingress.data.gdpr.parsers;
 
 import static ingress.data.gdpr.models.utils.Preconditions.notEmptyString;
+import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 
 /**
  * @author SgrAlpha
  */
-public class LongValueParser implements ValueParser<Long> {
+public class LongValueParser implements SingleLineValueParser<Long> {
 
     private static final LongValueParser INSTANCE = new LongValueParser();
 
-    @Override public Long parse(final String value) {
+    @Override public Long parse(final String... columns) {
+        notNull(columns, "No columns to parse from");
+        if (columns.length != 1) {
+            throw new IllegalArgumentException(String.format("Expecting only one column, but got %d", columns.length));
+        }
+        final String value = columns[0];
         notEmptyString(value, "Missing value to parse from");
         return Long.parseLong(value);
     }

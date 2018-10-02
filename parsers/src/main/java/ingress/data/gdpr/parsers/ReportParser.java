@@ -19,8 +19,9 @@ package ingress.data.gdpr.parsers;
 
 import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+import static ingress.data.gdpr.parsers.utils.ErrorConstants.FILE_NOT_FOUND;
 
-import ingress.data.gdpr.models.NumericBasedRecord;
+import ingress.data.gdpr.models.TimestampedRecord;
 import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.parsers.utils.ErrorConstants;
 import org.slf4j.Logger;
@@ -30,25 +31,40 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
-/**
- * @author SgrAlpha
- */
-public class NumericBasedRecordParser<T> implements SingleFileParser<List<NumericBasedRecord<T>>> {
+public class ReportParser {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NumericBasedRecordParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportParser.class);
 
-    private final ZonedDateTimeParser timeParser;
-    private final ValueParser<T> valueParser;
-
-    public NumericBasedRecordParser(final ZonedDateTimeParser timeParser, final ValueParser<T> valueParser) {
-        this.timeParser = timeParser;
-        this.valueParser = valueParser;
+    public static <T> ReportDetails<List<TimestampedRecord<T>>> parse(
+            final List<Path> files,
+            final String targetFileName,
+            final SingleLineValueParser<ZonedDateTime> timeParser,
+            final SingleLineValueParser<T> valueParser) {
+        Optional<Path> dataFile = files.stream()
+                .filter(file -> file.getFileName().toString().equals(targetFileName))
+                .findFirst();
+        if (!dataFile.isPresent()) {
+            LOGGER.warn("Can not find report named '{}', skipping ...", targetFileName);
+            return ReportDetails.error(FILE_NOT_FOUND);
+        }
+        final ReportDetails<List<TimestampedRecord<T>>> details = parse(dataFile.get(), timeParser, valueParser);
+        if (details.isOk()) {
+            LOGGER.info("Parsed {} records in {}", details.getData().size(), targetFileName);
+        } else {
+            LOGGER.warn("Ran into error when parsing {}: {}", targetFileName, details.getError());
+        }
+        return details;
     }
 
-    @Override public ReportDetails<List<NumericBasedRecord<T>>> parse(final Path dataFile) {
+    public static <T> ReportDetails<List<TimestampedRecord<T>>> parse(
+            final Path dataFile,
+            final SingleLineValueParser<ZonedDateTime> timeParser,
+            final SingleLineValueParser<T> singleLineValueParser) {
         notNull(dataFile, "Data file needs to be specified");
         if (!Files.isRegularFile(dataFile)) {
             return ReportDetails.error(ErrorConstants.NOT_REGULAR_FILE);
@@ -64,7 +80,7 @@ public class NumericBasedRecordParser<T> implements SingleFileParser<List<Numeri
             return ReportDetails.error(e.getMessage());
         }
         try {
-            List<NumericBasedRecord<T>> data = new LinkedList<>();
+            List<TimestampedRecord<T>> data = new LinkedList<>();
             for (int i = 1; i < lines.size(); i++) {    // Skip first line (header)
                 final String line = lines.get(i);
                 if (isEmptyString(line)) {
@@ -82,11 +98,12 @@ public class NumericBasedRecordParser<T> implements SingleFileParser<List<Numeri
                 }
                 final T value;
                 try {
-                    value = valueParser.parse(columns[1]);
+                    final String[] valueColumns = Arrays.copyOfRange(columns, 1, columns.length);
+                    value = singleLineValueParser.parse(valueColumns);
                 } catch (Exception e) {
                     return ReportDetails.error(String.format("Found mal-formatted value at line %d, expecting a numeric value but got: %s", i, columns[1]));
                 }
-                data.add(new NumericBasedRecord<>(time, value));
+                data.add(new TimestampedRecord<>(time, value));
             }
             return ReportDetails.ok(data);
         } catch (Exception e) {

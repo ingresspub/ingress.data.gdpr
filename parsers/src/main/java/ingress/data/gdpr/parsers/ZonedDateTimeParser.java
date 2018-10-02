@@ -18,6 +18,7 @@
 package ingress.data.gdpr.parsers;
 
 import static ingress.data.gdpr.models.utils.Preconditions.notEmptyString;
+import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,13 +26,18 @@ import java.time.format.DateTimeFormatter;
 /**
  * @author SgrAlpha
  */
-public class ZonedDateTimeParser implements ValueParser<ZonedDateTime> {
+public class ZonedDateTimeParser implements SingleLineValueParser<ZonedDateTime> {
 
     private static final String GDPR_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss zz";
 
     private static final ZonedDateTimeParser INSTANCE = new ZonedDateTimeParser();
 
-    @Override public ZonedDateTime parse(final String time) {
+    @Override public ZonedDateTime parse(final String... columns) {
+        notNull(columns, "No columns to parse from");
+        if (columns.length != 1) {
+            throw new IllegalArgumentException(String.format("Expecting only one column, but got %d", columns.length));
+        }
+        final String time = columns[0];
         notEmptyString(time, "Missing time info to parse from");
         return ZonedDateTime.parse(time, DateTimeFormatter.ofPattern(GDPR_TIME_PATTERN));
     }

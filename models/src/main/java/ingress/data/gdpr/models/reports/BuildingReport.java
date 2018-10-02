@@ -19,7 +19,7 @@ package ingress.data.gdpr.models.reports;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ingress.data.gdpr.models.NumericBasedRecord;
+import ingress.data.gdpr.models.TimestampedRecord;
 import ingress.data.gdpr.models.utils.JsonUtil;
 
 import java.util.List;
@@ -30,124 +30,124 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BuildingReport {
 
-    private ReportDetails<List<NumericBasedRecord<Float>>> mindUnitsControlled;
-    private ReportDetails<List<NumericBasedRecord<Integer>>> mindUnitsControlledActive;
-    private ReportDetails<List<NumericBasedRecord<Float>>> fieldsCreated;
-    private ReportDetails<List<NumericBasedRecord<Integer>>> fieldsCreatedActive;
-    private ReportDetails<List<NumericBasedRecord<Float>>> linksCreated;
-    private ReportDetails<List<NumericBasedRecord<Double>>> linkLengthInKm;
-    private ReportDetails<List<NumericBasedRecord<Integer>>> linksCreatedActive;
-    private ReportDetails<List<NumericBasedRecord<Integer>>> portalsCaptured;
-    private ReportDetails<List<NumericBasedRecord<Integer>>> portalsOwned;
-    private ReportDetails<List<NumericBasedRecord<Float>>> resonatorsDeployed;
-    private ReportDetails<List<NumericBasedRecord<Float>>> modsDeployed;
-    private ReportDetails<List<NumericBasedRecord<Float>>> xmRecharged;
+    private ReportDetails<List<TimestampedRecord<Float>>> mindUnitsControlled;
+    private ReportDetails<List<TimestampedRecord<Integer>>> mindUnitsControlledActive;
+    private ReportDetails<List<TimestampedRecord<Float>>> fieldsCreated;
+    private ReportDetails<List<TimestampedRecord<Integer>>> fieldsCreatedActive;
+    private ReportDetails<List<TimestampedRecord<Float>>> linksCreated;
+    private ReportDetails<List<TimestampedRecord<Double>>> linkLengthInKm;
+    private ReportDetails<List<TimestampedRecord<Integer>>> linksCreatedActive;
+    private ReportDetails<List<TimestampedRecord<Integer>>> portalsCaptured;
+    private ReportDetails<List<TimestampedRecord<Integer>>> portalsOwned;
+    private ReportDetails<List<TimestampedRecord<Float>>> resonatorsDeployed;
+    private ReportDetails<List<TimestampedRecord<Float>>> modsDeployed;
+    private ReportDetails<List<TimestampedRecord<Float>>> xmRecharged;
 
     @JsonProperty("mind_units_controlled")
-    public ReportDetails<List<NumericBasedRecord<Float>>> getMindUnitsControlled() {
+    public ReportDetails<List<TimestampedRecord<Float>>> getMindUnitsControlled() {
         return mindUnitsControlled;
     }
 
-    public void setMindUnitsControlled(final ReportDetails<List<NumericBasedRecord<Float>>> mindUnitsControlled) {
+    public void setMindUnitsControlled(final ReportDetails<List<TimestampedRecord<Float>>> mindUnitsControlled) {
         this.mindUnitsControlled = mindUnitsControlled;
     }
 
     @JsonProperty("mind_units_controlled_active")
-    public ReportDetails<List<NumericBasedRecord<Integer>>> getMindUnitsControlledActive() {
+    public ReportDetails<List<TimestampedRecord<Integer>>> getMindUnitsControlledActive() {
         return mindUnitsControlledActive;
     }
 
-    public void setMindUnitsControlledActive(final ReportDetails<List<NumericBasedRecord<Integer>>> mindUnitsControlledActive) {
+    public void setMindUnitsControlledActive(final ReportDetails<List<TimestampedRecord<Integer>>> mindUnitsControlledActive) {
         this.mindUnitsControlledActive = mindUnitsControlledActive;
     }
 
     @JsonProperty("fields_created")
-    public ReportDetails<List<NumericBasedRecord<Float>>> getFieldsCreated() {
+    public ReportDetails<List<TimestampedRecord<Float>>> getFieldsCreated() {
         return fieldsCreated;
     }
 
-    public void setFieldsCreated(final ReportDetails<List<NumericBasedRecord<Float>>> fieldsCreated) {
+    public void setFieldsCreated(final ReportDetails<List<TimestampedRecord<Float>>> fieldsCreated) {
         this.fieldsCreated = fieldsCreated;
     }
 
     @JsonProperty("fields_created_active")
-    public ReportDetails<List<NumericBasedRecord<Integer>>> getFieldsCreatedActive() {
+    public ReportDetails<List<TimestampedRecord<Integer>>> getFieldsCreatedActive() {
         return fieldsCreatedActive;
     }
 
-    public void setFieldsCreatedActive(final ReportDetails<List<NumericBasedRecord<Integer>>> fieldsCreatedActive) {
+    public void setFieldsCreatedActive(final ReportDetails<List<TimestampedRecord<Integer>>> fieldsCreatedActive) {
         this.fieldsCreatedActive = fieldsCreatedActive;
     }
 
     @JsonProperty("links_created")
-    public ReportDetails<List<NumericBasedRecord<Float>>> getLinksCreated() {
+    public ReportDetails<List<TimestampedRecord<Float>>> getLinksCreated() {
         return linksCreated;
     }
 
-    public void setLinksCreated(final ReportDetails<List<NumericBasedRecord<Float>>> linksCreated) {
+    public void setLinksCreated(final ReportDetails<List<TimestampedRecord<Float>>> linksCreated) {
         this.linksCreated = linksCreated;
     }
 
     @JsonProperty("link_length_in_km")
-    public ReportDetails<List<NumericBasedRecord<Double>>> getLinkLengthInKm() {
+    public ReportDetails<List<TimestampedRecord<Double>>> getLinkLengthInKm() {
         return linkLengthInKm;
     }
 
-    public void setLinkLengthInKm(final ReportDetails<List<NumericBasedRecord<Double>>> linkLengthInKm) {
+    public void setLinkLengthInKm(final ReportDetails<List<TimestampedRecord<Double>>> linkLengthInKm) {
         this.linkLengthInKm = linkLengthInKm;
     }
 
     @JsonProperty("links_created_active")
-    public ReportDetails<List<NumericBasedRecord<Integer>>> getLinksCreatedActive() {
+    public ReportDetails<List<TimestampedRecord<Integer>>> getLinksCreatedActive() {
         return linksCreatedActive;
     }
 
-    public void setLinksCreatedActive(final ReportDetails<List<NumericBasedRecord<Integer>>> linksCreatedActive) {
+    public void setLinksCreatedActive(final ReportDetails<List<TimestampedRecord<Integer>>> linksCreatedActive) {
         this.linksCreatedActive = linksCreatedActive;
     }
 
     @JsonProperty("portals_captured")
-    public ReportDetails<List<NumericBasedRecord<Integer>>> getPortalsCaptured() {
+    public ReportDetails<List<TimestampedRecord<Integer>>> getPortalsCaptured() {
         return portalsCaptured;
     }
 
-    public void setPortalsCaptured(final ReportDetails<List<NumericBasedRecord<Integer>>> portalCaptured) {
+    public void setPortalsCaptured(final ReportDetails<List<TimestampedRecord<Integer>>> portalCaptured) {
         this.portalsCaptured = portalCaptured;
     }
 
     @JsonProperty("portals_owned")
-    public ReportDetails<List<NumericBasedRecord<Integer>>> getPortalsOwned() {
+    public ReportDetails<List<TimestampedRecord<Integer>>> getPortalsOwned() {
         return portalsOwned;
     }
 
-    public void setPortalsOwned(final ReportDetails<List<NumericBasedRecord<Integer>>> portalsOwned) {
+    public void setPortalsOwned(final ReportDetails<List<TimestampedRecord<Integer>>> portalsOwned) {
         this.portalsOwned = portalsOwned;
     }
 
     @JsonProperty("resonators_deployed")
-    public ReportDetails<List<NumericBasedRecord<Float>>> getResonatorsDeployed() {
+    public ReportDetails<List<TimestampedRecord<Float>>> getResonatorsDeployed() {
         return resonatorsDeployed;
     }
 
-    public void setResonatorsDeployed(final ReportDetails<List<NumericBasedRecord<Float>>> resonatorsDeployed) {
+    public void setResonatorsDeployed(final ReportDetails<List<TimestampedRecord<Float>>> resonatorsDeployed) {
         this.resonatorsDeployed = resonatorsDeployed;
     }
 
     @JsonProperty("mods_deployed")
-    public ReportDetails<List<NumericBasedRecord<Float>>> getModsDeployed() {
+    public ReportDetails<List<TimestampedRecord<Float>>> getModsDeployed() {
         return modsDeployed;
     }
 
-    public void setModsDeployed(final ReportDetails<List<NumericBasedRecord<Float>>> modsDeployed) {
+    public void setModsDeployed(final ReportDetails<List<TimestampedRecord<Float>>> modsDeployed) {
         this.modsDeployed = modsDeployed;
     }
 
     @JsonProperty("xm_recharged")
-    public ReportDetails<List<NumericBasedRecord<Float>>> getXmRecharged() {
+    public ReportDetails<List<TimestampedRecord<Float>>> getXmRecharged() {
         return xmRecharged;
     }
 
-    public void setXmRecharged(final ReportDetails<List<NumericBasedRecord<Float>>> xmRecharged) {
+    public void setXmRecharged(final ReportDetails<List<TimestampedRecord<Float>>> xmRecharged) {
         this.xmRecharged = xmRecharged;
     }
 

@@ -20,7 +20,7 @@ package ingress.data.gdpr.models.reports;
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ingress.data.gdpr.models.NumericBasedRecord;
+import ingress.data.gdpr.models.TimestampedRecord;
 import ingress.data.gdpr.models.MissionDefinition;
 
 import java.util.List;
@@ -30,10 +30,10 @@ import java.util.List;
  */
 public class MissionReport {
 
-    private final ReportDetails<List<NumericBasedRecord>> missionsCompleted;
+    private final ReportDetails<List<TimestampedRecord>> missionsCompleted;
     private final ReportDetails<List<MissionDefinition>> missionsCreated;
 
-    public MissionReport(final ReportDetails<List<NumericBasedRecord>> missionsCompleted, final ReportDetails<List<MissionDefinition>> missionsCreated) {
+    public MissionReport(final ReportDetails<List<TimestampedRecord>> missionsCompleted, final ReportDetails<List<MissionDefinition>> missionsCreated) {
         notNull(missionsCompleted, "Missing details about missions completed");
         this.missionsCompleted = missionsCompleted;
         notNull(missionsCreated, "Missing details about missions created");
@@ -41,7 +41,7 @@ public class MissionReport {
     }
 
     @JsonProperty("missions_completed")
-    public ReportDetails<List<NumericBasedRecord>> getMissionsCompleted() {
+    public ReportDetails<List<TimestampedRecord>> getMissionsCompleted() {
         return missionsCompleted;
     }
 

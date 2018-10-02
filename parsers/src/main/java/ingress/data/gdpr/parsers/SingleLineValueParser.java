@@ -18,12 +18,19 @@
 package ingress.data.gdpr.parsers;
 
 /**
- * @param <T> target type of value
+ * @param <T> target type of record
  *
  * @author SgrAlpha
  */
-public interface ValueParser<T> {
+public interface SingleLineValueParser<T> {
 
-    T parse(String value) throws Exception;
+    /**
+     * @param columns columns to parse record from
+     *
+     * @return record
+     *
+     * @throws Exception if any thing goes wrong
+     */
+    T parse(String... columns) throws Exception;
 
 }

@@ -44,7 +44,7 @@ public class FloatValueParserTest {
     }
     @Test(expected = IllegalArgumentException.class)
     public void testParseFromNull() {
-        PARSER.parse(null);
+        PARSER.parse();
     }
 
 }

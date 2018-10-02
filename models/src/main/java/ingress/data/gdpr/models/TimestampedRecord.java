@@ -17,13 +17,35 @@
 
 package ingress.data.gdpr.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import ingress.data.gdpr.models.utils.JsonUtil;
+
 import java.time.ZonedDateTime;
 
 /**
  * @author SgrAlpha
  */
-public interface TimestampedRecord {
+public class TimestampedRecord<T> {
 
-    ZonedDateTime getTime();
+    private final ZonedDateTime time;
+    private final T value;
 
+    public TimestampedRecord(final ZonedDateTime time, final T value) {
+        this.time = time;
+        this.value = value;
+    }
+
+    @JsonProperty("time")
+    public ZonedDateTime getTime() {
+        return time;
+    }
+
+    @JsonProperty("value")
+    public T getValue() {
+        return value;
+    }
+
+    @Override public String toString() {
+        return JsonUtil.toJson(this);
+    }
 }

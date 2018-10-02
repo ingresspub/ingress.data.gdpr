@@ -19,7 +19,7 @@ package ingress.data.gdpr.models.reports;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ingress.data.gdpr.models.NumericBasedRecord;
+import ingress.data.gdpr.models.TimestampedRecord;
 import ingress.data.gdpr.models.utils.JsonUtil;
 
 import java.util.List;
@@ -30,54 +30,54 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DefenseReport {
 
-    private ReportDetails<List<NumericBasedRecord<Double>>> mindUnitsTimesDaysHeld;
-    private ReportDetails<List<NumericBasedRecord<Double>>> fieldHeldDays;
-    private ReportDetails<List<NumericBasedRecord<Double>>> linkLengthInKmTimesDaysHeld;
-    private ReportDetails<List<NumericBasedRecord<Double>>> linkHeldDays;
-    private ReportDetails<List<NumericBasedRecord<Double>>> portalHeldDays;
+    private ReportDetails<List<TimestampedRecord<Double>>> mindUnitsTimesDaysHeld;
+    private ReportDetails<List<TimestampedRecord<Double>>> fieldHeldDays;
+    private ReportDetails<List<TimestampedRecord<Double>>> linkLengthInKmTimesDaysHeld;
+    private ReportDetails<List<TimestampedRecord<Double>>> linkHeldDays;
+    private ReportDetails<List<TimestampedRecord<Double>>> portalHeldDays;
 
     @JsonProperty("mind_units_time_days_held")
-    public ReportDetails<List<NumericBasedRecord<Double>>> getMindUnitsTimesDaysHeld() {
+    public ReportDetails<List<TimestampedRecord<Double>>> getMindUnitsTimesDaysHeld() {
         return mindUnitsTimesDaysHeld;
     }
 
-    public void setMindUnitsTimesDaysHeld(final ReportDetails<List<NumericBasedRecord<Double>>> mindUnitsTimesDaysHeld) {
+    public void setMindUnitsTimesDaysHeld(final ReportDetails<List<TimestampedRecord<Double>>> mindUnitsTimesDaysHeld) {
         this.mindUnitsTimesDaysHeld = mindUnitsTimesDaysHeld;
     }
 
     @JsonProperty("field_held_days")
-    public ReportDetails<List<NumericBasedRecord<Double>>> getFieldHeldDays() {
+    public ReportDetails<List<TimestampedRecord<Double>>> getFieldHeldDays() {
         return fieldHeldDays;
     }
 
-    public void setFieldHeldDays(final ReportDetails<List<NumericBasedRecord<Double>>> fieldHeldDays) {
+    public void setFieldHeldDays(final ReportDetails<List<TimestampedRecord<Double>>> fieldHeldDays) {
         this.fieldHeldDays = fieldHeldDays;
     }
 
     @JsonProperty("link_length_in_km_time_days_held")
-    public ReportDetails<List<NumericBasedRecord<Double>>> getLinkLengthInKmTimesDaysHeld() {
+    public ReportDetails<List<TimestampedRecord<Double>>> getLinkLengthInKmTimesDaysHeld() {
         return linkLengthInKmTimesDaysHeld;
     }
 
-    public void setLinkLengthInKmTimesDaysHeld(final ReportDetails<List<NumericBasedRecord<Double>>> linkLengthInKmTimesDaysHeld) {
+    public void setLinkLengthInKmTimesDaysHeld(final ReportDetails<List<TimestampedRecord<Double>>> linkLengthInKmTimesDaysHeld) {
         this.linkLengthInKmTimesDaysHeld = linkLengthInKmTimesDaysHeld;
     }
 
     @JsonProperty("link_held_days")
-    public ReportDetails<List<NumericBasedRecord<Double>>> getLinkHeldDays() {
+    public ReportDetails<List<TimestampedRecord<Double>>> getLinkHeldDays() {
         return linkHeldDays;
     }
 
-    public void setLinkHeldDays(final ReportDetails<List<NumericBasedRecord<Double>>> linkHeldDays) {
+    public void setLinkHeldDays(final ReportDetails<List<TimestampedRecord<Double>>> linkHeldDays) {
         this.linkHeldDays = linkHeldDays;
     }
 
     @JsonProperty("portal_held_days")
-    public ReportDetails<List<NumericBasedRecord<Double>>> getPortalHeldDays() {
+    public ReportDetails<List<TimestampedRecord<Double>>> getPortalHeldDays() {
         return portalHeldDays;
     }
 
-    public void setPortalHeldDays(final ReportDetails<List<NumericBasedRecord<Double>>> portalHeldDays) {
+    public void setPortalHeldDays(final ReportDetails<List<TimestampedRecord<Double>>> portalHeldDays) {
         this.portalHeldDays = portalHeldDays;
     }
 

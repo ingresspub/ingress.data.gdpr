@@ -19,7 +19,7 @@ package ingress.data.gdpr.models.reports;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ingress.data.gdpr.models.NumericBasedRecord;
+import ingress.data.gdpr.models.TimestampedRecord;
 import ingress.data.gdpr.models.utils.JsonUtil;
 
 import java.util.List;
@@ -30,44 +30,44 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CombatReport {
 
-    private ReportDetails<List<NumericBasedRecord<Float>>> resonatorsDestroyed;
-    private ReportDetails<List<NumericBasedRecord<Integer>>> portalsNeutralized;
-    private ReportDetails<List<NumericBasedRecord<Float>>> linksDestroyed;
-    private ReportDetails<List<NumericBasedRecord<Float>>> fieldsDestroyed;
+    private ReportDetails<List<TimestampedRecord<Float>>> resonatorsDestroyed;
+    private ReportDetails<List<TimestampedRecord<Integer>>> portalsNeutralized;
+    private ReportDetails<List<TimestampedRecord<Float>>> linksDestroyed;
+    private ReportDetails<List<TimestampedRecord<Float>>> fieldsDestroyed;
 
     @JsonProperty("resonators_destroyed")
-    public ReportDetails<List<NumericBasedRecord<Float>>> getResonatorsDestroyed() {
+    public ReportDetails<List<TimestampedRecord<Float>>> getResonatorsDestroyed() {
         return resonatorsDestroyed;
     }
 
-    public void setResonatorsDestroyed(final ReportDetails<List<NumericBasedRecord<Float>>> resonatorsDestroyed) {
+    public void setResonatorsDestroyed(final ReportDetails<List<TimestampedRecord<Float>>> resonatorsDestroyed) {
         this.resonatorsDestroyed = resonatorsDestroyed;
     }
 
     @JsonProperty("portals_neutralized")
-    public ReportDetails<List<NumericBasedRecord<Integer>>> getPortalsNeutralized() {
+    public ReportDetails<List<TimestampedRecord<Integer>>> getPortalsNeutralized() {
         return portalsNeutralized;
     }
 
-    public void setPortalsNeutralized(final ReportDetails<List<NumericBasedRecord<Integer>>> portalsNeutralized) {
+    public void setPortalsNeutralized(final ReportDetails<List<TimestampedRecord<Integer>>> portalsNeutralized) {
         this.portalsNeutralized = portalsNeutralized;
     }
 
     @JsonProperty("links_destroyed")
-    public ReportDetails<List<NumericBasedRecord<Float>>> getLinksDestroyed() {
+    public ReportDetails<List<TimestampedRecord<Float>>> getLinksDestroyed() {
         return linksDestroyed;
     }
 
-    public void setLinksDestroyed(final ReportDetails<List<NumericBasedRecord<Float>>> linksDestroyed) {
+    public void setLinksDestroyed(final ReportDetails<List<TimestampedRecord<Float>>> linksDestroyed) {
         this.linksDestroyed = linksDestroyed;
     }
 
     @JsonProperty("fields_destroyed")
-    public ReportDetails<List<NumericBasedRecord<Float>>> getFieldsDestroyed() {
+    public ReportDetails<List<TimestampedRecord<Float>>> getFieldsDestroyed() {
         return fieldsDestroyed;
     }
 
-    public void setFieldsDestroyed(final ReportDetails<List<NumericBasedRecord<Float>>> fieldsDestroyed) {
+    public void setFieldsDestroyed(final ReportDetails<List<TimestampedRecord<Float>>> fieldsDestroyed) {
         this.fieldsDestroyed = fieldsDestroyed;
     }
 
