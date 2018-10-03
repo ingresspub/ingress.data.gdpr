@@ -18,15 +18,19 @@
 package ingress.data.gdpr.parsers.utils;
 
 /**
+ * @param <T> target type of record
+ *
  * @author SgrAlpha
  */
-public class ErrorConstants {
+public interface SingleLineValueParser<T> {
 
-    public static final String NOT_REGULAR_FILE = "not_regular_file";
-    public static final String UNREADABLE_FILE = "unreadable_file";
+    /**
+     * @param columns columns to parse record from
+     *
+     * @return record
+     *
+     * @throws Exception if any thing goes wrong
+     */
+    T parse(String... columns) throws Exception;
 
-    public static final String MALFORMATTED_DATA = "malformatted_data";
-
-    public static final String FILE_NOT_FOUND = "file_not_found";
-    public static final String NO_DATA = "no_data";
 }

@@ -15,18 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.parsers.utils;
+package ingress.data.gdpr.models.records;
+
+import java.time.ZonedDateTime;
 
 /**
  * @author SgrAlpha
  */
-public class ErrorConstants {
+public class CommMention {
 
-    public static final String NOT_REGULAR_FILE = "not_regular_file";
-    public static final String UNREADABLE_FILE = "unreadable_file";
+    public static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
-    public static final String MALFORMATTED_DATA = "malformatted_data";
+    private final ZonedDateTime time;
+    private final String message;
 
-    public static final String FILE_NOT_FOUND = "file_not_found";
-    public static final String NO_DATA = "no_data";
+    public CommMention(final ZonedDateTime time, final String message) {
+        this.time = time;
+        this.message = message;
+    }
+
+    public ZonedDateTime getTime() {
+        return time;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }

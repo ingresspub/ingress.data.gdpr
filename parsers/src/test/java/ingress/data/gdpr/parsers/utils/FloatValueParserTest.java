@@ -17,16 +17,36 @@
 
 package ingress.data.gdpr.parsers.utils;
 
+import static org.junit.Assert.assertEquals;
+
+import ingress.data.gdpr.parsers.utils.FloatValueParser;
+import org.junit.Test;
+
 /**
  * @author SgrAlpha
  */
-public class ErrorConstants {
+public class FloatValueParserTest {
 
-    public static final String NOT_REGULAR_FILE = "not_regular_file";
-    public static final String UNREADABLE_FILE = "unreadable_file";
+    private static final FloatValueParser PARSER = FloatValueParser.getDefault();
+    
+    @Test
+    public void testParseFromValid() {
+        assertEquals(0.00636792043224f, PARSER.parse("0.00636792043224"), 0);
+    }
 
-    public static final String MALFORMATTED_DATA = "malformatted_data";
+    @Test(expected = NumberFormatException.class)
+    public void testParseFromInvalid() {
+        PARSER.parse("asdfg");
+    }
 
-    public static final String FILE_NOT_FOUND = "file_not_found";
-    public static final String NO_DATA = "no_data";
+    @Test(expected = IllegalArgumentException.class)
+    public void testParseFromBlank() {
+        PARSER.parse("");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParseFromNull() {
+        PARSER.parse();
+    }
+
 }

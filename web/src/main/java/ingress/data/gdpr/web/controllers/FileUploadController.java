@@ -19,8 +19,8 @@ package ingress.data.gdpr.web.controllers;
 
 import ingress.data.gdpr.web.utils.ExceptionUtil;
 import ingress.data.gdpr.web.utils.zip.ZipFileExtractor;
-import ingress.data.gdpr.models.reports.SummarizedReport;
-import ingress.data.gdpr.parsers.Summarizer;
+import ingress.data.gdpr.models.reports.RawDataReport;
+import ingress.data.gdpr.parsers.RawDataParser;
 import net.lingala.zip4j.exception.ZipException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +68,7 @@ public class FileUploadController {
             File tempZipFile = Files.createTempFile("ingress-data-" + uploaded.getOriginalFilename(), null).toFile();
             uploaded.transferTo(tempZipFile);
             final Stream<Path> files = ZipFileExtractor.extract(tempZipFile, unzipPassword);
-            final SummarizedReport report = Summarizer.summarize(files.collect(Collectors.toList()));
+            final RawDataReport report = RawDataParser.parse(files.collect(Collectors.toList()));
             redirectAttributes.addFlashAttribute("message", "You successfully uploaded " + uploaded.getOriginalFilename() + "!");
             return "redirect:/";
         };

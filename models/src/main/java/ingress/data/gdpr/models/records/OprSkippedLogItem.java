@@ -15,18 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.parsers.utils;
+package ingress.data.gdpr.models.records;
 
 /**
  * @author SgrAlpha
  */
-public class ErrorConstants {
-
-    public static final String NOT_REGULAR_FILE = "not_regular_file";
-    public static final String UNREADABLE_FILE = "unreadable_file";
-
-    public static final String MALFORMATTED_DATA = "malformatted_data";
-
-    public static final String FILE_NOT_FOUND = "file_not_found";
-    public static final String NO_DATA = "no_data";
+public class OprSkippedLogItem {
 }

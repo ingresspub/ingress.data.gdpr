@@ -60,4 +60,8 @@ public class DataFileNames {
     public static final String SEER_PORTALS_TSV = "seer_portals.tsv";
     public static final String PORTALS_VISITED_TSV = "portals_visited.tsv";
     public static final String XM_COLLECTED_TSV = "xm_collected.tsv";
+    public static final String OPR_PROFILE_CSV = "OprProfile.csv";
+    public static final String COMM_MENTIONS_TSV = "comm_mentions.tsv";
+    public static final String GAME_LOG_TSV = "game_log.tsv";
+    public static final String MISSIONS_COMPLETED_TSV = "missions_completed.tsv";
 }
