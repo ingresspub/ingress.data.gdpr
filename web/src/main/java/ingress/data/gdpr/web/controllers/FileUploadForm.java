@@ -21,6 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 
+/**
+ * @author SgrAlpha
+ */
 public class FileUploadForm {
 
     @ZipFileConstraint

@@ -26,6 +26,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
+/**
+ * @author SgrAlpha
+ */
 public class ZipFileExtractor {
 
     private static final String TEMP_DIR_PREFIX = "ingress-data-";

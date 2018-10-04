@@ -3,6 +3,13 @@ spring:
     multipart:
       max-file-size: "20MB"
       max-request-size: "20MB"
+  datasource:
+    primary:
+      jdbc-url: jdbc:h2:file:~/.h2/ingress_gdpr
+      driver-class-name: "org.h2.Driver"
+      username: sa
+      password:
+    schema: classpath:db/schema.sql
 
 server:
   tomcat:

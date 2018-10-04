@@ -53,6 +53,10 @@ public class RawDataParserTest {
         RawDataReport rpt = RawDataParser.parse(files);
         assertNotNull(rpt);
 
+        assertNotNull(rpt.getAgentProfile());
+        assertTrue(rpt.getAgentProfile().getError(), rpt.getAgentProfile().isOk());
+        assertNotNull(rpt.getAgentProfile().getData());
+
         assertNotNull(rpt.getGameLogs());
         assertTrue(rpt.getGameLogs().getError(), rpt.getGameLogs().isOk());
         assertNotNull(rpt.getGameLogs().getData());
@@ -68,22 +72,37 @@ public class RawDataParserTest {
         assertNotNull(rpt.getOprProfile());
         assertTrue(rpt.getOprProfile().getError(), rpt.getOprProfile().isOk());
         assertNotNull(rpt.getOprProfile().getData());
+
         assertNotNull(rpt.getOprAgreements());
         assertTrue(rpt.getOprAgreements().getError(), rpt.getOprAgreements().isOk());
         assertNotNull(rpt.getOprAgreements().getData());
         assertFalse(rpt.getOprAgreements().getData().isEmpty());
+
+        assertNotNull(rpt.getOprAssignmentLogs());
+        assertTrue(rpt.getOprAssignmentLogs().getError(), rpt.getOprAssignmentLogs().isOk());
+        assertNotNull(rpt.getOprAssignmentLogs().getData());
+        assertFalse(rpt.getOprAssignmentLogs().getData().isEmpty());
+
+        assertNotNull(rpt.getOprSubmissionLogs());
+        assertTrue(rpt.getOprSubmissionLogs().getError(), rpt.getOprSubmissionLogs().isOk());
+        assertNotNull(rpt.getOprSubmissionLogs().getData());
+        assertFalse(rpt.getOprSubmissionLogs().getData().isEmpty());
+
         assertNotNull(rpt.getAllPortalsApproved());
         assertTrue(rpt.getAllPortalsApproved().getError(), rpt.getAllPortalsApproved().isOk());
         assertNotNull(rpt.getAllPortalsApproved().getData());
         assertFalse(rpt.getAllPortalsApproved().getData().isEmpty());
+
         assertNotNull(rpt.getSeerPortals());
         assertTrue(rpt.getSeerPortals().getError(), rpt.getSeerPortals().isOk());
         assertNotNull(rpt.getSeerPortals().getData());
         assertFalse(rpt.getSeerPortals().getData().isEmpty());
+
         assertNotNull(rpt.getPortalsVisited());
         assertTrue(rpt.getPortalsVisited().getError(), rpt.getPortalsVisited().isOk());
         assertNotNull(rpt.getPortalsVisited().getData());
         assertFalse(rpt.getPortalsVisited().getData().isEmpty());
+
         assertNotNull(rpt.getXmCollected());
         assertTrue(rpt.getXmCollected().getError(), rpt.getXmCollected().isOk());
         assertNotNull(rpt.getXmCollected().getData());
@@ -96,57 +115,79 @@ public class RawDataParserTest {
 
         assertNotNull(rpt.getMindUnitsControlled());
         assertTrue(rpt.getMindUnitsControlled().getError(), rpt.getMindUnitsControlled().isOk());
+        assertNotNull(rpt.getMindUnitsControlled().getData());
         assertFalse(rpt.getMindUnitsControlled().getData().isEmpty());
+
         assertNotNull(rpt.getMindUnitsControlledActive());
         assertTrue(rpt.getMindUnitsControlledActive().getError(), rpt.getMindUnitsControlledActive().isOk());
         assertNotNull(rpt.getMindUnitsControlledActive().getData());
         assertEquals(1, rpt.getMindUnitsControlledActive().getData().size());
+
         assertNotNull(rpt.getFieldsCreated());
         assertTrue(rpt.getFieldsCreated().getError(), rpt.getFieldsCreated().isOk());
+        assertNotNull(rpt.getFieldsCreated().getData());
         assertFalse(rpt.getFieldsCreated().getData().isEmpty());
+
         assertNotNull(rpt.getFieldsCreatedActive());
         assertTrue(rpt.getFieldsCreatedActive().getError(), rpt.getFieldsCreatedActive().isOk());
         assertNotNull(rpt.getFieldsCreatedActive().getData());
         assertEquals(1, rpt.getFieldsCreatedActive().getData().size());
+
         assertNotNull(rpt.getLinksCreated());
         assertTrue(rpt.getLinksCreated().getError(), rpt.getLinksCreated().isOk());
+        assertNotNull(rpt.getLinksCreated().getData());
         assertFalse(rpt.getLinksCreated().getData().isEmpty());
+
         assertNotNull(rpt.getLinkLengthInKm());
         assertTrue(rpt.getLinkLengthInKm().getError(), rpt.getLinkLengthInKm().isOk());
+        assertNotNull(rpt.getLinkLengthInKm().getData());
         assertFalse(rpt.getLinkLengthInKm().getData().isEmpty());
+
         assertNotNull(rpt.getLinksCreatedActive());
         assertTrue(rpt.getLinksCreatedActive().getError(), rpt.getLinksCreatedActive().isOk());
         assertNotNull(rpt.getLinksCreatedActive().getData());
         assertEquals(1, rpt.getLinksCreatedActive().getData().size());
+
         assertNotNull(rpt.getPortalsCaptured());
         assertTrue(rpt.getPortalsCaptured().getError(), rpt.getPortalsCaptured().isOk());
+        assertNotNull(rpt.getPortalsCaptured().getData());
         assertFalse(rpt.getPortalsCaptured().getData().isEmpty());
+
         assertNotNull(rpt.getPortalsOwned());
         assertTrue(rpt.getPortalsOwned().getError(), rpt.getPortalsOwned().isOk());
         assertNotNull(rpt.getPortalsOwned().getData());
         assertEquals(1, rpt.getPortalsOwned().getData().size());
+
         assertNotNull(rpt.getResonatorsDeployed());
         assertTrue(rpt.getResonatorsDeployed().getError(), rpt.getResonatorsDeployed().isOk());
+        assertNotNull(rpt.getResonatorsDeployed().getData());
         assertFalse(rpt.getResonatorsDeployed().getData().isEmpty());
+
         assertNotNull(rpt.getModsDeployed());
         assertTrue(rpt.getModsDeployed().getError(), rpt.getModsDeployed().isOk());
+        assertNotNull(rpt.getModsDeployed().getData());
         assertFalse(rpt.getModsDeployed().getData().isEmpty());
+
         assertNotNull(rpt.getXmRecharged());
         assertTrue(rpt.getXmRecharged().getError(), rpt.getXmRecharged().isOk());
+        assertNotNull(rpt.getXmRecharged().getData());
         assertFalse(rpt.getXmRecharged().getData().isEmpty());
 
         assertNotNull(rpt.getResonatorsDestroyed());
         assertTrue(rpt.getResonatorsDestroyed().getError(), rpt.getResonatorsDestroyed().isOk());
         assertNotNull(rpt.getResonatorsDestroyed().getData());
         assertFalse(rpt.getResonatorsDestroyed().getData().isEmpty());
+
         assertNotNull(rpt.getPortalsNeutralized());
         assertTrue(rpt.getPortalsNeutralized().getError(), rpt.getPortalsNeutralized().isOk());
         assertNotNull(rpt.getPortalsNeutralized().getData());
         assertFalse(rpt.getPortalsNeutralized().getData().isEmpty());
+
         assertNotNull(rpt.getLinksDestroyed());
         assertTrue(rpt.getLinksDestroyed().getError(), rpt.getLinksDestroyed().isOk());
         assertNotNull(rpt.getLinksDestroyed().getData());
         assertFalse(rpt.getLinksDestroyed().getData().isEmpty());
+
         assertNotNull(rpt.getFieldsDestroyed());
         assertTrue(rpt.getFieldsDestroyed().getError(),rpt.getFieldsDestroyed().isOk());
         assertNotNull(rpt.getFieldsDestroyed().getData());
@@ -154,40 +195,53 @@ public class RawDataParserTest {
 
         assertNotNull(rpt.getPortalHeldDays());
         assertTrue(rpt.getPortalHeldDays().getError(), rpt.getPortalHeldDays().isOk());
+        assertNotNull(rpt.getPortalHeldDays().getData());
         assertFalse(rpt.getPortalHeldDays().getData().isEmpty());
+
         assertNotNull(rpt.getLinkHeldDays());
         assertTrue(rpt.getLinkHeldDays().getError(), rpt.getLinkHeldDays().isOk());
+        assertNotNull(rpt.getLinkHeldDays().getData());
         assertFalse(rpt.getLinkHeldDays().getData().isEmpty());
+
         assertNotNull(rpt.getLinkLengthInKmTimesDaysHeld());
         assertTrue(rpt.getLinkLengthInKmTimesDaysHeld().getError(), rpt.getLinkLengthInKmTimesDaysHeld().isOk());
         assertFalse(rpt.getLinkLengthInKmTimesDaysHeld().getData().isEmpty());
+
         assertNotNull(rpt.getFieldHeldDays());
         assertTrue(rpt.getFieldHeldDays().getError(), rpt.getFieldHeldDays().isOk());
+        assertNotNull(rpt.getFieldHeldDays().getData());
         assertFalse(rpt.getFieldHeldDays().getData().isEmpty());
+
         assertNotNull(rpt.getMindUnitsTimesDaysHeld());
         assertTrue(rpt.getMindUnitsTimesDaysHeld().getError(), rpt.getMindUnitsTimesDaysHeld().isOk());
+        assertNotNull(rpt.getMindUnitsTimesDaysHeld().getData());
         assertFalse(rpt.getMindUnitsTimesDaysHeld().getData().isEmpty());
 
         assertNotNull(rpt.getHacks());
         assertTrue(rpt.getHacks().getError(), rpt.getHacks().isOk());
         assertNotNull(rpt.getHacks().getData());
         assertFalse(rpt.getHacks().getData().isEmpty());
+
         assertNotNull(rpt.getGlyphHackPoints());
         assertTrue(rpt.getGlyphHackPoints().getError(), rpt.getGlyphHackPoints().isOk());
         assertNotNull(rpt.getGlyphHackPoints().getData());
         assertFalse(rpt.getGlyphHackPoints().getData().isEmpty());
+
         assertNotNull(rpt.getGlyphHackOnePerfect());
         assertTrue(rpt.getGlyphHackOnePerfect().getError(), rpt.getGlyphHackOnePerfect().isOk());
         assertNotNull(rpt.getGlyphHackOnePerfect().getData());
         assertFalse(rpt.getGlyphHackOnePerfect().getData().isEmpty());
+
         assertNotNull(rpt.getGlyphHackThreePerfect());
         assertTrue(rpt.getGlyphHackThreePerfect().getError(), rpt.getGlyphHackThreePerfect().isOk());
         assertNotNull(rpt.getGlyphHackThreePerfect().getData());
         assertFalse(rpt.getGlyphHackThreePerfect().getData().isEmpty());
+
         assertNotNull(rpt.getGlyphHackFourPerfect());
         assertTrue(rpt.getGlyphHackFourPerfect().getError(), rpt.getGlyphHackFourPerfect().isOk());
         assertNotNull(rpt.getGlyphHackFourPerfect().getData());
         assertFalse(rpt.getGlyphHackFourPerfect().getData().isEmpty());
+
         assertNotNull(rpt.getGlyphHackFivePerfect());
         assertTrue(rpt.getGlyphHackFivePerfect().getError(), rpt.getGlyphHackFivePerfect().isOk());
         assertNotNull(rpt.getGlyphHackFivePerfect().getData());
@@ -202,18 +256,36 @@ public class RawDataParserTest {
         assertTrue(rpt.getExo5ControlFieldsCreated().getError(), rpt.getExo5ControlFieldsCreated().isOk());
         assertNotNull(rpt.getExo5ControlFieldsCreated().getData());
         assertFalse(rpt.getExo5ControlFieldsCreated().getData().isEmpty());
+
         assertNotNull(rpt.getMagusBuilderSlotsDeployed());
         assertTrue(rpt.getMagusBuilderSlotsDeployed().getError(), rpt.getMagusBuilderSlotsDeployed().isOk());
         assertNotNull(rpt.getMagusBuilderSlotsDeployed().getData());
         assertFalse(rpt.getMagusBuilderSlotsDeployed().getData().isEmpty());
+
         assertNotNull(rpt.getNeutralizerUniquePortalsDestroyed());
         assertTrue(rpt.getNeutralizerUniquePortalsDestroyed().getError(), rpt.getNeutralizerUniquePortalsDestroyed().isOk());
         assertNotNull(rpt.getNeutralizerUniquePortalsDestroyed().getData());
         assertFalse(rpt.getNeutralizerUniquePortalsDestroyed().getData().isEmpty());
+
         assertNotNull(rpt.getMissionDayPoints());
         assertTrue(rpt.getMissionDayPoints().getError(), rpt.getMissionDayPoints().isOk());
         assertNotNull(rpt.getMissionDayPoints().getData());
         assertFalse(rpt.getMissionDayPoints().getData().isEmpty());
+
+        assertNotNull(rpt.getMissionsCompleted());
+        assertTrue(rpt.getMissionsCompleted().getError(), rpt.getMissionsCompleted().isOk());
+        assertNotNull(rpt.getMissionsCompleted().getData());
+        assertFalse(rpt.getMissionsCompleted().getData().isEmpty());
+
+        assertNotNull(rpt.getZendeskTickets());
+        assertTrue(rpt.getZendeskTickets().getError(), rpt.getZendeskTickets().isOk());
+        assertNotNull(rpt.getZendeskTickets().getData());
+        assertFalse(rpt.getZendeskTickets().getData().isEmpty());
+
+        assertNotNull(rpt.getStorePurchases());
+        assertTrue(rpt.getStorePurchases().getError(), rpt.getStorePurchases().isOk());
+        assertNotNull(rpt.getStorePurchases().getData());
+        assertFalse(rpt.getStorePurchases().getData().isEmpty());
 
     }
 

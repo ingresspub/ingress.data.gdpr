@@ -50,26 +50,35 @@ import static ingress.data.gdpr.parsers.utils.DataFileNames.MISSION_DAY_POINTS_T
 import static ingress.data.gdpr.parsers.utils.DataFileNames.MODS_DEPLOYED_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.NEUTRALIZER_UNIQUE_PORTALS_NEUTRALIZED_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.OPR_AGREEMENTS_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.OPR_ASSIGNMENT_LOG_CSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.OPR_PROFILE_CSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.OPR_SUBMISSION_LOG_CSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.PORTALS_CAPTURED_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.PORTALS_NEUTRALIZED_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.PORTALS_OWNED_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.PORTALS_VISITED_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.PORTAL_HELD_DAYS_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.PROFILE_TXT;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.RESONATORS_DEPLOYED_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.RESONATORS_DESTROYED_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.SEER_PORTALS_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.STORE_PURCHASES_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.XM_COLLECTED_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.XM_RECHARGED_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.ZENDESK_RECORDS_TSV;
 
 import ingress.data.gdpr.models.records.CommMention;
-import ingress.data.gdpr.models.records.UsedDevice;
 import ingress.data.gdpr.models.records.GameLog;
+import ingress.data.gdpr.models.records.StorePurchase;
 import ingress.data.gdpr.models.records.TimestampedRecord;
-import ingress.data.gdpr.models.records.OprProfile;
+import ingress.data.gdpr.models.records.UsedDevice;
+import ingress.data.gdpr.models.records.ZendeskTicket;
+import ingress.data.gdpr.models.records.opr.OprAssignmentLogItem;
+import ingress.data.gdpr.models.records.opr.OprProfile;
+import ingress.data.gdpr.models.records.opr.OprSubmissionLogItem;
+import ingress.data.gdpr.models.records.profile.AgentProfile;
 import ingress.data.gdpr.models.reports.RawDataReport;
 import ingress.data.gdpr.models.reports.ReportDetails;
-import ingress.data.gdpr.parsers.utils.DataFileNames;
 import ingress.data.gdpr.parsers.utils.DoubleValueParser;
 import ingress.data.gdpr.parsers.utils.FloatValueParser;
 import ingress.data.gdpr.parsers.utils.IntegerValueParser;
@@ -80,6 +89,7 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -110,7 +120,10 @@ public class RawDataParser {
 
         final RawDataReport report = new RawDataReport();
         final List<CompletableFuture<RawDataReport>> futuresList = new LinkedList<>();
-        files.forEach(dataFile -> futuresList.add(locateAndParse(dataFile, report, executor)));
+        files
+                .stream()
+                .filter(dataFile -> Objects.nonNull(dataFile) && Objects.nonNull(dataFile.getFileName()))
+                .forEach(dataFile -> futuresList.add(locateAndParse(dataFile, report, executor)));
         try {
             CompletableFuture
                     .allOf(futuresList.toArray(new CompletableFuture[0]))
@@ -123,23 +136,38 @@ public class RawDataParser {
 
     private static CompletableFuture<RawDataReport> locateAndParse(
             final Path dataFile, final RawDataReport report, final Executor executor) {
-        final String fileName = dataFile.getFileName().toString();
+        notNull(dataFile, "Data file needs to be specified");
+        final Path fileNamePath = dataFile.getFileName();
+        // fix: Maven find-bug plugin keep complaining about NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE
+        if (fileNamePath == null) {
+            return CompletableFuture.completedFuture(report);
+        }
+        final String fileName = fileNamePath.toString();
         switch (fileName) {
+            case PROFILE_TXT:
+                return parseAgentProfile(dataFile, executor)
+                        .thenApplyAsync(report::setAgentProfile);
+            case DEVICES_TXT:
+                return parseUsedDevices(dataFile, executor)
+                        .thenApplyAsync(report::setUsedDevices);
             case GAME_LOG_TSV:
                 return parseGameLogs(dataFile, executor)
                         .thenApplyAsync(report::setGameLogs);
             case COMM_MENTIONS_TSV:
                 return parseCommMention(dataFile, executor)
                         .thenApplyAsync(report::setCommMentions);
-            case DEVICES_TXT:
-                return parseUsedDevices(dataFile, executor)
-                        .thenApplyAsync(report::setUsedDevices);
             case OPR_PROFILE_CSV:
                 return parseOprProfile(dataFile, executor)
                         .thenApplyAsync(report::setOprProfile);
             case OPR_AGREEMENTS_TSV:
                 return parseTimestampDataFileWith(dataFile, IntegerValueParser.getDefault(), executor)
                         .thenApplyAsync(report::setOprAgreements);
+            case OPR_ASSIGNMENT_LOG_CSV:
+                return parseOprAssignmentLogs(dataFile, executor)
+                        .thenApplyAsync(report::setOprAssignmentLogs);
+            case OPR_SUBMISSION_LOG_CSV:
+                return parseOprSubmissionLogs(dataFile, executor)
+                        .thenApplyAsync(report::setOprSubmissionLogs);
             case ALL_PORTALS_APPROVED_TSV:
                 return parseTimestampDataFileWith(dataFile, IntegerValueParser.getDefault(), executor)
                         .thenApplyAsync(report::setAllPortalsApproved);
@@ -254,10 +282,28 @@ public class RawDataParser {
             case MISSIONS_COMPLETED_TSV:
                 return parseTimestampDataFileWith(dataFile, IntegerValueParser.getDefault(), executor)
                         .thenApplyAsync(report::setMissionsCompleted);
+            case ZENDESK_RECORDS_TSV:
+                return parseZendeskTickets(dataFile, executor)
+                        .thenApplyAsync(report::setZendeskTickets);
+            case STORE_PURCHASES_TSV:
+                return parseStorePurchases(dataFile,executor)
+                        .thenApplyAsync(report::setStorePurchases);
             default:
                 LOGGER.warn("Unsupported data file: {}", fileName);
                 return CompletableFuture.completedFuture(report);
         }
+    }
+
+    private static CompletableFuture<ReportDetails<AgentProfile>> parseAgentProfile(
+            final Path dataFile, final Executor executor) {
+        return CompletableFuture
+                .supplyAsync(() -> {
+                    final ReportDetails<AgentProfile> details = AgentProfileParser.getDefault().parse(dataFile);
+                    if (!details.isOk()) {
+                        LOGGER.warn("Ran into error when parsing {}: {}", dataFile.getFileName(), details.getError());
+                    }
+                    return details;
+                }, executor);
     }
 
     private static CompletableFuture<ReportDetails<List<GameLog>>> parseGameLogs(
@@ -301,6 +347,54 @@ public class RawDataParser {
         return CompletableFuture
                 .supplyAsync(() -> {
                     final ReportDetails<OprProfile> details = OprProfileParser.getDefault().parse(dataFile);
+                    if (!details.isOk()) {
+                        LOGGER.warn("Ran into error when parsing {}: {}", dataFile.getFileName(), details.getError());
+                    }
+                    return details;
+                }, executor);
+    }
+
+    private static CompletableFuture<ReportDetails<List<ZendeskTicket>>> parseZendeskTickets(
+            final Path dataFile, final Executor executor) {
+        return CompletableFuture
+                .supplyAsync(() -> {
+                    final ReportDetails<List<ZendeskTicket>> details = ZendeskTicketParser.getDefault().parse(dataFile);
+                    if (!details.isOk()) {
+                        LOGGER.warn("Ran into error when parsing {}: {}", dataFile.getFileName(), details.getError());
+                    }
+                    return details;
+                }, executor);
+    }
+
+    private static CompletableFuture<ReportDetails<List<StorePurchase>>> parseStorePurchases(
+            final Path dataFile, final Executor executor) {
+        return CompletableFuture
+                .supplyAsync(() -> {
+                    final ReportDetails<List<StorePurchase>> details = StorePurchasesParser.getDefault().parse(dataFile);
+                    if (!details.isOk()) {
+                        LOGGER.warn("Ran into error when parsing {}: {}", dataFile.getFileName(), details.getError());
+                    }
+                    return details;
+                }, executor);
+    }
+
+    private static CompletableFuture<ReportDetails<List<OprAssignmentLogItem>>> parseOprAssignmentLogs(
+            final Path dataFile, final Executor executor) {
+        return CompletableFuture
+                .supplyAsync(() -> {
+                    final ReportDetails<List<OprAssignmentLogItem>> details = OprAssignmentLogsParser.getDefault().parse(dataFile);
+                    if (!details.isOk()) {
+                        LOGGER.warn("Ran into error when parsing {}: {}", dataFile.getFileName(), details.getError());
+                    }
+                    return details;
+                }, executor);
+    }
+
+    private static CompletableFuture<ReportDetails<List<OprSubmissionLogItem>>> parseOprSubmissionLogs(
+            final Path dataFile, final Executor executor) {
+        return CompletableFuture
+                .supplyAsync(() -> {
+                    final ReportDetails<List<OprSubmissionLogItem>> details = OprSubmissionLogsParser.getDefault().parse(dataFile);
                     if (!details.isOk()) {
                         LOGGER.warn("Ran into error when parsing {}: {}", dataFile.getFileName(), details.getError());
                     }

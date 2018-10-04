@@ -28,7 +28,7 @@ import java.time.format.DateTimeFormatter;
  */
 public class ZonedDateTimeParser implements SingleLineValueParser<ZonedDateTime> {
 
-    private static final String GDPR_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss zz";
+    public static final String GDPR_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss zz";
 
     private static final ZonedDateTimeParser INSTANCE = new ZonedDateTimeParser();
 

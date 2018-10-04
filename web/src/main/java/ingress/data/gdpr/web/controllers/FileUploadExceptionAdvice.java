@@ -24,6 +24,9 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/**
+ * @author SgrAlpha
+ */
 @ControllerAdvice
 public class FileUploadExceptionAdvice {
 

@@ -34,6 +34,10 @@
             <artifactId>data.gdpr.models</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.sgr</groupId>
+            <artifactId>geometry-common</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>

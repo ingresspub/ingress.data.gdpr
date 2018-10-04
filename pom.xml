@@ -48,7 +48,7 @@
         <dep.javax.validation.version>2.0.1.Final</dep.javax.validation.version>
 
         <!-- Regular dependencies -->
-        <dep.io.sgr.geometry.version>1.0.0</dep.io.sgr.geometry.version>
+        <dep.io.sgr.geometry.version>1.0.1</dep.io.sgr.geometry.version>
         <dep.zip4j.version>1.3.2</dep.zip4j.version>
         <dep.jackson.version>2.9.6</dep.jackson.version>
         <dep.slf4j.version>1.7.25</dep.slf4j.version>
@@ -119,6 +119,11 @@
                 <groupId>io.sgr</groupId>
                 <artifactId>geometry-common</artifactId>
                 <version>${dep.io.sgr.geometry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>1.4.197</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>

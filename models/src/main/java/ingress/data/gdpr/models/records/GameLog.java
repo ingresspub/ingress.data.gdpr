@@ -42,10 +42,6 @@ public class GameLog {
         this.other = other;
     }
 
-    public static String getTimePattern() {
-        return TIME_PATTERN;
-    }
-
     public ZonedDateTime getTime() {
         return time;
     }

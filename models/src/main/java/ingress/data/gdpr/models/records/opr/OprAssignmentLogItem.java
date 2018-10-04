@@ -15,10 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.models.records;
+package ingress.data.gdpr.models.records.opr;
+
+import java.time.ZonedDateTime;
 
 /**
  * @author SgrAlpha
  */
-public class OprSubmissionLogItem {
+public class OprAssignmentLogItem {
+
+    private final String candidateId;
+    private final ZonedDateTime time;
+
+    public OprAssignmentLogItem(final String candidateId, final ZonedDateTime time) {
+        this.candidateId = candidateId;
+        this.time = time;
+    }
+
+    public String getCandidateId() {
+        return candidateId;
+    }
+
+    public ZonedDateTime getTime() {
+        return time;
+    }
 }

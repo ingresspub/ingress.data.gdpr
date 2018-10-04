@@ -18,13 +18,12 @@
 package ingress.data.gdpr.parsers;
 
 import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
-import static ingress.data.gdpr.models.utils.Preconditions.notEmptyString;
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.NOT_REGULAR_FILE;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.NO_DATA;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.UNREADABLE_FILE;
 
-import ingress.data.gdpr.models.records.CommMention;
+import ingress.data.gdpr.models.records.StorePurchase;
 import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.parsers.utils.DefaultPacificDateTimeParser;
 import org.slf4j.Logger;
@@ -40,23 +39,23 @@ import java.util.List;
 /**
  * @author SgrAlpha
  */
-public class CommMentionParser implements DataFileParser<List<CommMention>> {
+public class StorePurchasesParser implements DataFileParser<List<StorePurchase>> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommMentionParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StorePurchasesParser.class);
 
-    private static final DefaultPacificDateTimeParser TIME_PARSER = new DefaultPacificDateTimeParser(CommMention.TIME_PATTERN);
+    private static final DefaultPacificDateTimeParser TIME_PARSER = new DefaultPacificDateTimeParser(StorePurchase.TIME_PATTERN);
     private static final String COLUMN_SEPARATOR = "\t";
 
-    private static final CommMentionParser INSTANCE = new CommMentionParser();
+    private static final StorePurchasesParser INSTANCE = new StorePurchasesParser();
 
-    private CommMentionParser() {
+    private StorePurchasesParser() {
     }
 
-    public static CommMentionParser getDefault() {
+    public static StorePurchasesParser getDefault() {
         return INSTANCE;
     }
 
-    @Override public ReportDetails<List<CommMention>> parse(final Path dataFile) {
+    @Override public ReportDetails<List<StorePurchase>> parse(final Path dataFile) {
         notNull(dataFile, "Data file needs to be specified");
         if (!Files.isRegularFile(dataFile)) {
             LOGGER.warn("{} is not a regular file", dataFile.getFileName());
@@ -79,20 +78,22 @@ public class CommMentionParser implements DataFileParser<List<CommMention>> {
         }
 
         try {
-            List<CommMention> data = new LinkedList<>();
+            List<StorePurchase> data = new LinkedList<>();
             for (int i = 1; i < lines.size(); i++) {    // Skip first line (header)
                 final String line = lines.get(i);
                 if (isEmptyString(line)) {
                     continue;
                 }
-                final String[] columns = line.split(COLUMN_SEPARATOR, 2);
+                final String[] columns = line.split(COLUMN_SEPARATOR, 5);
                 final ZonedDateTime time;
                 try {
                     time = TIME_PARSER.parse(columns[0]);
                 } catch (Exception e) {
-                    return ReportDetails.error(String.format("Expecting a valid timestamp (%s) at the beginning of line %d, but got %s", CommMention.TIME_PATTERN, i, columns[0]));
+                    return ReportDetails.error(String.format("Expecting a valid timestamp (%s) at the beginning of line %d, but got %s", StorePurchase.TIME_PATTERN, i, columns[0]));
                 }
-                data.add(new CommMention(time, columns[1]));
+                final String balanceStr = columns[3];
+                Integer balance = isEmptyString(balanceStr) ? null : Integer.parseInt(balanceStr);
+                data.add(new StorePurchase(time, columns[1], columns[2], balance, columns[4]));
             }
             if (data.size() > 1) {
                 LOGGER.info("Parsed {} records from {}", data.size(), dataFile.getFileName());

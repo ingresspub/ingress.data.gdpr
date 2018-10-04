@@ -20,6 +20,9 @@ package ingress.data.gdpr.web;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * @author SgrAlpha
+ */
 @SpringBootApplication
 public class Application {
 

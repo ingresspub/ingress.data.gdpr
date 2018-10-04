@@ -22,6 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+/**
+ * @author SgrAlpha
+ */
 public class ZipFileValidator implements ConstraintValidator<ZipFileConstraint, MultipartFile> {
 
     @Override public boolean isValid(final MultipartFile value, final ConstraintValidatorContext context) {

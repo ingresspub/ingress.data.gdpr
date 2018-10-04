@@ -58,13 +58,12 @@ public class GameLogParser implements DataFileParser<List<GameLog>> {
 
     @Override public ReportDetails<List<GameLog>> parse(final Path dataFile) {
         notNull(dataFile, "Data file needs to be specified");
-        final String dataFileName = dataFile.getFileName().toString();
         if (!Files.isRegularFile(dataFile)) {
-            LOGGER.warn("{} is not a regular file", dataFileName);
+            LOGGER.warn("{} is not a regular file", dataFile.getFileName());
             return ReportDetails.error(NOT_REGULAR_FILE);
         }
         if (!Files.isReadable(dataFile)) {
-            LOGGER.warn("{} is not a readable file", dataFileName);
+            LOGGER.warn("{} is not a readable file", dataFile.getFileName());
             return ReportDetails.error(UNREADABLE_FILE);
         }
 
@@ -94,7 +93,7 @@ public class GameLogParser implements DataFileParser<List<GameLog>> {
                 try {
                     time = TIME_PARSER.parse(columns[0]);
                 } catch (Exception e) {
-                    return ReportDetails.error(String.format("Expecting a valid timestamp at the beginning of line %d, but got %s", i, columns[0]));
+                    return ReportDetails.error(String.format("Expecting a valid timestamp (%s) at the beginning of line %d, but got %s", GameLog.TIME_PATTERN, i, columns[0]));
                 }
                 final Coordinate location;
                 if ("None".equalsIgnoreCase(columns[1]) || "None".equalsIgnoreCase(columns[2])) {
@@ -109,9 +108,9 @@ public class GameLogParser implements DataFileParser<List<GameLog>> {
                 data.add(new GameLog(time, location, columns[3], columns[4], columns.length == 6 ? columns[5] : null));
             }
             if (data.size() > 1) {
-                LOGGER.info("Parsed {} records from {}", data.size(), dataFileName);
+                LOGGER.info("Parsed {} records from {}", data.size(), dataFile.getFileName());
             } else {
-                LOGGER.info("Parsed {} record from {}", data.size(), dataFileName);
+                LOGGER.info("Parsed {} record from {}", data.size(), dataFile.getFileName());
             }
             return ReportDetails.ok(data);
         } catch (Exception e) {

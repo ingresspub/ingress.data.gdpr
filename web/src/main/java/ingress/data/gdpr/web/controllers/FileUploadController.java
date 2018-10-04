@@ -17,13 +17,14 @@
 
 package ingress.data.gdpr.web.controllers;
 
+import ingress.data.gdpr.parsers.RawDataParser;
+import ingress.data.gdpr.web.services.Summarizer;
 import ingress.data.gdpr.web.utils.ExceptionUtil;
 import ingress.data.gdpr.web.utils.zip.ZipFileExtractor;
-import ingress.data.gdpr.models.reports.RawDataReport;
-import ingress.data.gdpr.parsers.RawDataParser;
 import net.lingala.zip4j.exception.ZipException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -38,16 +39,25 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
+/**
+ * @author SgrAlpha
+ */
 @Controller
 public class FileUploadController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileUploadController.class);
+
+    private final Summarizer summarizer;
+
+    public FileUploadController(@Autowired final Summarizer summarizer) {
+        this.summarizer = summarizer;
+    }
 
     @GetMapping("/")
     public String index(final ModelMap map) {
@@ -67,8 +77,16 @@ public class FileUploadController {
             final String unzipPassword = uploadForm.getPassword();
             File tempZipFile = Files.createTempFile("ingress-data-" + uploaded.getOriginalFilename(), null).toFile();
             uploaded.transferTo(tempZipFile);
-            final Stream<Path> files = ZipFileExtractor.extract(tempZipFile, unzipPassword);
-            final RawDataReport report = RawDataParser.parse(files.collect(Collectors.toList()));
+            final List<Path> files = ZipFileExtractor.extract(tempZipFile, unzipPassword).collect(Collectors.toList());
+            summarizer.saveRawDataReport(RawDataParser.parse(files));
+            if (!tempZipFile.delete()) {
+                LOGGER.warn("Unable to clean up temp zip file: {}", tempZipFile);
+            }
+            files.stream().map(Path::toFile).forEach(file -> {
+                if (!file.delete()) {
+                    LOGGER.warn("Unable to clean up temp data file: {}", file);
+                }
+            });
             redirectAttributes.addFlashAttribute("message", "You successfully uploaded " + uploaded.getOriginalFilename() + "!");
             return "redirect:/";
         };

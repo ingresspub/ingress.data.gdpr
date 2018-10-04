@@ -17,15 +17,15 @@
 
 package ingress.data.gdpr.parsers;
 
+import static ingress.data.gdpr.parsers.utils.ErrorConstants.NOT_REGULAR_FILE;
+import static ingress.data.gdpr.parsers.utils.ErrorConstants.NO_DATA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import ingress.data.gdpr.models.records.TimestampedRecord;
 import ingress.data.gdpr.models.reports.ReportDetails;
-import ingress.data.gdpr.parsers.utils.ErrorConstants;
 import ingress.data.gdpr.parsers.utils.IntegerValueParser;
 import org.junit.Test;
 
@@ -49,7 +49,7 @@ public class TimestampedDataFileParserTest {
         final Path temp = Paths.get(TimestampedDataFileParserTest.class.getResource("test_count_based_wrong_time_format.tsv").toURI());
         ReportDetails<List<TimestampedRecord<Integer>>> result = DATA_FILE_PARSER.parse(temp);
         assertNotNull(result);
-        assertFalse(result.isOk());
+        assertFalse(result.getError(), result.isOk());
         assertNull(result.getData());
     }
 
@@ -58,7 +58,7 @@ public class TimestampedDataFileParserTest {
         final Path temp = Paths.get(TimestampedDataFileParserTest.class.getResource("test_count_based_wrong_columns.tsv").toURI());
         ReportDetails<List<TimestampedRecord<Integer>>> result = DATA_FILE_PARSER.parse(temp);
         assertNotNull(result);
-        assertFalse(result.isOk());
+        assertFalse(result.getError(), result.isOk());
         assertNull(result.getData());
     }
 
@@ -67,10 +67,9 @@ public class TimestampedDataFileParserTest {
         final Path temp = Files.createTempFile("test-file-", null);
         ReportDetails<List<TimestampedRecord<Integer>>> result = DATA_FILE_PARSER.parse(temp);
         assertNotNull(result);
-        assertTrue(result.isOk());
-        final List<TimestampedRecord<Integer>> data = result.getData();
-        assertNotNull(data);
-        assertEquals(0, data.size());
+        assertFalse(result.getError(), result.isOk());
+        assertNull(result.getData());
+        assertEquals(NO_DATA, result.getError());
         Files.delete(temp);
     }
 
@@ -79,8 +78,8 @@ public class TimestampedDataFileParserTest {
         final Path temp = Files.createTempDirectory("test-dir-");
         ReportDetails<List<TimestampedRecord<Integer>>> result = DATA_FILE_PARSER.parse(temp);
         assertNotNull(result);
-        assertFalse(result.isOk());
-        assertEquals(ErrorConstants.NOT_REGULAR_FILE, result.getError());
+        assertFalse(result.getError(), result.isOk());
+        assertEquals(NOT_REGULAR_FILE, result.getError());
         Files.delete(temp);
     }
 

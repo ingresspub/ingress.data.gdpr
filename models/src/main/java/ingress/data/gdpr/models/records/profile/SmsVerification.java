@@ -15,10 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.models.records;
+package ingress.data.gdpr.models.records.profile;
+
+import java.time.ZonedDateTime;
 
 /**
  * @author SgrAlpha
  */
-public class ZendeskRecord {
+public class SmsVerification {
+
+    private final boolean verified;
+    private final ZonedDateTime verificationTime;
+
+    public SmsVerification(final boolean verified, final ZonedDateTime verificationTime) {
+        this.verified = verified;
+        this.verificationTime = verificationTime;
+    }
+
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public ZonedDateTime getVerificationTime() {
+        return verificationTime;
+    }
+
 }

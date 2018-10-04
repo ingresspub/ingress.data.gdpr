@@ -18,11 +18,16 @@
 package ingress.data.gdpr.models.reports;
 
 import ingress.data.gdpr.models.records.CommMention;
-import ingress.data.gdpr.models.records.UsedDevice;
 import ingress.data.gdpr.models.records.GameLog;
-import ingress.data.gdpr.models.records.MissionDefinition;
+import ingress.data.gdpr.models.records.StorePurchase;
 import ingress.data.gdpr.models.records.TimestampedRecord;
-import ingress.data.gdpr.models.records.OprProfile;
+import ingress.data.gdpr.models.records.UsedDevice;
+import ingress.data.gdpr.models.records.ZendeskTicket;
+import ingress.data.gdpr.models.records.mission.Mission;
+import ingress.data.gdpr.models.records.opr.OprAssignmentLogItem;
+import ingress.data.gdpr.models.records.opr.OprProfile;
+import ingress.data.gdpr.models.records.opr.OprSubmissionLogItem;
+import ingress.data.gdpr.models.records.profile.AgentProfile;
 import ingress.data.gdpr.models.utils.JsonUtil;
 
 import java.time.Clock;
@@ -35,6 +40,8 @@ public class RawDataReport {
 
     private final long generatedTimeInMs;
 
+    private ReportDetails<AgentProfile> agentProfile;
+
     private ReportDetails<List<GameLog>> gameLogs;
     private ReportDetails<List<CommMention>> commMentions;
 
@@ -42,6 +49,8 @@ public class RawDataReport {
 
     private ReportDetails<OprProfile> oprProfile;
     private ReportDetails<List<TimestampedRecord<Integer>>> oprAgreements;
+    private ReportDetails<List<OprAssignmentLogItem>> oprAssignmentLogs;
+    private ReportDetails<List<OprSubmissionLogItem>> oprSubmissionLogs;
     private ReportDetails<List<TimestampedRecord<Integer>>> allPortalsApproved;
     private ReportDetails<List<TimestampedRecord<Integer>>> seerPortals;
     private ReportDetails<List<TimestampedRecord<Integer>>> portalsVisited;
@@ -87,7 +96,10 @@ public class RawDataReport {
     private ReportDetails<List<TimestampedRecord<Integer>>> missionDayPoints;
 
     private ReportDetails<List<TimestampedRecord<Integer>>> missionsCompleted;
-    private ReportDetails<List<MissionDefinition>> missionsCreated;
+    private ReportDetails<List<Mission>> missionsCreated;
+
+    private ReportDetails<List<ZendeskTicket>> zendeskTickets;
+    private ReportDetails<List<StorePurchase>> storePurchases;
 
     public RawDataReport() {
         generatedTimeInMs = Clock.systemUTC().millis();
@@ -95,6 +107,15 @@ public class RawDataReport {
 
     public long getGeneratedTimeInMs() {
         return generatedTimeInMs;
+    }
+
+    public ReportDetails<AgentProfile> getAgentProfile() {
+        return agentProfile;
+    }
+
+    public RawDataReport setAgentProfile(final ReportDetails<AgentProfile> agentProfile) {
+        this.agentProfile = agentProfile;
+        return this;
     }
 
     public ReportDetails<List<GameLog>> getGameLogs() {
@@ -139,6 +160,24 @@ public class RawDataReport {
 
     public RawDataReport setOprAgreements(final ReportDetails<List<TimestampedRecord<Integer>>> oprAgreements) {
         this.oprAgreements = oprAgreements;
+        return this;
+    }
+
+    public ReportDetails<List<OprAssignmentLogItem>> getOprAssignmentLogs() {
+        return oprAssignmentLogs;
+    }
+
+    public RawDataReport setOprAssignmentLogs(final ReportDetails<List<OprAssignmentLogItem>> oprAssignmentLogs) {
+        this.oprAssignmentLogs = oprAssignmentLogs;
+        return this;
+    }
+
+    public ReportDetails<List<OprSubmissionLogItem>> getOprSubmissionLogs() {
+        return oprSubmissionLogs;
+    }
+
+    public RawDataReport setOprSubmissionLogs(final ReportDetails<List<OprSubmissionLogItem>> oprSubmissionLogs) {
+        this.oprSubmissionLogs = oprSubmissionLogs;
         return this;
     }
 
@@ -484,12 +523,30 @@ public class RawDataReport {
         return this;
     }
 
-    public ReportDetails<List<MissionDefinition>> getMissionsCreated() {
+    public ReportDetails<List<Mission>> getMissionsCreated() {
         return missionsCreated;
     }
 
-    public RawDataReport setMissionsCreated(final ReportDetails<List<MissionDefinition>> missionsCreated) {
+    public RawDataReport setMissionsCreated(final ReportDetails<List<Mission>> missionsCreated) {
         this.missionsCreated = missionsCreated;
+        return this;
+    }
+
+    public ReportDetails<List<ZendeskTicket>> getZendeskTickets() {
+        return zendeskTickets;
+    }
+
+    public RawDataReport setZendeskTickets(final ReportDetails<List<ZendeskTicket>> zendeskTickets) {
+        this.zendeskTickets = zendeskTickets;
+        return this;
+    }
+
+    public ReportDetails<List<StorePurchase>> getStorePurchases() {
+        return storePurchases;
+    }
+
+    public RawDataReport setStorePurchases(final ReportDetails<List<StorePurchase>> storePurchases) {
+        this.storePurchases = storePurchases;
         return this;
     }
 

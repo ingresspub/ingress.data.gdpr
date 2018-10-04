@@ -15,21 +15,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.web.utils;
+package ingress.data.gdpr.models.records.profile;
+
+import java.time.ZonedDateTime;
 
 /**
  * @author SgrAlpha
  */
-public class ExceptionUtil {
+public class Badge {
 
-    public static Throwable findRootCause(final Throwable throwable) {
-        if (throwable == null) {
-            return null;
-        }
-        if (throwable.getCause() != null) {
-            return findRootCause(throwable.getCause());
-        }
-        return throwable;
+    private final String name;
+    private final BadgeLevel level;
+    private final ZonedDateTime time;
+
+    public Badge(final String name, final BadgeLevel level, final ZonedDateTime time) {
+        this.name = name;
+        this.level = level;
+        this.time = time;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BadgeLevel getLevel() {
+        return level;
+    }
+
+    public ZonedDateTime getTime() {
+        return time;
     }
 
 }

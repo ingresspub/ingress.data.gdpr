@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.models.records;
+package ingress.data.gdpr.models.records.opr;
 
 /**
  * @author SgrAlpha
  */
-public class Profile {
+public class OprSkippedLogItem {
 }

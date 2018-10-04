@@ -51,13 +51,12 @@ public class DeviceRecordsParser implements DataFileParser<List<UsedDevice>> {
 
     @Override public ReportDetails<List<UsedDevice>> parse(final Path dataFile) {
         notNull(dataFile, "Data file needs to be specified");
-        final String dataFileName = dataFile.getFileName().toString();
         if (!Files.isRegularFile(dataFile)) {
-            LOGGER.warn("{} is not a regular file", dataFileName);
+            LOGGER.warn("{} is not a regular file", dataFile.getFileName());
             return ReportDetails.error(NOT_REGULAR_FILE);
         }
         if (!Files.isReadable(dataFile)) {
-            LOGGER.warn("{} is not a readable file", dataFileName);
+            LOGGER.warn("{} is not a readable file", dataFile.getFileName());
             return ReportDetails.error(UNREADABLE_FILE);
         }
         try {
@@ -66,7 +65,7 @@ public class DeviceRecordsParser implements DataFileParser<List<UsedDevice>> {
                     .filter(line -> !isEmptyString(line))
                     .map(UsedDevice::new)
                     .collect(Collectors.toList());
-            LOGGER.info("Parsed {} used devices in {}", records.size(), dataFileName);
+            LOGGER.info("Parsed {} used devices in {}", records.size(), dataFile.getFileName());
             return ReportDetails.ok(records);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);

@@ -17,8 +17,34 @@
 
 package ingress.data.gdpr.models.records;
 
+import java.time.ZonedDateTime;
+
 /**
  * @author SgrAlpha
  */
-public class OprSkippedLogItem {
+public class ZendeskTicket {
+
+    public static final String TIME_PATTERN = "MMM d, yyyy h:mm:ss a";
+
+    private final ZonedDateTime time;
+    private final String subject;
+    private final String comment;
+
+    public ZendeskTicket(final ZonedDateTime time, final String subject, final String comment) {
+        this.time = time;
+        this.subject = subject;
+        this.comment = comment;
+    }
+
+    public ZonedDateTime getTime() {
+        return time;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public String getComment() {
+        return comment;
+    }
 }

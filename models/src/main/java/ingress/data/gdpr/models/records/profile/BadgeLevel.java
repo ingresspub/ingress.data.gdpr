@@ -15,10 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.models.records;
+package ingress.data.gdpr.models.records.profile;
 
 /**
  * @author SgrAlpha
  */
-public class MissionDefinition {
+public enum BadgeLevel {
+
+    BRONZE,
+    SILVER,
+    GOLD,
+    PLATINUM,
+    BLACK,
+    ;
 }

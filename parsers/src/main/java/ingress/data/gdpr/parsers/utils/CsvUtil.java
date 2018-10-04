@@ -15,21 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.web.utils;
+package ingress.data.gdpr.parsers.utils;
+
+import static ingress.data.gdpr.models.utils.Preconditions.notEmptyString;
 
 /**
  * @author SgrAlpha
  */
-public class ExceptionUtil {
+public class CsvUtil {
 
-    public static Throwable findRootCause(final Throwable throwable) {
-        if (throwable == null) {
-            return null;
-        }
-        if (throwable.getCause() != null) {
-            return findRootCause(throwable.getCause());
-        }
-        return throwable;
+    public static String[] split(final String line) {
+        notEmptyString(line, "Source line needs to be specified");
+        return line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+    }
+
+    public static String escapeQuote(final String original) {
+        notEmptyString(original, "Original string needs to be specified");
+        return original.substring(1, original.length() - 1);
     }
 
 }

@@ -17,8 +17,47 @@
 
 package ingress.data.gdpr.models.records;
 
+import java.time.ZonedDateTime;
+import java.util.Optional;
+
 /**
  * @author SgrAlpha
  */
 public class StorePurchase {
+
+    public static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+
+    private final ZonedDateTime time;
+    private final String transactionType;
+    private final String item;
+    private final Integer cmuBalance;
+    private final String transactionDescription;
+
+    public StorePurchase(final ZonedDateTime time, final String transactionType, final String item, final Integer cmuBalance, final String transactionDescription) {
+        this.time = time;
+        this.transactionType = transactionType;
+        this.item = item;
+        this.cmuBalance = cmuBalance;
+        this.transactionDescription = transactionDescription;
+    }
+
+    public ZonedDateTime getTime() {
+        return time;
+    }
+
+    public String getTransactionType() {
+        return transactionType;
+    }
+
+    public String getItem() {
+        return item;
+    }
+
+    public Optional<Integer> getCmuBalance() {
+        return Optional.ofNullable(cmuBalance);
+    }
+
+    public String getTransactionDescription() {
+        return transactionDescription;
+    }
 }

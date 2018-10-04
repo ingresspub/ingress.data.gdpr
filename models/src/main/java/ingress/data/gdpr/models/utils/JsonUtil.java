@@ -56,4 +56,17 @@ public class JsonUtil {
         return "{}"; //$NON-NLS-1$
     }
 
+    /**
+     * @param object The object to generate json from
+     * @return the json string
+     */
+    public static <T> String toPrettyJson(final T object) {
+        try {
+            return OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "{}"; //$NON-NLS-1$
+    }
+
 }
