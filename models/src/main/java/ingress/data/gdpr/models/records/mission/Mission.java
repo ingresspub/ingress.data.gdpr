@@ -17,8 +17,11 @@
 
 package ingress.data.gdpr.models.records.mission;
 
+import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -33,12 +36,12 @@ public class Mission {
     private final ZonedDateTime creationTime;
     private final ZonedDateTime publishedTime;
     private final ZonedDateTime lastModifiedTime;
-    private final List<MissionDetail> versions;
+
+    private final List<MissionDetail> versions = new LinkedList<>();
 
     public Mission(
             final String title, final String logoUrl, final String badgeUrl, final boolean enabled,
-            final ZonedDateTime creationTime, final ZonedDateTime publishedTime, final ZonedDateTime lastModifiedTime,
-            final List<MissionDetail> versions) {
+            final ZonedDateTime creationTime, final ZonedDateTime publishedTime, final ZonedDateTime lastModifiedTime) {
         this.title = title;
         this.logoUrl = logoUrl;
         this.badgeUrl = badgeUrl;
@@ -46,7 +49,6 @@ public class Mission {
         this.creationTime = creationTime;
         this.publishedTime = publishedTime;
         this.lastModifiedTime = lastModifiedTime;
-        this.versions = versions;
     }
 
     public String getTitle() {
@@ -81,4 +83,8 @@ public class Mission {
         return Collections.unmodifiableList(versions);
     }
 
+    public void addVersions(final MissionDetail version) {
+        notNull(version, "Cannot add NULL version");
+        this.versions.add(version);
+    }
 }

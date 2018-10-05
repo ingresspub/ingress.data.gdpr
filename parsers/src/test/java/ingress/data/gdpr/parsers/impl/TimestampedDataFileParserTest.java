@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.parsers;
+package ingress.data.gdpr.parsers.impl;
 
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.NOT_REGULAR_FILE;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.NO_DATA;
@@ -67,9 +67,9 @@ public class TimestampedDataFileParserTest {
         final Path temp = Files.createTempFile("test-file-", null);
         ReportDetails<List<TimestampedRecord<Integer>>> result = DATA_FILE_PARSER.parse(temp);
         assertNotNull(result);
-        assertFalse(result.getError(), result.isOk());
-        assertNull(result.getData());
+        assertFalse(result.isOk());
         assertEquals(NO_DATA, result.getError());
+        assertNull(result.getData());
         Files.delete(temp);
     }
 
@@ -78,8 +78,9 @@ public class TimestampedDataFileParserTest {
         final Path temp = Files.createTempDirectory("test-dir-");
         ReportDetails<List<TimestampedRecord<Integer>>> result = DATA_FILE_PARSER.parse(temp);
         assertNotNull(result);
-        assertFalse(result.getError(), result.isOk());
+        assertFalse(result.isOk());
         assertEquals(NOT_REGULAR_FILE, result.getError());
+        assertNull(result.getData());
         Files.delete(temp);
     }
 

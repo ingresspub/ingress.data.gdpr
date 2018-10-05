@@ -16,16 +16,9 @@
 #
 
 spring:
-  profiles:
-    active: dev
-  servlet:
-    multipart:
-      max-file-size: "20MB"
-      max-request-size: "20MB"
-  datasource:
-    primary:
-      jdbc-url: jdbc:h2:mem:ingress_gdpr
-      driver-class-name: "org.h2.Driver"
-      username: sa
-      password:
-    schema: classpath:db/schema.sql
+  profiles: prod
+
+server:
+  tomcat:
+    customized:
+      apr-enabled: true

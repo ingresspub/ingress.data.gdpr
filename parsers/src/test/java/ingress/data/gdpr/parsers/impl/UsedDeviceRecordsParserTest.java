@@ -15,16 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.parsers;
+package ingress.data.gdpr.parsers.impl;
 
+import static ingress.data.gdpr.parsers.utils.ErrorConstants.NOT_REGULAR_FILE;
+import static ingress.data.gdpr.parsers.utils.ErrorConstants.NO_DATA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import ingress.data.gdpr.models.records.UsedDevice;
 import ingress.data.gdpr.models.reports.ReportDetails;
-import ingress.data.gdpr.parsers.utils.ErrorConstants;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -61,10 +63,9 @@ public class UsedDeviceRecordsParserTest {
         final Path temp = Files.createTempFile("test-file-", null);
         ReportDetails<List<UsedDevice>> result = PARSER.parse(temp);
         assertNotNull(result);
-        assertTrue(result.isOk());
-        final List<UsedDevice> data = result.getData();
-        assertNotNull(data);
-        assertEquals(0, data.size());
+        assertFalse(result.isOk());
+        assertEquals(NO_DATA, result.getError());
+        assertNull(result.getData());
         Files.delete(temp);
     }
 
@@ -74,7 +75,8 @@ public class UsedDeviceRecordsParserTest {
         ReportDetails<List<UsedDevice>> result = PARSER.parse(temp);
         assertNotNull(result);
         assertFalse(result.isOk());
-        assertEquals(ErrorConstants.NOT_REGULAR_FILE, result.getError());
+        assertEquals(NOT_REGULAR_FILE, result.getError());
+        assertNull(result.getData());
         Files.delete(temp);
     }
 

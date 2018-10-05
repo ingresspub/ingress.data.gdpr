@@ -15,11 +15,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-CREATE TABLE IF NOT EXISTS `gdpr_raw_game_logs` (
-  `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `time` BIGINT NOT NULL,
-  `loc_latE6` INT,
-  `loc_lngE6` INT,
-  `tracker_trigger` VARCHAR(64),
-  `comment` TEXT
-);
+package ingress.data.gdpr.models.analyzed;
+
+import io.sgr.geometry.Coordinate;
+
+/**
+ * @author SgrAlpha
+ */
+public class Marker {
+
+    private final String type;
+    private final Coordinate latLng;
+    private final String color;
+
+    public Marker(final String type, final Coordinate latLng, final String color) {
+        this.type = type;
+        this.latLng = latLng;
+        this.color = color;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public Coordinate getLatLng() {
+        return latLng;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+}

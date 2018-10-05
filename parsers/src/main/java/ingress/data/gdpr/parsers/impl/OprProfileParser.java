@@ -15,26 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.parsers;
+package ingress.data.gdpr.parsers.impl;
 
 import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 import static ingress.data.gdpr.parsers.utils.CsvUtil.escapeQuote;
 import static ingress.data.gdpr.parsers.utils.CsvUtil.split;
-import static ingress.data.gdpr.parsers.utils.ErrorConstants.NOT_REGULAR_FILE;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.NO_DATA;
-import static ingress.data.gdpr.parsers.utils.ErrorConstants.UNREADABLE_FILE;
 
 import ingress.data.gdpr.models.records.opr.OprProfile;
 import ingress.data.gdpr.models.reports.ReportDetails;
+import ingress.data.gdpr.parsers.PlainTextDataFileParser;
 import ingress.data.gdpr.parsers.exceptions.MalformattedRecordException;
 import ingress.data.gdpr.parsers.utils.ZonedDateTimeParser;
 import io.sgr.geometry.Coordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -42,7 +39,7 @@ import java.util.List;
 /**
  * @author SgrAlpha
  */
-public class OprProfileParser implements DataFileParser<OprProfile> {
+public class OprProfileParser extends PlainTextDataFileParser<OprProfile> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OprProfileParser.class);
 
@@ -56,27 +53,12 @@ public class OprProfileParser implements DataFileParser<OprProfile> {
         return INSTANCE;
     }
 
-    @Override public ReportDetails<OprProfile> parse(final Path dataFile) {
-        notNull(dataFile, "Data file needs to be specified");
-        if (!Files.isRegularFile(dataFile)) {
-            LOGGER.warn("{} is not a regular file", dataFile.getFileName());
-            return ReportDetails.error(NOT_REGULAR_FILE);
-        }
-        if (!Files.isReadable(dataFile)) {
-            LOGGER.warn("{} is not a readable file", dataFile.getFileName());
-            return ReportDetails.error(UNREADABLE_FILE);
-        }
-
-        final List<String> lines;
-        try {
-            lines = Files.readAllLines(dataFile);
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
-            return ReportDetails.error(e.getMessage());
-        }
+    @Override protected ReportDetails<OprProfile> readLines(final List<String> lines, final Path dataFile) {
+        notNull(lines, "No line to read from");
         if (lines.size() < 2) {
             return ReportDetails.error(NO_DATA);
         }
+        notNull(dataFile, "Data file needs to be specified");
 
         ReportDetails<OprProfile> details;
         try {
@@ -87,10 +69,15 @@ public class OprProfileParser implements DataFileParser<OprProfile> {
             details = ReportDetails.ok(parse(columns));
             LOGGER.info("Parsed OPR profile in {}", dataFile.getFileName());
         } catch (MalformattedRecordException e) {
+            LOGGER.error(e.getMessage(), e);
             details = ReportDetails.error(e.getMessage());
         }
 
         return details;
+    }
+
+    @Override protected Logger getLogger() {
+        return LOGGER;
     }
 
     private OprProfile parse(final String... columns) throws MalformattedRecordException {
@@ -116,7 +103,6 @@ public class OprProfileParser implements DataFileParser<OprProfile> {
                     TIME_PARSER.parse(escapeQuote(columns[16]))
             );
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
             throw new MalformattedRecordException(String.format("Unable to parse OPR profile from %s", Arrays.asList(columns)), e);
         }
     }

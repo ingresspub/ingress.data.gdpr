@@ -17,59 +17,46 @@
 
 package ingress.data.gdpr.parsers;
 
-import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.NOT_REGULAR_FILE;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.UNREADABLE_FILE;
 
-import ingress.data.gdpr.models.records.UsedDevice;
 import ingress.data.gdpr.models.reports.ReportDetails;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author SgrAlpha
  */
-public class DeviceRecordsParser implements DataFileParser<List<UsedDevice>> {
+public abstract class PlainTextDataFileParser<T> implements DataFileParser<T> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DeviceRecordsParser.class);
-
-    private static final DeviceRecordsParser INSTANCE = new DeviceRecordsParser();
-
-    private DeviceRecordsParser() {
-    }
-
-    public static DeviceRecordsParser getDefault() {
-        return INSTANCE;
-    }
-
-    @Override public ReportDetails<List<UsedDevice>> parse(final Path dataFile) {
+    @Override public ReportDetails<T> parse(final Path dataFile) {
         notNull(dataFile, "Data file needs to be specified");
         if (!Files.isRegularFile(dataFile)) {
-            LOGGER.warn("{} is not a regular file", dataFile.getFileName());
+            getLogger().warn("{} is not a regular file", dataFile.getFileName());
             return ReportDetails.error(NOT_REGULAR_FILE);
         }
         if (!Files.isReadable(dataFile)) {
-            LOGGER.warn("{} is not a readable file", dataFile.getFileName());
+            getLogger().warn("{} is not a readable file", dataFile.getFileName());
             return ReportDetails.error(UNREADABLE_FILE);
         }
+
+        final List<String> lines;
         try {
-            final List<String> lines = Files.readAllLines(dataFile);
-            final List<UsedDevice> records = lines.stream()
-                    .filter(line -> !isEmptyString(line))
-                    .map(UsedDevice::new)
-                    .collect(Collectors.toList());
-            LOGGER.info("Parsed {} used devices in {}", records.size(), dataFile.getFileName());
-            return ReportDetails.ok(records);
+            lines = Files.readAllLines(dataFile);
         } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            getLogger().error(e.getMessage(), e);
             return ReportDetails.error(e.getMessage());
         }
+        return readLines(lines, dataFile);
     }
+
+    protected abstract ReportDetails<T> readLines(final List<String> lines, final Path dataFile);
+
+    protected abstract Logger getLogger();
+
 }

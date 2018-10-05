@@ -17,8 +17,11 @@
 
 package ingress.data.gdpr.models.records.mission;
 
+import static ingress.data.gdpr.models.utils.Preconditions.notEmptyString;
+
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -31,15 +34,16 @@ public class MissionDetail {
     private final int version;
     private final String description;
     private final String type;
-    private final List<String> waypoints;
 
-    public MissionDetail(final ZonedDateTime creationTime, final ZonedDateTime lastModifiedTime, final int version, final String description, final String type, final List<String> waypoints) {
+    private final List<String> wayPoints = new LinkedList<>();
+
+    public MissionDetail(final ZonedDateTime creationTime, final ZonedDateTime lastModifiedTime,
+                         final int version, final String description, final String type) {
         this.creationTime = creationTime;
         this.lastModifiedTime = lastModifiedTime;
         this.version = version;
         this.description = description;
         this.type = type;
-        this.waypoints = waypoints;
     }
 
     public ZonedDateTime getCreationTime() {
@@ -62,8 +66,12 @@ public class MissionDetail {
         return type;
     }
 
-    public List<String> getWaypoints() {
-        return Collections.unmodifiableList(waypoints);
+    public List<String> getWayPoints() {
+        return Collections.unmodifiableList(wayPoints);
     }
 
+    public void addWayPoints(final String wayPoint) {
+        notEmptyString(wayPoint, "");
+        this.wayPoints.add(wayPoint);
+    }
 }

@@ -23,7 +23,19 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import ingress.data.gdpr.models.records.CommMention;
+import ingress.data.gdpr.models.records.GameLog;
+import ingress.data.gdpr.models.records.StorePurchase;
+import ingress.data.gdpr.models.records.TimestampedRecord;
+import ingress.data.gdpr.models.records.UsedDevice;
+import ingress.data.gdpr.models.records.ZendeskTicket;
+import ingress.data.gdpr.models.records.mission.Mission;
+import ingress.data.gdpr.models.records.opr.OprAssignmentLogItem;
+import ingress.data.gdpr.models.records.opr.OprProfile;
+import ingress.data.gdpr.models.records.opr.OprSubmissionLogItem;
+import ingress.data.gdpr.models.records.profile.AgentProfile;
 import ingress.data.gdpr.models.reports.RawDataReport;
+import ingress.data.gdpr.models.reports.ReportDetails;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,239 +65,297 @@ public class RawDataParserTest {
         RawDataReport rpt = RawDataParser.parse(files);
         assertNotNull(rpt);
 
-        assertNotNull(rpt.getAgentProfile());
-        assertTrue(rpt.getAgentProfile().getError(), rpt.getAgentProfile().isOk());
-        assertNotNull(rpt.getAgentProfile().getData());
+        assertTrue(rpt.getAgentProfile().isPresent());
+        final ReportDetails<AgentProfile> agentProfile = rpt.getAgentProfile().get();
+        assertTrue(agentProfile.getError(), agentProfile.isOk());
+        assertNotNull(agentProfile.getData());
 
-        assertNotNull(rpt.getGameLogs());
-        assertTrue(rpt.getGameLogs().getError(), rpt.getGameLogs().isOk());
-        assertNotNull(rpt.getGameLogs().getData());
+        assertTrue(rpt.getGameLogs().isPresent());
+        final ReportDetails<List<GameLog>> gameLogs = rpt.getGameLogs().get();
+        assertTrue(gameLogs.getError(), gameLogs.isOk());
+        assertNotNull(gameLogs.getData());
+        assertFalse(gameLogs.getData().isEmpty());
 
-        assertNotNull(rpt.getCommMentions());
-        assertTrue(rpt.getCommMentions().getError(), rpt.getCommMentions().isOk());
-        assertNotNull(rpt.getCommMentions().getData());
+        assertTrue(rpt.getCommMentions().isPresent());
+        final ReportDetails<List<CommMention>> commMentions = rpt.getCommMentions().get();
+        assertTrue(commMentions.getError(), commMentions.isOk());
+        assertNotNull(commMentions.getData());
+        assertFalse(commMentions.getData().isEmpty());
 
-        assertNotNull(rpt.getUsedDevices());
-        assertTrue(rpt.getUsedDevices().getError(), rpt.getUsedDevices().isOk());
-        assertNotNull(rpt.getUsedDevices().getData());
+        assertTrue(rpt.getUsedDevices().isPresent());
+        final ReportDetails<List<UsedDevice>> usedDevices = rpt.getUsedDevices().get();
+        assertTrue(usedDevices.getError(), usedDevices.isOk());
+        assertNotNull(usedDevices.getData());
+        assertFalse(usedDevices.getData().isEmpty());
 
-        assertNotNull(rpt.getOprProfile());
-        assertTrue(rpt.getOprProfile().getError(), rpt.getOprProfile().isOk());
-        assertNotNull(rpt.getOprProfile().getData());
+        assertTrue(rpt.getOprProfile().isPresent());
+        final ReportDetails<OprProfile> oprProfile = rpt.getOprProfile().get();
+        assertTrue(oprProfile.getError(), oprProfile.isOk());
+        assertNotNull(oprProfile.getData());
 
-        assertNotNull(rpt.getOprAgreements());
-        assertTrue(rpt.getOprAgreements().getError(), rpt.getOprAgreements().isOk());
-        assertNotNull(rpt.getOprAgreements().getData());
-        assertFalse(rpt.getOprAgreements().getData().isEmpty());
+        assertTrue(rpt.getOprAgreements().isPresent());
+        final ReportDetails<List<TimestampedRecord<Integer>>> oprAgreements = rpt.getOprAgreements().get();
+        assertTrue(oprAgreements.getError(), oprAgreements.isOk());
+        assertNotNull(oprAgreements.getData());
+        assertFalse(oprAgreements.getData().isEmpty());
 
-        assertNotNull(rpt.getOprAssignmentLogs());
-        assertTrue(rpt.getOprAssignmentLogs().getError(), rpt.getOprAssignmentLogs().isOk());
-        assertNotNull(rpt.getOprAssignmentLogs().getData());
-        assertFalse(rpt.getOprAssignmentLogs().getData().isEmpty());
+        assertTrue(rpt.getOprAssignmentLogs().isPresent());
+        final ReportDetails<List<OprAssignmentLogItem>> oprAssignmentLogs = rpt.getOprAssignmentLogs().get();
+        assertTrue(oprAssignmentLogs.getError(), oprAssignmentLogs.isOk());
+        assertNotNull(oprAssignmentLogs.getData());
+        assertFalse(oprAssignmentLogs.getData().isEmpty());
 
-        assertNotNull(rpt.getOprSubmissionLogs());
-        assertTrue(rpt.getOprSubmissionLogs().getError(), rpt.getOprSubmissionLogs().isOk());
-        assertNotNull(rpt.getOprSubmissionLogs().getData());
-        assertFalse(rpt.getOprSubmissionLogs().getData().isEmpty());
+        assertTrue(rpt.getOprSubmissionLogs().isPresent());
+        final ReportDetails<List<OprSubmissionLogItem>> oprSubmissionLogs = rpt.getOprSubmissionLogs().get();
+        assertTrue(oprSubmissionLogs.getError(), oprSubmissionLogs.isOk());
+        assertNotNull(oprSubmissionLogs.getData());
+        assertFalse(oprSubmissionLogs.getData().isEmpty());
 
-        assertNotNull(rpt.getAllPortalsApproved());
-        assertTrue(rpt.getAllPortalsApproved().getError(), rpt.getAllPortalsApproved().isOk());
-        assertNotNull(rpt.getAllPortalsApproved().getData());
-        assertFalse(rpt.getAllPortalsApproved().getData().isEmpty());
+        assertTrue(rpt.getAllPortalsApproved().isPresent());
+        final ReportDetails<List<TimestampedRecord<Integer>>> allPortalsApproved = rpt.getAllPortalsApproved().get();
+        assertTrue(allPortalsApproved.getError(), allPortalsApproved.isOk());
+        assertNotNull(allPortalsApproved.getData());
+        assertFalse(allPortalsApproved.getData().isEmpty());
 
-        assertNotNull(rpt.getSeerPortals());
-        assertTrue(rpt.getSeerPortals().getError(), rpt.getSeerPortals().isOk());
-        assertNotNull(rpt.getSeerPortals().getData());
-        assertFalse(rpt.getSeerPortals().getData().isEmpty());
+        assertTrue(rpt.getSeerPortals().isPresent());
+        final ReportDetails<List<TimestampedRecord<Integer>>> seerPortals = rpt.getSeerPortals().get();
+        assertTrue(seerPortals.getError(), seerPortals.isOk());
+        assertNotNull(seerPortals.getData());
+        assertFalse(seerPortals.getData().isEmpty());
 
-        assertNotNull(rpt.getPortalsVisited());
-        assertTrue(rpt.getPortalsVisited().getError(), rpt.getPortalsVisited().isOk());
-        assertNotNull(rpt.getPortalsVisited().getData());
-        assertFalse(rpt.getPortalsVisited().getData().isEmpty());
+        assertTrue(rpt.getPortalsVisited().isPresent());
+        final ReportDetails<List<TimestampedRecord<Integer>>> portalsVisited = rpt.getPortalsVisited().get();
+        assertTrue(portalsVisited.getError(), portalsVisited.isOk());
+        assertNotNull(portalsVisited.getData());
+        assertFalse(portalsVisited.getData().isEmpty());
 
-        assertNotNull(rpt.getXmCollected());
-        assertTrue(rpt.getXmCollected().getError(), rpt.getXmCollected().isOk());
-        assertNotNull(rpt.getXmCollected().getData());
-        assertFalse(rpt.getXmCollected().getData().isEmpty());
+        assertTrue(rpt.getXmCollected().isPresent());
+        final ReportDetails<List<TimestampedRecord<Float>>> xmCollected = rpt.getXmCollected().get();
+        assertTrue(xmCollected.getError(), xmCollected.isOk());
+        assertNotNull(xmCollected.getData());
+        assertFalse(xmCollected.getData().isEmpty());
 
-        assertNotNull(rpt.getKilometersWalked());
-        assertTrue(rpt.getKilometersWalked().getError(), rpt.getKilometersWalked().isOk());
-        assertNotNull(rpt.getKilometersWalked().getData());
-        assertFalse(rpt.getKilometersWalked().getData().isEmpty());
+        assertTrue(rpt.getKilometersWalked().isPresent());
+        final ReportDetails<List<TimestampedRecord<Float>>> kilometersWalked = rpt.getKilometersWalked().get();
+        assertTrue(kilometersWalked.getError(), kilometersWalked.isOk());
+        assertNotNull(kilometersWalked.getData());
+        assertFalse(kilometersWalked.getData().isEmpty());
 
-        assertNotNull(rpt.getMindUnitsControlled());
-        assertTrue(rpt.getMindUnitsControlled().getError(), rpt.getMindUnitsControlled().isOk());
-        assertNotNull(rpt.getMindUnitsControlled().getData());
-        assertFalse(rpt.getMindUnitsControlled().getData().isEmpty());
+        assertTrue(rpt.getMindUnitsControlled().isPresent());
+        final ReportDetails<List<TimestampedRecord<Float>>> mindUnitsControlled = rpt.getMindUnitsControlled().get();
+        assertTrue(mindUnitsControlled.getError(), mindUnitsControlled.isOk());
+        assertNotNull(mindUnitsControlled.getData());
+        assertFalse(mindUnitsControlled.getData().isEmpty());
 
-        assertNotNull(rpt.getMindUnitsControlledActive());
-        assertTrue(rpt.getMindUnitsControlledActive().getError(), rpt.getMindUnitsControlledActive().isOk());
-        assertNotNull(rpt.getMindUnitsControlledActive().getData());
-        assertEquals(1, rpt.getMindUnitsControlledActive().getData().size());
+        assertTrue(rpt.getMindUnitsControlledActive().isPresent());
+        final ReportDetails<List<TimestampedRecord<Integer>>> mindUnitsControlledActive = rpt.getMindUnitsControlledActive().get();
+        assertTrue(mindUnitsControlledActive.getError(), mindUnitsControlledActive.isOk());
+        assertNotNull(mindUnitsControlledActive.getData());
+        assertEquals(1, mindUnitsControlledActive.getData().size());
 
-        assertNotNull(rpt.getFieldsCreated());
-        assertTrue(rpt.getFieldsCreated().getError(), rpt.getFieldsCreated().isOk());
-        assertNotNull(rpt.getFieldsCreated().getData());
-        assertFalse(rpt.getFieldsCreated().getData().isEmpty());
+        assertTrue(rpt.getFieldsCreated().isPresent());
+        final ReportDetails<List<TimestampedRecord<Float>>> fieldsCreated = rpt.getFieldsCreated().get();
+        assertTrue(fieldsCreated.getError(), fieldsCreated.isOk());
+        assertNotNull(fieldsCreated.getData());
+        assertFalse(fieldsCreated.getData().isEmpty());
 
-        assertNotNull(rpt.getFieldsCreatedActive());
-        assertTrue(rpt.getFieldsCreatedActive().getError(), rpt.getFieldsCreatedActive().isOk());
-        assertNotNull(rpt.getFieldsCreatedActive().getData());
-        assertEquals(1, rpt.getFieldsCreatedActive().getData().size());
+        assertTrue(rpt.getFieldsCreatedActive().isPresent());
+        final ReportDetails<List<TimestampedRecord<Integer>>> fieldsCreatedActive = rpt.getFieldsCreatedActive().get();
+        assertTrue(fieldsCreatedActive.getError(), fieldsCreatedActive.isOk());
+        assertNotNull(fieldsCreatedActive.getData());
+        assertEquals(1, fieldsCreatedActive.getData().size());
 
-        assertNotNull(rpt.getLinksCreated());
-        assertTrue(rpt.getLinksCreated().getError(), rpt.getLinksCreated().isOk());
-        assertNotNull(rpt.getLinksCreated().getData());
-        assertFalse(rpt.getLinksCreated().getData().isEmpty());
+        assertTrue(rpt.getLinksCreated().isPresent());
+        final ReportDetails<List<TimestampedRecord<Float>>> linksCreated = rpt.getLinksCreated().get();
+        assertTrue(linksCreated.getError(), linksCreated.isOk());
+        assertNotNull(linksCreated.getData());
+        assertFalse(linksCreated.getData().isEmpty());
 
-        assertNotNull(rpt.getLinkLengthInKm());
-        assertTrue(rpt.getLinkLengthInKm().getError(), rpt.getLinkLengthInKm().isOk());
-        assertNotNull(rpt.getLinkLengthInKm().getData());
-        assertFalse(rpt.getLinkLengthInKm().getData().isEmpty());
+        assertTrue(rpt.getLinkLengthInKm().isPresent());
+        final ReportDetails<List<TimestampedRecord<Double>>> linkLengthInKm = rpt.getLinkLengthInKm().get();
+        assertTrue(linkLengthInKm.getError(), linkLengthInKm.isOk());
+        assertNotNull(linkLengthInKm.getData());
+        assertFalse(linkLengthInKm.getData().isEmpty());
 
-        assertNotNull(rpt.getLinksCreatedActive());
-        assertTrue(rpt.getLinksCreatedActive().getError(), rpt.getLinksCreatedActive().isOk());
-        assertNotNull(rpt.getLinksCreatedActive().getData());
-        assertEquals(1, rpt.getLinksCreatedActive().getData().size());
+        assertTrue(rpt.getLinksCreatedActive().isPresent());
+        final ReportDetails<List<TimestampedRecord<Integer>>> linksCreatedActive = rpt.getLinksCreatedActive().get();
+        assertTrue(linksCreatedActive.getError(), linksCreatedActive.isOk());
+        assertNotNull(linksCreatedActive.getData());
+        assertEquals(1, linksCreatedActive.getData().size());
 
-        assertNotNull(rpt.getPortalsCaptured());
-        assertTrue(rpt.getPortalsCaptured().getError(), rpt.getPortalsCaptured().isOk());
-        assertNotNull(rpt.getPortalsCaptured().getData());
-        assertFalse(rpt.getPortalsCaptured().getData().isEmpty());
+        assertTrue(rpt.getPortalsCaptured().isPresent());
+        final ReportDetails<List<TimestampedRecord<Integer>>> portalsCaptured = rpt.getPortalsCaptured().get();
+        assertTrue(portalsCaptured.getError(), portalsCaptured.isOk());
+        assertNotNull(portalsCaptured.getData());
+        assertFalse(portalsCaptured.getData().isEmpty());
 
-        assertNotNull(rpt.getPortalsOwned());
-        assertTrue(rpt.getPortalsOwned().getError(), rpt.getPortalsOwned().isOk());
-        assertNotNull(rpt.getPortalsOwned().getData());
-        assertEquals(1, rpt.getPortalsOwned().getData().size());
+        assertTrue(rpt.getPortalsOwned().isPresent());
+        final ReportDetails<List<TimestampedRecord<Integer>>> portalsOwned = rpt.getPortalsOwned().get();
+        assertTrue(portalsOwned.getError(), portalsOwned.isOk());
+        assertNotNull(portalsOwned.getData());
+        assertEquals(1, portalsOwned.getData().size());
 
-        assertNotNull(rpt.getResonatorsDeployed());
-        assertTrue(rpt.getResonatorsDeployed().getError(), rpt.getResonatorsDeployed().isOk());
-        assertNotNull(rpt.getResonatorsDeployed().getData());
-        assertFalse(rpt.getResonatorsDeployed().getData().isEmpty());
+        assertTrue(rpt.getResonatorsDeployed().isPresent());
+        final ReportDetails<List<TimestampedRecord<Float>>> resonatorsDeployed = rpt.getResonatorsDeployed().get();
+        assertTrue(resonatorsDeployed.getError(), resonatorsDeployed.isOk());
+        assertNotNull(resonatorsDeployed.getData());
+        assertFalse(resonatorsDeployed.getData().isEmpty());
 
-        assertNotNull(rpt.getModsDeployed());
-        assertTrue(rpt.getModsDeployed().getError(), rpt.getModsDeployed().isOk());
-        assertNotNull(rpt.getModsDeployed().getData());
-        assertFalse(rpt.getModsDeployed().getData().isEmpty());
+        assertTrue(rpt.getModsDeployed().isPresent());
+        final ReportDetails<List<TimestampedRecord<Float>>> modsDeployed = rpt.getModsDeployed().get();
+        assertTrue(modsDeployed.getError(), modsDeployed.isOk());
+        assertNotNull(modsDeployed.getData());
+        assertFalse(modsDeployed.getData().isEmpty());
 
-        assertNotNull(rpt.getXmRecharged());
-        assertTrue(rpt.getXmRecharged().getError(), rpt.getXmRecharged().isOk());
-        assertNotNull(rpt.getXmRecharged().getData());
-        assertFalse(rpt.getXmRecharged().getData().isEmpty());
+        assertTrue(rpt.getXmRecharged().isPresent());
+        final ReportDetails<List<TimestampedRecord<Float>>> xmRecharged = rpt.getXmRecharged().get();
+        assertTrue(xmRecharged.getError(), xmRecharged.isOk());
+        assertNotNull(xmRecharged.getData());
+        assertFalse(xmRecharged.getData().isEmpty());
 
-        assertNotNull(rpt.getResonatorsDestroyed());
-        assertTrue(rpt.getResonatorsDestroyed().getError(), rpt.getResonatorsDestroyed().isOk());
-        assertNotNull(rpt.getResonatorsDestroyed().getData());
-        assertFalse(rpt.getResonatorsDestroyed().getData().isEmpty());
+        assertTrue(rpt.getResonatorsDestroyed().isPresent());
+        final ReportDetails<List<TimestampedRecord<Float>>> resonatorsDestroyed = rpt.getResonatorsDestroyed().get();
+        assertTrue(resonatorsDestroyed.getError(), resonatorsDestroyed.isOk());
+        assertNotNull(resonatorsDestroyed.getData());
+        assertFalse(resonatorsDestroyed.getData().isEmpty());
 
-        assertNotNull(rpt.getPortalsNeutralized());
-        assertTrue(rpt.getPortalsNeutralized().getError(), rpt.getPortalsNeutralized().isOk());
-        assertNotNull(rpt.getPortalsNeutralized().getData());
-        assertFalse(rpt.getPortalsNeutralized().getData().isEmpty());
+        assertTrue(rpt.getPortalsNeutralized().isPresent());
+        final ReportDetails<List<TimestampedRecord<Integer>>> portalsNeutralized = rpt.getPortalsNeutralized().get();
+        assertTrue(portalsNeutralized.getError(), portalsNeutralized.isOk());
+        assertNotNull(portalsNeutralized.getData());
+        assertFalse(portalsNeutralized.getData().isEmpty());
 
-        assertNotNull(rpt.getLinksDestroyed());
-        assertTrue(rpt.getLinksDestroyed().getError(), rpt.getLinksDestroyed().isOk());
-        assertNotNull(rpt.getLinksDestroyed().getData());
-        assertFalse(rpt.getLinksDestroyed().getData().isEmpty());
+        assertTrue(rpt.getLinksDestroyed().isPresent());
+        final ReportDetails<List<TimestampedRecord<Float>>> linksDestroyed = rpt.getLinksDestroyed().get();
+        assertTrue(linksDestroyed.getError(), linksDestroyed.isOk());
+        assertNotNull(linksDestroyed.getData());
+        assertFalse(linksDestroyed.getData().isEmpty());
 
-        assertNotNull(rpt.getFieldsDestroyed());
-        assertTrue(rpt.getFieldsDestroyed().getError(),rpt.getFieldsDestroyed().isOk());
-        assertNotNull(rpt.getFieldsDestroyed().getData());
-        assertFalse(rpt.getFieldsDestroyed().getData().isEmpty());
+        assertTrue(rpt.getFieldsDestroyed().isPresent());
+        final ReportDetails<List<TimestampedRecord<Float>>> fieldsDestroyed = rpt.getFieldsDestroyed().get();
+        assertTrue(fieldsDestroyed.getError(), fieldsDestroyed.isOk());
+        assertNotNull(fieldsDestroyed.getData());
+        assertFalse(fieldsDestroyed.getData().isEmpty());
 
-        assertNotNull(rpt.getPortalHeldDays());
-        assertTrue(rpt.getPortalHeldDays().getError(), rpt.getPortalHeldDays().isOk());
-        assertNotNull(rpt.getPortalHeldDays().getData());
-        assertFalse(rpt.getPortalHeldDays().getData().isEmpty());
+        assertTrue(rpt.getPortalHeldDays().isPresent());
+        final ReportDetails<List<TimestampedRecord<Double>>> portalHeldDays = rpt.getPortalHeldDays().get();
+        assertTrue(portalHeldDays.getError(), portalHeldDays.isOk());
+        assertNotNull(portalHeldDays.getData());
+        assertFalse(portalHeldDays.getData().isEmpty());
 
-        assertNotNull(rpt.getLinkHeldDays());
-        assertTrue(rpt.getLinkHeldDays().getError(), rpt.getLinkHeldDays().isOk());
-        assertNotNull(rpt.getLinkHeldDays().getData());
-        assertFalse(rpt.getLinkHeldDays().getData().isEmpty());
+        assertTrue(rpt.getLinkHeldDays().isPresent());
+        final ReportDetails<List<TimestampedRecord<Double>>> linkHeldDays = rpt.getLinkHeldDays().get();
+        assertTrue(linkHeldDays.getError(), linkHeldDays.isOk());
+        assertNotNull(linkHeldDays.getData());
+        assertFalse(linkHeldDays.getData().isEmpty());
 
-        assertNotNull(rpt.getLinkLengthInKmTimesDaysHeld());
-        assertTrue(rpt.getLinkLengthInKmTimesDaysHeld().getError(), rpt.getLinkLengthInKmTimesDaysHeld().isOk());
-        assertFalse(rpt.getLinkLengthInKmTimesDaysHeld().getData().isEmpty());
+        assertTrue(rpt.getLinkLengthInKmTimesDaysHeld().isPresent());
+        final ReportDetails<List<TimestampedRecord<Double>>> linkLengthInKmTimesDaysHeld = rpt.getLinkLengthInKmTimesDaysHeld().get();
+        assertTrue(linkLengthInKmTimesDaysHeld.getError(), linkLengthInKmTimesDaysHeld.isOk());
+        assertNotNull(linkLengthInKmTimesDaysHeld.getData());
+        assertFalse(linkLengthInKmTimesDaysHeld.getData().isEmpty());
 
-        assertNotNull(rpt.getFieldHeldDays());
-        assertTrue(rpt.getFieldHeldDays().getError(), rpt.getFieldHeldDays().isOk());
-        assertNotNull(rpt.getFieldHeldDays().getData());
-        assertFalse(rpt.getFieldHeldDays().getData().isEmpty());
+        assertTrue(rpt.getFieldHeldDays().isPresent());
+        final ReportDetails<List<TimestampedRecord<Double>>> fieldHeldDays = rpt.getFieldHeldDays().get();
+        assertTrue(fieldHeldDays.getError(), fieldHeldDays.isOk());
+        assertNotNull(fieldHeldDays.getData());
+        assertFalse(fieldHeldDays.getData().isEmpty());
 
-        assertNotNull(rpt.getMindUnitsTimesDaysHeld());
-        assertTrue(rpt.getMindUnitsTimesDaysHeld().getError(), rpt.getMindUnitsTimesDaysHeld().isOk());
-        assertNotNull(rpt.getMindUnitsTimesDaysHeld().getData());
-        assertFalse(rpt.getMindUnitsTimesDaysHeld().getData().isEmpty());
+        assertTrue(rpt.getMindUnitsTimesDaysHeld().isPresent());
+        final ReportDetails<List<TimestampedRecord<Double>>> mindUnitsTimesDaysHeld = rpt.getMindUnitsTimesDaysHeld().get();
+        assertTrue(mindUnitsTimesDaysHeld.getError(), mindUnitsTimesDaysHeld.isOk());
+        assertNotNull(mindUnitsTimesDaysHeld.getData());
+        assertFalse(mindUnitsTimesDaysHeld.getData().isEmpty());
 
-        assertNotNull(rpt.getHacks());
-        assertTrue(rpt.getHacks().getError(), rpt.getHacks().isOk());
-        assertNotNull(rpt.getHacks().getData());
-        assertFalse(rpt.getHacks().getData().isEmpty());
+        assertTrue(rpt.getHacks().isPresent());
+        final ReportDetails<List<TimestampedRecord<Float>>> hacks = rpt.getHacks().get();
+        assertTrue(hacks.getError(), hacks.isOk());
+        assertNotNull(hacks.getData());
+        assertFalse(hacks.getData().isEmpty());
 
-        assertNotNull(rpt.getGlyphHackPoints());
-        assertTrue(rpt.getGlyphHackPoints().getError(), rpt.getGlyphHackPoints().isOk());
-        assertNotNull(rpt.getGlyphHackPoints().getData());
-        assertFalse(rpt.getGlyphHackPoints().getData().isEmpty());
+        assertTrue(rpt.getGlyphHackPoints().isPresent());
+        final ReportDetails<List<TimestampedRecord<Float>>> glyphHackPoints = rpt.getGlyphHackPoints().get();
+        assertTrue(glyphHackPoints.getError(), glyphHackPoints.isOk());
+        assertNotNull(glyphHackPoints.getData());
+        assertFalse(glyphHackPoints.getData().isEmpty());
 
-        assertNotNull(rpt.getGlyphHackOnePerfect());
-        assertTrue(rpt.getGlyphHackOnePerfect().getError(), rpt.getGlyphHackOnePerfect().isOk());
-        assertNotNull(rpt.getGlyphHackOnePerfect().getData());
-        assertFalse(rpt.getGlyphHackOnePerfect().getData().isEmpty());
+        assertTrue(rpt.getGlyphHackOnePerfect().isPresent());
+        final ReportDetails<List<TimestampedRecord<Float>>> glyphHackOnePerfect = rpt.getGlyphHackOnePerfect().get();
+        assertTrue(glyphHackOnePerfect.getError(), glyphHackOnePerfect.isOk());
+        assertNotNull(glyphHackOnePerfect.getData());
+        assertFalse(glyphHackOnePerfect.getData().isEmpty());
 
-        assertNotNull(rpt.getGlyphHackThreePerfect());
-        assertTrue(rpt.getGlyphHackThreePerfect().getError(), rpt.getGlyphHackThreePerfect().isOk());
-        assertNotNull(rpt.getGlyphHackThreePerfect().getData());
-        assertFalse(rpt.getGlyphHackThreePerfect().getData().isEmpty());
+        assertTrue(rpt.getGlyphHackThreePerfect().isPresent());
+        final ReportDetails<List<TimestampedRecord<Float>>> glyphHackThreePerfect = rpt.getGlyphHackThreePerfect().get();
+        assertTrue(glyphHackThreePerfect.getError(), glyphHackThreePerfect.isOk());
+        assertNotNull(glyphHackThreePerfect.getData());
+        assertFalse(glyphHackThreePerfect.getData().isEmpty());
 
-        assertNotNull(rpt.getGlyphHackFourPerfect());
-        assertTrue(rpt.getGlyphHackFourPerfect().getError(), rpt.getGlyphHackFourPerfect().isOk());
-        assertNotNull(rpt.getGlyphHackFourPerfect().getData());
-        assertFalse(rpt.getGlyphHackFourPerfect().getData().isEmpty());
+        assertTrue(rpt.getGlyphHackFourPerfect().isPresent());
+        final ReportDetails<List<TimestampedRecord<Float>>> glyphHackFourPerfect = rpt.getGlyphHackFourPerfect().get();
+        assertTrue(glyphHackFourPerfect.getError(), glyphHackFourPerfect.isOk());
+        assertNotNull(glyphHackFourPerfect.getData());
+        assertFalse(glyphHackFourPerfect.getData().isEmpty());
 
-        assertNotNull(rpt.getGlyphHackFivePerfect());
-        assertTrue(rpt.getGlyphHackFivePerfect().getError(), rpt.getGlyphHackFivePerfect().isOk());
-        assertNotNull(rpt.getGlyphHackFivePerfect().getData());
-        assertFalse(rpt.getGlyphHackFivePerfect().getData().isEmpty());
+        assertTrue(rpt.getGlyphHackFivePerfect().isPresent());
+        final ReportDetails<List<TimestampedRecord<Float>>> glyphHackFivePerfect = rpt.getGlyphHackFivePerfect().get();
+        assertTrue(glyphHackFivePerfect.getError(), glyphHackFivePerfect.isOk());
+        assertNotNull(glyphHackFivePerfect.getData());
+        assertFalse(glyphHackFivePerfect.getData().isEmpty());
 
-        assertNotNull(rpt.getAgentsRecruited());
-        assertTrue(rpt.getAgentsRecruited().getError(), rpt.getAgentsRecruited().isOk());
-        assertNotNull(rpt.getAgentsRecruited().getData());
-        assertFalse(rpt.getAgentsRecruited().getData().isEmpty());
+        assertTrue(rpt.getAgentsRecruited().isPresent());
+        final ReportDetails<List<TimestampedRecord<Integer>>> agentsRecruited = rpt.getAgentsRecruited().get();
+        assertTrue(agentsRecruited.getError(), agentsRecruited.isOk());
+        assertNotNull(agentsRecruited.getData());
+        assertFalse(agentsRecruited.getData().isEmpty());
 
-        assertNotNull(rpt.getExo5ControlFieldsCreated());
-        assertTrue(rpt.getExo5ControlFieldsCreated().getError(), rpt.getExo5ControlFieldsCreated().isOk());
-        assertNotNull(rpt.getExo5ControlFieldsCreated().getData());
-        assertFalse(rpt.getExo5ControlFieldsCreated().getData().isEmpty());
+        assertTrue(rpt.getExo5ControlFieldsCreated().isPresent());
+        final ReportDetails<List<TimestampedRecord<Float>>> exo5ControlFieldsCreated = rpt.getExo5ControlFieldsCreated().get();
+        assertTrue(exo5ControlFieldsCreated.getError(), exo5ControlFieldsCreated.isOk());
+        assertNotNull(exo5ControlFieldsCreated.getData());
+        assertFalse(exo5ControlFieldsCreated.getData().isEmpty());
 
-        assertNotNull(rpt.getMagusBuilderSlotsDeployed());
-        assertTrue(rpt.getMagusBuilderSlotsDeployed().getError(), rpt.getMagusBuilderSlotsDeployed().isOk());
-        assertNotNull(rpt.getMagusBuilderSlotsDeployed().getData());
-        assertFalse(rpt.getMagusBuilderSlotsDeployed().getData().isEmpty());
+        assertTrue(rpt.getMagusBuilderSlotsDeployed().isPresent());
+        final ReportDetails<List<TimestampedRecord<Integer>>> magusBuilderSlotsDeployed = rpt.getMagusBuilderSlotsDeployed().get();
+        assertTrue(magusBuilderSlotsDeployed.getError(), magusBuilderSlotsDeployed.isOk());
+        assertNotNull(magusBuilderSlotsDeployed.getData());
+        assertFalse(magusBuilderSlotsDeployed.getData().isEmpty());
 
-        assertNotNull(rpt.getNeutralizerUniquePortalsDestroyed());
-        assertTrue(rpt.getNeutralizerUniquePortalsDestroyed().getError(), rpt.getNeutralizerUniquePortalsDestroyed().isOk());
-        assertNotNull(rpt.getNeutralizerUniquePortalsDestroyed().getData());
-        assertFalse(rpt.getNeutralizerUniquePortalsDestroyed().getData().isEmpty());
+        assertTrue(rpt.getNeutralizerUniquePortalsDestroyed().isPresent());
+        final ReportDetails<List<TimestampedRecord<Integer>>> neutralizerUniquePortalsDestroyed = rpt.getNeutralizerUniquePortalsDestroyed().get();
+        assertTrue(neutralizerUniquePortalsDestroyed.getError(), neutralizerUniquePortalsDestroyed.isOk());
+        assertNotNull(neutralizerUniquePortalsDestroyed.getData());
+        assertFalse(neutralizerUniquePortalsDestroyed.getData().isEmpty());
 
-        assertNotNull(rpt.getMissionDayPoints());
-        assertTrue(rpt.getMissionDayPoints().getError(), rpt.getMissionDayPoints().isOk());
-        assertNotNull(rpt.getMissionDayPoints().getData());
-        assertFalse(rpt.getMissionDayPoints().getData().isEmpty());
+        assertTrue(rpt.getMissionDayPoints().isPresent());
+        final ReportDetails<List<TimestampedRecord<Integer>>> missionDayPoints = rpt.getMissionDayPoints().get();
+        assertTrue(missionDayPoints.getError(), missionDayPoints.isOk());
+        assertNotNull(missionDayPoints.getData());
+        assertFalse(missionDayPoints.getData().isEmpty());
 
-        assertNotNull(rpt.getMissionsCompleted());
-        assertTrue(rpt.getMissionsCompleted().getError(), rpt.getMissionsCompleted().isOk());
-        assertNotNull(rpt.getMissionsCompleted().getData());
-        assertFalse(rpt.getMissionsCompleted().getData().isEmpty());
+        assertTrue(rpt.getMissionsCompleted().isPresent());
+        final ReportDetails<List<TimestampedRecord<Integer>>> missionsCompleted = rpt.getMissionsCompleted().get();
+        assertTrue(missionsCompleted.getError(), missionsCompleted.isOk());
+        assertNotNull(missionsCompleted.getData());
+        assertFalse(missionsCompleted.getData().isEmpty());
 
-        assertNotNull(rpt.getZendeskTickets());
-        assertTrue(rpt.getZendeskTickets().getError(), rpt.getZendeskTickets().isOk());
-        assertNotNull(rpt.getZendeskTickets().getData());
-        assertFalse(rpt.getZendeskTickets().getData().isEmpty());
+        assertTrue(rpt.getMissionsCreated().isPresent());
+        final ReportDetails<List<Mission>> missionsCreated = rpt.getMissionsCreated().get();
+        assertTrue(missionsCreated.getError(), missionsCreated.isOk());
+        assertNotNull(missionsCreated.getData());
+        assertFalse(missionsCreated.getData().isEmpty());
 
-        assertNotNull(rpt.getStorePurchases());
-        assertTrue(rpt.getStorePurchases().getError(), rpt.getStorePurchases().isOk());
-        assertNotNull(rpt.getStorePurchases().getData());
-        assertFalse(rpt.getStorePurchases().getData().isEmpty());
+        assertTrue(rpt.getZendeskTickets().isPresent());
+        final ReportDetails<List<ZendeskTicket>> zendeskTickets = rpt.getZendeskTickets().get();
+        assertTrue(zendeskTickets.getError(), zendeskTickets.isOk());
+        assertNotNull(zendeskTickets.getData());
+        assertFalse(zendeskTickets.getData().isEmpty());
+
+        assertTrue(rpt.getStorePurchases().isPresent());
+        final ReportDetails<List<StorePurchase>> storePurchases = rpt.getStorePurchases().get();
+        assertTrue(storePurchases.getError(), storePurchases.isOk());
+        assertNotNull(storePurchases.getData());
+        assertFalse(storePurchases.getData().isEmpty());
 
     }
 

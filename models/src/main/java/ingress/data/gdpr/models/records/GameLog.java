@@ -20,6 +20,7 @@ package ingress.data.gdpr.models.records;
 import io.sgr.geometry.Coordinate;
 
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 /**
  * @author SgrAlpha
@@ -46,8 +47,8 @@ public class GameLog {
         return time;
     }
 
-    public Coordinate getLocation() {
-        return location;
+    public Optional<Coordinate> getLocation() {
+        return Optional.ofNullable(location);
     }
 
     public String getTrackerTrigger() {

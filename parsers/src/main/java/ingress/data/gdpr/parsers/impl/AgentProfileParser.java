@@ -15,13 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.parsers;
+package ingress.data.gdpr.parsers.impl;
 
 import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
-import static ingress.data.gdpr.parsers.utils.ErrorConstants.NOT_REGULAR_FILE;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.NO_DATA;
-import static ingress.data.gdpr.parsers.utils.ErrorConstants.UNREADABLE_FILE;
 
 import ingress.data.gdpr.models.records.profile.AgentProfile;
 import ingress.data.gdpr.models.records.profile.Badge;
@@ -30,14 +28,13 @@ import ingress.data.gdpr.models.records.profile.PushNotificationFor;
 import ingress.data.gdpr.models.records.profile.SmsVerification;
 import ingress.data.gdpr.models.records.profile.TutorialState;
 import ingress.data.gdpr.models.reports.ReportDetails;
+import ingress.data.gdpr.parsers.PlainTextDataFileParser;
 import ingress.data.gdpr.parsers.exceptions.MalformattedRecordException;
 import ingress.data.gdpr.parsers.utils.DefaultPacificDateTimeParser;
 import io.sgr.geometry.Coordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -50,7 +47,7 @@ import java.util.stream.Collectors;
 /**
  * @author SgrAlpha
  */
-public class AgentProfileParser implements DataFileParser<AgentProfile> {
+public class AgentProfileParser extends PlainTextDataFileParser<AgentProfile> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AgentProfileParser.class);
 
@@ -64,27 +61,12 @@ public class AgentProfileParser implements DataFileParser<AgentProfile> {
         return INSTANCE;
     }
 
-    @Override public ReportDetails<AgentProfile> parse(final Path dataFile) {
-        notNull(dataFile, "Data file needs to be specified");
-        if (!Files.isRegularFile(dataFile)) {
-            LOGGER.warn("{} is not a regular file", dataFile.getFileName());
-            return ReportDetails.error(NOT_REGULAR_FILE);
-        }
-        if (!Files.isReadable(dataFile)) {
-            LOGGER.warn("{} is not a readable file", dataFile.getFileName());
-            return ReportDetails.error(UNREADABLE_FILE);
-        }
-
-        final List<String> lines;
-        try {
-            lines = Files.readAllLines(dataFile);
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
-            return ReportDetails.error(e.getMessage());
-        }
+    @Override protected ReportDetails<AgentProfile> readLines(final List<String> lines, final Path dataFile) {
+        notNull(lines, "No line to read from");
         if (lines.isEmpty()) {
             return ReportDetails.error(NO_DATA);
         }
+        notNull(dataFile, "Data file needs to be specified");
 
         Map<String, Object> data = new HashMap<>();
         Map<String, Map<String, String>> subDataSet = new HashMap<>();
@@ -96,22 +78,22 @@ public class AgentProfileParser implements DataFileParser<AgentProfile> {
             if (isEmptyString(line)) {
                 continue;
             }
-            if (line.startsWith("\t")) {
+            if (line.startsWith(SEPARATOR_TAB)) {
                 if (LineType.DATA == lastLineType) {
-                    String[] tmp = line.split(": ", 2);
-                    data.put(tmp[0].replaceFirst("\t", ""), tmp[1]);
+                    String[] tmp = line.split(SEPARATOR_COMMA_AND_SPACE, 2);
+                    data.put(tmp[0].replaceFirst(SEPARATOR_TAB, ""), tmp[1]);
                     lastLineType = LineType.DATA;
                 } else if (LineType.KEY == lastLineType || LineType.SUB_DATA == lastLineType) {
                     String lastKey = keys.peek();
                     if (isEmptyString(lastKey)) {
-                        return ReportDetails.error(String.format("Unable to parse agent profile date at line %d because unable to locate parent node: %s", i, line));
+                        return ReportDetails.error(String.format("Unable to parse agent profile data at line %d because unable to locate parent node: %s", i, line));
                     }
                     Map<String, String> subData = subDataSet.get(lastKey);
-                    String[] tmp = line.split("Badges".equals(lastKey) ? " at " : ": ", 2);
-                    subData.put(tmp[0].replaceFirst("\t", ""), tmp[1]);
+                    String[] tmp = line.split("Badges".equals(lastKey) ? SEPARATOR_WORD_AT : SEPARATOR_COMMA_AND_SPACE, 2);
+                    subData.put(tmp[0].replaceFirst(SEPARATOR_TAB, ""), tmp[1]);
                     lastLineType = LineType.SUB_DATA;
                 } else {
-                    return ReportDetails.error(String.format("Unable to parse agent profile date at line %d because unable to locate parent node: %s", i, line));
+                    return ReportDetails.error(String.format("Unable to parse agent profile data at line %d because unable to locate parent node: %s", i, line));
                 }
             } else {
                 if (line.endsWith(":")) {
@@ -126,7 +108,7 @@ public class AgentProfileParser implements DataFileParser<AgentProfile> {
                     if (LineType.SUB_DATA == lastLineType) {
                         keys.pop();
                     }
-                    String[] tmp = line.split(": ", 2);
+                    String[] tmp = line.split(SEPARATOR_COMMA_AND_SPACE, 2);
                     data.put(tmp[0], tmp[1]);
                     lastLineType = LineType.DATA;
                 }
@@ -140,6 +122,10 @@ public class AgentProfileParser implements DataFileParser<AgentProfile> {
             LOGGER.error(e.getMessage(), e);
             return ReportDetails.error(e.getMessage());
         }
+    }
+
+    @Override protected Logger getLogger() {
+        return LOGGER;
     }
 
     private static AgentProfile transform(final Map<String, Object> data, final Map<String, Map<String, String>> subDataSet) throws MalformattedRecordException {
@@ -199,14 +185,14 @@ public class AgentProfileParser implements DataFileParser<AgentProfile> {
                 .entrySet()
                 .stream()
                 .map(entry -> {
-                    String[] tmp = entry.getValue().split(" at ");
+                    String[] tmp = entry.getValue().split(SEPARATOR_WORD_AT);
                     return new TutorialState(entry.getKey(), tmp[0], TIME_PARSER.parse(tmp[1]));
                 })
                 .collect(Collectors.toList());
     }
 
     private static List<String> parseBlockedAgents(final String blockedAgents) {
-        return Arrays.asList(blockedAgents.replaceAll(" ", "").split(","));
+        return Arrays.asList(blockedAgents.split(SEPARATOR_COMMA_AND_SPACE));
     }
 
     private static PushNotificationFor parsePushNotificationFor(final Map<String, String> subData) {
@@ -230,7 +216,7 @@ public class AgentProfileParser implements DataFileParser<AgentProfile> {
     }
 
     private static SmsVerification parseSmsVerification(final String smsVerificationState) throws MalformattedRecordException {
-        String[] tmp = smsVerificationState.split(" at ");
+        String[] tmp = smsVerificationState.split(SEPARATOR_WORD_AT);
         if (tmp.length != 2) {
             throw new MalformattedRecordException(String.format("Unable to parse SMS verification state from '%s'", smsVerificationState));
         }

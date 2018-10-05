@@ -15,13 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.parsers;
+package ingress.data.gdpr.parsers.impl;
 
 import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.MISSIONS_TSV;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import ingress.data.gdpr.models.records.profile.AgentProfile;
+import ingress.data.gdpr.models.records.mission.Mission;
 import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.models.utils.JsonUtil;
 import org.junit.Test;
@@ -32,16 +34,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 
 /**
  * @author SgrAlpha
  */
-public class AgentProfileParserTest {
+public class MissionsParserTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AgentProfileParserTest.class);
-
-    private static final String TARGET_FILE_NAME = "profile.txt";
+    private static final Logger LOGGER = LoggerFactory.getLogger(MissionsParserTest.class);
 
     @Test
     public void test() throws IOException {
@@ -52,19 +53,20 @@ public class AgentProfileParserTest {
         }
         final Optional<Path> dataFile = Files
                 .list(Paths.get(basePath))
-                .filter(path -> TARGET_FILE_NAME.equals(path.getFileName().toString()))
+                .filter(path -> MISSIONS_TSV.equals(path.getFileName().toString()))
                 .findFirst();
         if (!dataFile.isPresent()) {
-            LOGGER.warn("No {} found under {}, skipping ...", TARGET_FILE_NAME, basePath);
+            LOGGER.warn("No {} found under {}, skipping ...", MISSIONS_TSV, basePath);
             return;
         }
 
-        ReportDetails<AgentProfile> profileReport = AgentProfileParser.getDefault().parse(dataFile.get());
-        assertNotNull(profileReport);
-        assertTrue(profileReport.getError(), profileReport.isOk());
-        final AgentProfile profile = profileReport.getData();
-        assertNotNull(profile);
-        LOGGER.info(JsonUtil.toPrettyJson(profile));
+        ReportDetails<List<Mission>> missionsReport = MissionsParser.getDefault().parse(dataFile.get());
+        assertNotNull(missionsReport);
+        assertTrue(missionsReport.getError(), missionsReport.isOk());
+        final List<Mission> missions = missionsReport.getData();
+        assertNotNull(missions);
+        assertFalse(missions.isEmpty());
+        LOGGER.info(JsonUtil.toPrettyJson(missions));
     }
 
 }

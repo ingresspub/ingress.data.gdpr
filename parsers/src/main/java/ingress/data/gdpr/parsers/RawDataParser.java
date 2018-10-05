@@ -46,6 +46,7 @@ import static ingress.data.gdpr.parsers.utils.DataFileNames.MIND_UNITS_CONTROLLE
 import static ingress.data.gdpr.parsers.utils.DataFileNames.MIND_UNITS_CONTROLLED_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.MIND_UNITS_TIMES_DAYS_HELD_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.MISSIONS_COMPLETED_TSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.MISSIONS_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.MISSION_DAY_POINTS_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.MODS_DEPLOYED_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.NEUTRALIZER_UNIQUE_PORTALS_NEUTRALIZED_TSV;
@@ -73,12 +74,24 @@ import ingress.data.gdpr.models.records.StorePurchase;
 import ingress.data.gdpr.models.records.TimestampedRecord;
 import ingress.data.gdpr.models.records.UsedDevice;
 import ingress.data.gdpr.models.records.ZendeskTicket;
+import ingress.data.gdpr.models.records.mission.Mission;
 import ingress.data.gdpr.models.records.opr.OprAssignmentLogItem;
 import ingress.data.gdpr.models.records.opr.OprProfile;
 import ingress.data.gdpr.models.records.opr.OprSubmissionLogItem;
 import ingress.data.gdpr.models.records.profile.AgentProfile;
 import ingress.data.gdpr.models.reports.RawDataReport;
 import ingress.data.gdpr.models.reports.ReportDetails;
+import ingress.data.gdpr.parsers.impl.AgentProfileParser;
+import ingress.data.gdpr.parsers.impl.CommMentionParser;
+import ingress.data.gdpr.parsers.impl.DeviceRecordsParser;
+import ingress.data.gdpr.parsers.impl.GameLogParser;
+import ingress.data.gdpr.parsers.impl.MissionsParser;
+import ingress.data.gdpr.parsers.impl.OprAssignmentLogsParser;
+import ingress.data.gdpr.parsers.impl.OprProfileParser;
+import ingress.data.gdpr.parsers.impl.OprSubmissionLogsParser;
+import ingress.data.gdpr.parsers.impl.StorePurchasesParser;
+import ingress.data.gdpr.parsers.impl.TimestampedDataFileParser;
+import ingress.data.gdpr.parsers.impl.ZendeskTicketParser;
 import ingress.data.gdpr.parsers.utils.DoubleValueParser;
 import ingress.data.gdpr.parsers.utils.FloatValueParser;
 import ingress.data.gdpr.parsers.utils.IntegerValueParser;
@@ -114,7 +127,7 @@ public class RawDataParser {
         final int cores = Runtime.getRuntime().availableProcessors();
         final Executor executor = new ThreadPoolExecutor(
                 cores, cores,
-                10, TimeUnit.SECONDS,
+                1, TimeUnit.SECONDS,
                 new ArrayBlockingQueue<>(files.size())
         );
 
@@ -282,6 +295,9 @@ public class RawDataParser {
             case MISSIONS_COMPLETED_TSV:
                 return parseTimestampDataFileWith(dataFile, IntegerValueParser.getDefault(), executor)
                         .thenApplyAsync(report::setMissionsCompleted);
+            case MISSIONS_TSV:
+                return parseMissionsCreated(dataFile, executor)
+                        .thenApplyAsync(report::setMissionsCreated);
             case ZENDESK_RECORDS_TSV:
                 return parseZendeskTickets(dataFile, executor)
                         .thenApplyAsync(report::setZendeskTickets);
@@ -347,6 +363,18 @@ public class RawDataParser {
         return CompletableFuture
                 .supplyAsync(() -> {
                     final ReportDetails<OprProfile> details = OprProfileParser.getDefault().parse(dataFile);
+                    if (!details.isOk()) {
+                        LOGGER.warn("Ran into error when parsing {}: {}", dataFile.getFileName(), details.getError());
+                    }
+                    return details;
+                }, executor);
+    }
+
+    private static CompletableFuture<ReportDetails<List<Mission>>> parseMissionsCreated(
+            final Path dataFile, final Executor executor) {
+        return CompletableFuture
+                .supplyAsync(() -> {
+                    final ReportDetails<List<Mission>> details = MissionsParser.getDefault().parse(dataFile);
                     if (!details.isOk()) {
                         LOGGER.warn("Ran into error when parsing {}: {}", dataFile.getFileName(), details.getError());
                     }

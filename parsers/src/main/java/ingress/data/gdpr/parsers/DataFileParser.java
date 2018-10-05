@@ -28,6 +28,10 @@ import java.nio.file.Path;
  */
 public interface DataFileParser<T> {
 
+    String SEPARATOR_TAB = "\t";
+    String SEPARATOR_COMMA_AND_SPACE = ": ";
+    String SEPARATOR_WORD_AT = " at ";
+
     ReportDetails<T> parse(Path dataFile);
 
 }

@@ -15,22 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.parsers;
+package ingress.data.gdpr.parsers.impl;
 
 import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
-import static ingress.data.gdpr.parsers.utils.ErrorConstants.NOT_REGULAR_FILE;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.NO_DATA;
-import static ingress.data.gdpr.parsers.utils.ErrorConstants.UNREADABLE_FILE;
 
-import ingress.data.gdpr.models.records.ZendeskTicket;
+import ingress.data.gdpr.models.records.CommMention;
 import ingress.data.gdpr.models.reports.ReportDetails;
+import ingress.data.gdpr.parsers.PlainTextDataFileParser;
 import ingress.data.gdpr.parsers.utils.DefaultPacificDateTimeParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
@@ -39,59 +36,42 @@ import java.util.List;
 /**
  * @author SgrAlpha
  */
-public class ZendeskTicketParser implements DataFileParser<List<ZendeskTicket>> {
+public class CommMentionParser extends PlainTextDataFileParser<List<CommMention>> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZendeskTicketParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommMentionParser.class);
 
-    private static final DefaultPacificDateTimeParser TIME_PARSER = new DefaultPacificDateTimeParser(ZendeskTicket.TIME_PATTERN);
-    private static final String COLUMN_SEPARATOR = "\t";
+    private static final DefaultPacificDateTimeParser TIME_PARSER = new DefaultPacificDateTimeParser(CommMention.TIME_PATTERN);
 
-    private static final ZendeskTicketParser INSTANCE = new ZendeskTicketParser();
+    private static final CommMentionParser INSTANCE = new CommMentionParser();
 
-    private ZendeskTicketParser() {
+    private CommMentionParser() {
     }
 
-    public static ZendeskTicketParser getDefault() {
+    public static CommMentionParser getDefault() {
         return INSTANCE;
     }
 
-    @Override public ReportDetails<List<ZendeskTicket>> parse(final Path dataFile) {
+    @Override protected ReportDetails<List<CommMention>> readLines(final List<String> lines, final Path dataFile) {
+        notNull(lines, "No line to read from");
+        if (lines.size() < 2) {
+            return ReportDetails.error(NO_DATA);
+        }
         notNull(dataFile, "Data file needs to be specified");
-        if (!Files.isRegularFile(dataFile)) {
-            LOGGER.warn("{} is not a regular file", dataFile.getFileName());
-            return ReportDetails.error(NOT_REGULAR_FILE);
-        }
-        if (!Files.isReadable(dataFile)) {
-            LOGGER.warn("{} is not a readable file", dataFile.getFileName());
-            return ReportDetails.error(UNREADABLE_FILE);
-        }
-
-        final List<String> lines;
         try {
-            lines = Files.readAllLines(dataFile);
-            if (lines.size() < 2) {
-                return ReportDetails.error(NO_DATA);
-            }
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
-            return ReportDetails.error(e.getMessage());
-        }
-
-        try {
-            List<ZendeskTicket> data = new LinkedList<>();
+            List<CommMention> data = new LinkedList<>();
             for (int i = 1; i < lines.size(); i++) {    // Skip first line (header)
                 final String line = lines.get(i);
                 if (isEmptyString(line)) {
                     continue;
                 }
-                final String[] columns = line.split(COLUMN_SEPARATOR, 3);
+                final String[] columns = line.split(SEPARATOR_TAB, 2);
                 final ZonedDateTime time;
                 try {
                     time = TIME_PARSER.parse(columns[0]);
                 } catch (Exception e) {
-                    return ReportDetails.error(String.format("Expecting a valid timestamp (%s) at the beginning of line %d, but got %s", ZendeskTicket.TIME_PATTERN, i, columns[0]));
+                    return ReportDetails.error(String.format("Expecting a valid timestamp (%s) at the beginning of line %d, but got %s", CommMention.TIME_PATTERN, i, columns[0]));
                 }
-                data.add(new ZendeskTicket(time, columns[1], columns[2]));
+                data.add(new CommMention(time, columns[1]));
             }
             if (data.size() > 1) {
                 LOGGER.info("Parsed {} records from {}", data.size(), dataFile.getFileName());
@@ -103,6 +83,10 @@ public class ZendeskTicketParser implements DataFileParser<List<ZendeskTicket>> 
             LOGGER.error(e.getMessage(), e);
             return ReportDetails.error(e.getMessage());
         }
+    }
+
+    @Override protected Logger getLogger() {
+        return LOGGER;
     }
 
 }
