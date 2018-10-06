@@ -17,7 +17,12 @@
 
 spring:
   profiles: prod
-
+  datasource:
+    primary:
+      jdbc-url: jdbc:mysql://db_server:3306/ingress_gdpr?useSSL=false
+      driver-class-name: "com.mysql.jdbc.Driver"
+      username: ingress
+      password: ingress
 server:
   tomcat:
     customized:

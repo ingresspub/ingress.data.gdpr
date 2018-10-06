@@ -15,12 +15,33 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-spring:
-  profiles:
-    active: dev
-  servlet:
-    multipart:
-      max-file-size: "20MB"
-      max-request-size: "20MB"
-  datasource:
-    schema: classpath:db/schema.sql
+version: "3"
+services:
+  db:
+    restart: always
+    image: "mysql"
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: ingress_gdpr
+      MYSQL_USER: ingress
+      MYSQL_PASSWORD: ingress
+      MYSQL_ROOT_PASSWORD: example
+    networks:
+      app_net:
+        aliases:
+          - db_server
+  explorer:
+    restart: always
+    build:
+      context: .
+    image: ingress_data_explorer
+    depends_on:
+      - db
+    ports:
+    - 8080:8080
+    networks:
+      - app_net
+networks:
+  app_net:
+    driver: bridge
