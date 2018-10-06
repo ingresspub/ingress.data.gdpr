@@ -17,15 +17,10 @@
 
 package ingress.data.gdpr.web.controllers;
 
-import ingress.data.gdpr.models.analyzed.Marker;
-import ingress.data.gdpr.models.utils.JsonUtil;
 import ingress.data.gdpr.web.services.Summarizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import java.util.List;
 
 /**
  * @author SgrAlpha
@@ -40,16 +35,11 @@ public class IndexController {
     }
 
     @GetMapping("/")
-    public String index(final ModelMap map) {
-        int count = summarizer.countGameLogs();
-        if (count <= 0) {
+    public String index() {
+        if (summarizer.noDataUploaded()) {
             return "redirect:/upload";
         }
-        final List<Marker> capturedPortals = summarizer.listCapturedPortals();
-        final List<Marker> visitedPortals = summarizer.listVisitedPortals();
-        map.addAttribute("capturedPortals", JsonUtil.toJson(capturedPortals));
-        map.addAttribute("visitedPortals", JsonUtil.toJson(visitedPortals));
-        return "dashboard";
+        return "redirect:/unique_portals";
     }
 
 }

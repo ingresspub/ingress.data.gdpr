@@ -24,7 +24,7 @@ spring:
       max-request-size: "20MB"
   datasource:
     primary:
-      jdbc-url: jdbc:h2:mem:ingress_gdpr
+      jdbc-url: jdbc:h2:file:~/.h2/ingress_gdpr
       driver-class-name: "org.h2.Driver"
       username: sa
       password:

@@ -24,18 +24,20 @@ import java.util.Objects;
 /**
  * @author SgrAlpha
  */
-public class Marker {
+public class Circle {
 
     private final Coordinate latLng;
     private final String color;
+    private final int radius;
 
-    public Marker(final Coordinate latLng, final String color) {
+    public Circle(final Coordinate latLng, final String color, final int radius) {
         this.latLng = latLng;
         this.color = color;
+        this.radius = radius;
     }
 
     public String getType() {
-        return "marker";
+        return "circle";
     }
 
     public Coordinate getLatLng() {
@@ -46,15 +48,19 @@ public class Marker {
         return color;
     }
 
+    public int getRadius() {
+        return radius;
+    }
+
     @Override public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Marker)) {
+        if (!(o instanceof Circle)) {
             return false;
         }
-        final Marker marker = (Marker) o;
-        return Objects.equals(getLatLng(), marker.getLatLng());
+        final Circle circle = (Circle) o;
+        return Objects.equals(getLatLng(), circle.getLatLng());
     }
 
     @Override public int hashCode() {

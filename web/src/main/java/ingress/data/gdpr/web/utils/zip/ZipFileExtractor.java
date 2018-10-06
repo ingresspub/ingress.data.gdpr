@@ -17,6 +17,8 @@
 
 package ingress.data.gdpr.web.utils.zip;
 
+import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
+
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
@@ -35,7 +37,9 @@ public class ZipFileExtractor {
 
     public static Stream<Path> extract(final File uploaded, final String password) throws IOException, ZipException {
         ZipFile zipFile = new ZipFile(uploaded);
-        zipFile.setPassword(password);
+        if (!isEmptyString(password)) {
+            zipFile.setPassword(password);
+        }
         Path unzipToDir = Files.createTempDirectory(TEMP_DIR_PREFIX);
         zipFile.extractAll(unzipToDir.toFile().getAbsolutePath());
         return Files.list(unzipToDir);

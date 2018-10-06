@@ -21,7 +21,7 @@ import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import ingress.data.gdpr.models.analyzed.Marker;
+import ingress.data.gdpr.models.analyzed.Circle;
 import ingress.data.gdpr.models.records.CommMention;
 import ingress.data.gdpr.models.records.GameLog;
 import ingress.data.gdpr.models.reports.RawDataReport;
@@ -75,33 +75,35 @@ public class Summarizer {
         });
     }
 
-    public List<Marker> listCapturedPortals() {
+    public boolean noDataUploaded() {
+        return countGameLogs() <= 0;
+    }
+
+    public List<Circle> listCapturedPortals(final String color, final int radius) {
         final String sql = "SELECT DISTINCT loc_latE6, loc_lngE6 FROM gdpr_raw_game_logs WHERE tracker_trigger = 'captured portal'";
-        return jdbcTemplate.query(sql, rs -> {
-            List<Marker> markers = new LinkedList<>();
-            while (rs.next()) {
-                final Coordinate latLng = new Coordinate(rs.getInt("loc_latE6") / 1e6, rs.getInt("loc_lngE6") / 1e6);
-                markers.add(new Marker("marker", latLng, "#ff00ff"));
-            }
-            return markers;
-        });
+        return listPortals(sql, color, radius);
     }
 
-    public List<Marker> listVisitedPortals() {
+    public List<Circle> listVisitedPortals(final String color, final int radius) {
         final String sql = "SELECT DISTINCT loc_latE6, loc_lngE6 FROM gdpr_raw_game_logs"
-                + " WHERE tracker_trigger IN ('hacked enemy portal','hacked friendly portal','mod deployed','resonator deployed','resonator upgraded')"
+                + " WHERE tracker_trigger"
+                + " IN ('captured portal','hacked enemy portal','hacked friendly portal','mod deployed','resonator deployed','resonator upgraded')"
                 + " AND comment != 'fail'";
+        return listPortals(sql, color, radius);
+    }
+
+    private List<Circle> listPortals(final String sql, final String color, final int radius) {
         return jdbcTemplate.query(sql, rs -> {
-            List<Marker> markers = new LinkedList<>();
+            List<Circle> markers = new LinkedList<>();
             while (rs.next()) {
                 final Coordinate latLng = new Coordinate(rs.getInt("loc_latE6") / 1e6, rs.getInt("loc_lngE6") / 1e6);
-                markers.add(new Marker("marker", latLng, "#ff8800"));
+                markers.add(new Circle(latLng, color, radius));
             }
             return markers;
         });
     }
 
-    public int countGameLogs() {
+    private int countGameLogs() {
         final Integer count = jdbcTemplate.queryForObject("SELECT COUNT(1) FROM gdpr_raw_game_logs", Integer.class);
         return Optional.ofNullable(count).orElse(0);
     }

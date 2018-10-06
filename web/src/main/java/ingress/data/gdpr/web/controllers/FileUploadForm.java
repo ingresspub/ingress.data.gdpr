@@ -19,8 +19,6 @@ package ingress.data.gdpr.web.controllers;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotBlank;
-
 /**
  * @author SgrAlpha
  */
@@ -28,7 +26,6 @@ public class FileUploadForm {
 
     @ZipFileConstraint
     private MultipartFile file;
-    @NotBlank
     private String password;
 
     public MultipartFile getFile() {
