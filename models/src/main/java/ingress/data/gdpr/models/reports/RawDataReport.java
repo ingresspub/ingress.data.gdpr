@@ -32,7 +32,6 @@ import ingress.data.gdpr.models.utils.JsonUtil;
 
 import java.time.Clock;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author SgrAlpha
@@ -110,8 +109,8 @@ public class RawDataReport {
         return generatedTimeInMs;
     }
 
-    public Optional<ReportDetails<AgentProfile>> getAgentProfile() {
-        return Optional.ofNullable(agentProfile);
+    public ReportDetails<AgentProfile> getAgentProfile() {
+        return agentProfile;
     }
 
     public RawDataReport setAgentProfile(final ReportDetails<AgentProfile> agentProfile) {
@@ -119,8 +118,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<GameLog>>> getGameLogs() {
-        return Optional.ofNullable(gameLogs);
+    public ReportDetails<List<GameLog>> getGameLogs() {
+        return gameLogs;
     }
 
     public RawDataReport setGameLogs(final ReportDetails<List<GameLog>> gameLogs) {
@@ -128,8 +127,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<CommMention>>> getCommMentions() {
-        return Optional.ofNullable(commMentions);
+    public ReportDetails<List<CommMention>> getCommMentions() {
+        return commMentions;
     }
 
     public RawDataReport setCommMentions(final ReportDetails<List<CommMention>> commMentions) {
@@ -137,8 +136,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<UsedDevice>>> getUsedDevices() {
-        return Optional.ofNullable(usedDevices);
+    public ReportDetails<List<UsedDevice>> getUsedDevices() {
+        return usedDevices;
     }
 
     public RawDataReport setUsedDevices(final ReportDetails<List<UsedDevice>> usedDevices) {
@@ -146,8 +145,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<OprProfile>> getOprProfile() {
-        return Optional.ofNullable(oprProfile);
+    public ReportDetails<OprProfile> getOprProfile() {
+        return oprProfile;
     }
 
     public RawDataReport setOprProfile(final ReportDetails<OprProfile> oprProfile) {
@@ -155,8 +154,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Integer>>>> getOprAgreements() {
-        return Optional.ofNullable(oprAgreements);
+    public ReportDetails<List<TimestampedRecord<Integer>>> getOprAgreements() {
+        return oprAgreements;
     }
 
     public RawDataReport setOprAgreements(final ReportDetails<List<TimestampedRecord<Integer>>> oprAgreements) {
@@ -164,8 +163,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<OprAssignmentLogItem>>> getOprAssignmentLogs() {
-        return Optional.ofNullable(oprAssignmentLogs);
+    public ReportDetails<List<OprAssignmentLogItem>> getOprAssignmentLogs() {
+        return oprAssignmentLogs;
     }
 
     public RawDataReport setOprAssignmentLogs(final ReportDetails<List<OprAssignmentLogItem>> oprAssignmentLogs) {
@@ -173,8 +172,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<OprSubmissionLogItem>>> getOprSubmissionLogs() {
-        return Optional.ofNullable(oprSubmissionLogs);
+    public ReportDetails<List<OprSubmissionLogItem>> getOprSubmissionLogs() {
+        return oprSubmissionLogs;
     }
 
     public RawDataReport setOprSubmissionLogs(final ReportDetails<List<OprSubmissionLogItem>> oprSubmissionLogs) {
@@ -182,8 +181,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Integer>>>> getAllPortalsApproved() {
-        return Optional.ofNullable(allPortalsApproved);
+    public ReportDetails<List<TimestampedRecord<Integer>>> getAllPortalsApproved() {
+        return allPortalsApproved;
     }
 
     public RawDataReport setAllPortalsApproved(final ReportDetails<List<TimestampedRecord<Integer>>> allPortalsApproved) {
@@ -191,8 +190,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Integer>>>> getSeerPortals() {
-        return Optional.ofNullable(seerPortals);
+    public ReportDetails<List<TimestampedRecord<Integer>>> getSeerPortals() {
+        return seerPortals;
     }
 
     public RawDataReport setSeerPortals(final ReportDetails<List<TimestampedRecord<Integer>>> seerPortals) {
@@ -200,8 +199,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Integer>>>> getPortalsVisited() {
-        return Optional.ofNullable(portalsVisited);
+    public ReportDetails<List<TimestampedRecord<Integer>>> getPortalsVisited() {
+        return portalsVisited;
     }
 
     public RawDataReport setPortalsVisited(final ReportDetails<List<TimestampedRecord<Integer>>> portalsVisited) {
@@ -209,8 +208,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Float>>>> getXmCollected() {
-        return Optional.ofNullable(xmCollected);
+    public ReportDetails<List<TimestampedRecord<Float>>> getXmCollected() {
+        return xmCollected;
     }
 
     public RawDataReport setXmCollected(final ReportDetails<List<TimestampedRecord<Float>>> xmCollected) {
@@ -218,8 +217,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Float>>>> getKilometersWalked() {
-        return Optional.ofNullable(kilometersWalked);
+    public ReportDetails<List<TimestampedRecord<Float>>> getKilometersWalked() {
+        return kilometersWalked;
     }
 
     public RawDataReport setKilometersWalked(final ReportDetails<List<TimestampedRecord<Float>>> kilometersWalked) {
@@ -227,8 +226,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Float>>>> getMindUnitsControlled() {
-        return Optional.ofNullable(mindUnitsControlled);
+    public ReportDetails<List<TimestampedRecord<Float>>> getMindUnitsControlled() {
+        return mindUnitsControlled;
     }
 
     public RawDataReport setMindUnitsControlled(final ReportDetails<List<TimestampedRecord<Float>>> mindUnitsControlled) {
@@ -236,8 +235,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Integer>>>> getMindUnitsControlledActive() {
-        return Optional.ofNullable(mindUnitsControlledActive);
+    public ReportDetails<List<TimestampedRecord<Integer>>> getMindUnitsControlledActive() {
+        return mindUnitsControlledActive;
     }
 
     public RawDataReport setMindUnitsControlledActive(final ReportDetails<List<TimestampedRecord<Integer>>> mindUnitsControlledActive) {
@@ -245,8 +244,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Float>>>> getFieldsCreated() {
-        return Optional.ofNullable(fieldsCreated);
+    public ReportDetails<List<TimestampedRecord<Float>>> getFieldsCreated() {
+        return fieldsCreated;
     }
 
     public RawDataReport setFieldsCreated(final ReportDetails<List<TimestampedRecord<Float>>> fieldsCreated) {
@@ -254,8 +253,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Integer>>>> getFieldsCreatedActive() {
-        return Optional.ofNullable(fieldsCreatedActive);
+    public ReportDetails<List<TimestampedRecord<Integer>>> getFieldsCreatedActive() {
+        return fieldsCreatedActive;
     }
 
     public RawDataReport setFieldsCreatedActive(final ReportDetails<List<TimestampedRecord<Integer>>> fieldsCreatedActive) {
@@ -263,8 +262,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Float>>>> getLinksCreated() {
-        return Optional.ofNullable(linksCreated);
+    public ReportDetails<List<TimestampedRecord<Float>>> getLinksCreated() {
+        return linksCreated;
     }
 
     public RawDataReport setLinksCreated(final ReportDetails<List<TimestampedRecord<Float>>> linksCreated) {
@@ -272,8 +271,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Double>>>> getLinkLengthInKm() {
-        return Optional.ofNullable(linkLengthInKm);
+    public ReportDetails<List<TimestampedRecord<Double>>> getLinkLengthInKm() {
+        return linkLengthInKm;
     }
 
     public RawDataReport setLinkLengthInKm(final ReportDetails<List<TimestampedRecord<Double>>> linkLengthInKm) {
@@ -281,8 +280,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Integer>>>> getLinksCreatedActive() {
-        return Optional.ofNullable(linksCreatedActive);
+    public ReportDetails<List<TimestampedRecord<Integer>>> getLinksCreatedActive() {
+        return linksCreatedActive;
     }
 
     public RawDataReport setLinksCreatedActive(final ReportDetails<List<TimestampedRecord<Integer>>> linksCreatedActive) {
@@ -290,8 +289,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Integer>>>> getPortalsCaptured() {
-        return Optional.ofNullable(portalsCaptured);
+    public ReportDetails<List<TimestampedRecord<Integer>>> getPortalsCaptured() {
+        return portalsCaptured;
     }
 
     public RawDataReport setPortalsCaptured(final ReportDetails<List<TimestampedRecord<Integer>>> portalCaptured) {
@@ -299,8 +298,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Integer>>>> getPortalsOwned() {
-        return Optional.ofNullable(portalsOwned);
+    public ReportDetails<List<TimestampedRecord<Integer>>> getPortalsOwned() {
+        return portalsOwned;
     }
 
     public RawDataReport setPortalsOwned(final ReportDetails<List<TimestampedRecord<Integer>>> portalsOwned) {
@@ -308,8 +307,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Float>>>> getResonatorsDeployed() {
-        return Optional.ofNullable(resonatorsDeployed);
+    public ReportDetails<List<TimestampedRecord<Float>>> getResonatorsDeployed() {
+        return resonatorsDeployed;
     }
 
     public RawDataReport setResonatorsDeployed(final ReportDetails<List<TimestampedRecord<Float>>> resonatorsDeployed) {
@@ -317,8 +316,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Float>>>> getModsDeployed() {
-        return Optional.ofNullable(modsDeployed);
+    public ReportDetails<List<TimestampedRecord<Float>>> getModsDeployed() {
+        return modsDeployed;
     }
 
     public RawDataReport setModsDeployed(final ReportDetails<List<TimestampedRecord<Float>>> modsDeployed) {
@@ -326,8 +325,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Float>>>> getXmRecharged() {
-        return Optional.ofNullable(xmRecharged);
+    public ReportDetails<List<TimestampedRecord<Float>>> getXmRecharged() {
+        return xmRecharged;
     }
 
     public RawDataReport setXmRecharged(final ReportDetails<List<TimestampedRecord<Float>>> xmRecharged) {
@@ -335,8 +334,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Float>>>> getResonatorsDestroyed() {
-        return Optional.ofNullable(resonatorsDestroyed);
+    public ReportDetails<List<TimestampedRecord<Float>>> getResonatorsDestroyed() {
+        return resonatorsDestroyed;
     }
 
     public RawDataReport setResonatorsDestroyed(final ReportDetails<List<TimestampedRecord<Float>>> resonatorsDestroyed) {
@@ -344,8 +343,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Integer>>>> getPortalsNeutralized() {
-        return Optional.ofNullable(portalsNeutralized);
+    public ReportDetails<List<TimestampedRecord<Integer>>> getPortalsNeutralized() {
+        return portalsNeutralized;
     }
 
     public RawDataReport setPortalsNeutralized(final ReportDetails<List<TimestampedRecord<Integer>>> portalsNeutralized) {
@@ -353,8 +352,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Float>>>> getLinksDestroyed() {
-        return Optional.ofNullable(linksDestroyed);
+    public ReportDetails<List<TimestampedRecord<Float>>> getLinksDestroyed() {
+        return linksDestroyed;
     }
 
     public RawDataReport setLinksDestroyed(final ReportDetails<List<TimestampedRecord<Float>>> linksDestroyed) {
@@ -362,8 +361,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Float>>>> getFieldsDestroyed() {
-        return Optional.ofNullable(fieldsDestroyed);
+    public ReportDetails<List<TimestampedRecord<Float>>> getFieldsDestroyed() {
+        return fieldsDestroyed;
     }
 
     public RawDataReport setFieldsDestroyed(final ReportDetails<List<TimestampedRecord<Float>>> fieldsDestroyed) {
@@ -371,8 +370,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Double>>>> getMindUnitsTimesDaysHeld() {
-        return Optional.ofNullable(mindUnitsTimesDaysHeld);
+    public ReportDetails<List<TimestampedRecord<Double>>> getMindUnitsTimesDaysHeld() {
+        return mindUnitsTimesDaysHeld;
     }
 
     public RawDataReport setMindUnitsTimesDaysHeld(final ReportDetails<List<TimestampedRecord<Double>>> mindUnitsTimesDaysHeld) {
@@ -380,8 +379,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Double>>>> getFieldHeldDays() {
-        return Optional.ofNullable(fieldHeldDays);
+    public ReportDetails<List<TimestampedRecord<Double>>> getFieldHeldDays() {
+        return fieldHeldDays;
     }
 
     public RawDataReport setFieldHeldDays(final ReportDetails<List<TimestampedRecord<Double>>> fieldHeldDays) {
@@ -389,8 +388,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Double>>>> getLinkLengthInKmTimesDaysHeld() {
-        return Optional.ofNullable(linkLengthInKmTimesDaysHeld);
+    public ReportDetails<List<TimestampedRecord<Double>>> getLinkLengthInKmTimesDaysHeld() {
+        return linkLengthInKmTimesDaysHeld;
     }
 
     public RawDataReport setLinkLengthInKmTimesDaysHeld(final ReportDetails<List<TimestampedRecord<Double>>> linkLengthInKmTimesDaysHeld) {
@@ -398,8 +397,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Double>>>> getLinkHeldDays() {
-        return Optional.ofNullable(linkHeldDays);
+    public ReportDetails<List<TimestampedRecord<Double>>> getLinkHeldDays() {
+        return linkHeldDays;
     }
 
     public RawDataReport setLinkHeldDays(final ReportDetails<List<TimestampedRecord<Double>>> linkHeldDays) {
@@ -407,8 +406,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Double>>>> getPortalHeldDays() {
-        return Optional.ofNullable(portalHeldDays);
+    public ReportDetails<List<TimestampedRecord<Double>>> getPortalHeldDays() {
+        return portalHeldDays;
     }
 
     public RawDataReport setPortalHeldDays(final ReportDetails<List<TimestampedRecord<Double>>> portalHeldDays) {
@@ -416,8 +415,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Float>>>> getHacks() {
-        return Optional.ofNullable(hacks);
+    public ReportDetails<List<TimestampedRecord<Float>>> getHacks() {
+        return hacks;
     }
 
     public RawDataReport setHacks(final ReportDetails<List<TimestampedRecord<Float>>> hacks) {
@@ -425,8 +424,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Float>>>> getGlyphHackPoints() {
-        return Optional.ofNullable(glyphHackPoints);
+    public ReportDetails<List<TimestampedRecord<Float>>> getGlyphHackPoints() {
+        return glyphHackPoints;
     }
 
     public RawDataReport setGlyphHackPoints(final ReportDetails<List<TimestampedRecord<Float>>> glyphHackPoints) {
@@ -434,8 +433,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Float>>>> getGlyphHackOnePerfect() {
-        return Optional.ofNullable(glyphHackOnePerfect);
+    public ReportDetails<List<TimestampedRecord<Float>>> getGlyphHackOnePerfect() {
+        return glyphHackOnePerfect;
     }
 
     public RawDataReport setGlyphHackOnePerfect(final ReportDetails<List<TimestampedRecord<Float>>> glyphHackOnePerfect) {
@@ -443,8 +442,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Float>>>> getGlyphHackThreePerfect() {
-        return Optional.ofNullable(glyphHackThreePerfect);
+    public ReportDetails<List<TimestampedRecord<Float>>> getGlyphHackThreePerfect() {
+        return glyphHackThreePerfect;
     }
 
     public RawDataReport setGlyphHackThreePerfect(final ReportDetails<List<TimestampedRecord<Float>>> glyphHackThreePerfect) {
@@ -452,8 +451,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Float>>>> getGlyphHackFourPerfect() {
-        return Optional.ofNullable(glyphHackFourPerfect);
+    public ReportDetails<List<TimestampedRecord<Float>>> getGlyphHackFourPerfect() {
+        return glyphHackFourPerfect;
     }
 
     public RawDataReport setGlyphHackFourPerfect(final ReportDetails<List<TimestampedRecord<Float>>> glyphHackFourPerfect) {
@@ -461,8 +460,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Float>>>> getGlyphHackFivePerfect() {
-        return Optional.ofNullable(glyphHackFivePerfect);
+    public ReportDetails<List<TimestampedRecord<Float>>> getGlyphHackFivePerfect() {
+        return glyphHackFivePerfect;
     }
 
     public RawDataReport setGlyphHackFivePerfect(final ReportDetails<List<TimestampedRecord<Float>>> glyphHackFivePerfect) {
@@ -470,8 +469,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Integer>>>> getAgentsRecruited() {
-        return Optional.ofNullable(agentsRecruited);
+    public ReportDetails<List<TimestampedRecord<Integer>>> getAgentsRecruited() {
+        return agentsRecruited;
     }
 
     public RawDataReport setAgentsRecruited(final ReportDetails<List<TimestampedRecord<Integer>>> agentsRecruited) {
@@ -479,8 +478,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Float>>>> getExo5ControlFieldsCreated() {
-        return Optional.ofNullable(exo5ControlFieldsCreated);
+    public ReportDetails<List<TimestampedRecord<Float>>> getExo5ControlFieldsCreated() {
+        return exo5ControlFieldsCreated;
     }
 
     public RawDataReport setExo5ControlFieldsCreated(final ReportDetails<List<TimestampedRecord<Float>>> exo5ControlFieldsCreated) {
@@ -488,8 +487,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Integer>>>> getMagusBuilderSlotsDeployed() {
-        return Optional.ofNullable(magusBuilderSlotsDeployed);
+    public ReportDetails<List<TimestampedRecord<Integer>>> getMagusBuilderSlotsDeployed() {
+        return magusBuilderSlotsDeployed;
     }
 
     public RawDataReport setMagusBuilderSlotsDeployed(final ReportDetails<List<TimestampedRecord<Integer>>> magusBuilderSlotsDeployed) {
@@ -497,8 +496,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Integer>>>> getNeutralizerUniquePortalsDestroyed() {
-        return Optional.ofNullable(neutralizerUniquePortalsDestroyed);
+    public ReportDetails<List<TimestampedRecord<Integer>>> getNeutralizerUniquePortalsDestroyed() {
+        return neutralizerUniquePortalsDestroyed;
     }
 
     public RawDataReport setNeutralizerUniquePortalsDestroyed(final ReportDetails<List<TimestampedRecord<Integer>>> neutralizerUniquePortalsDestroyed) {
@@ -506,8 +505,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Integer>>>> getMissionDayPoints() {
-        return Optional.ofNullable(missionDayPoints);
+    public ReportDetails<List<TimestampedRecord<Integer>>> getMissionDayPoints() {
+        return missionDayPoints;
     }
 
     public RawDataReport setMissionDayPoints(final ReportDetails<List<TimestampedRecord<Integer>>> missionDayPoints) {
@@ -515,8 +514,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<TimestampedRecord<Integer>>>> getMissionsCompleted() {
-        return Optional.ofNullable(missionsCompleted);
+    public ReportDetails<List<TimestampedRecord<Integer>>> getMissionsCompleted() {
+        return missionsCompleted;
     }
 
     public RawDataReport setMissionsCompleted(final ReportDetails<List<TimestampedRecord<Integer>>> missionsCompleted) {
@@ -524,8 +523,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<Mission>>> getMissionsCreated() {
-        return Optional.ofNullable(missionsCreated);
+    public ReportDetails<List<Mission>> getMissionsCreated() {
+        return missionsCreated;
     }
 
     public RawDataReport setMissionsCreated(final ReportDetails<List<Mission>> missionsCreated) {
@@ -533,8 +532,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<ZendeskTicket>>> getZendeskTickets() {
-        return Optional.ofNullable(zendeskTickets);
+    public ReportDetails<List<ZendeskTicket>> getZendeskTickets() {
+        return zendeskTickets;
     }
 
     public RawDataReport setZendeskTickets(final ReportDetails<List<ZendeskTicket>> zendeskTickets) {
@@ -542,8 +541,8 @@ public class RawDataReport {
         return this;
     }
 
-    public Optional<ReportDetails<List<StorePurchase>>> getStorePurchases() {
-        return Optional.ofNullable(storePurchases);
+    public ReportDetails<List<StorePurchase>> getStorePurchases() {
+        return storePurchases;
     }
 
     public RawDataReport setStorePurchases(final ReportDetails<List<StorePurchase>> storePurchases) {

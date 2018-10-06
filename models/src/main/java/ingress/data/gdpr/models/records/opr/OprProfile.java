@@ -20,6 +20,7 @@ package ingress.data.gdpr.models.records.opr;
 import io.sgr.geometry.Coordinate;
 
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 /**
  * @author SgrAlpha
@@ -106,8 +107,8 @@ public class OprProfile {
         return hometownChangedTimes;
     }
 
-    public ZonedDateTime getHometownLastChangedTime() {
-        return hometownLastChangedTime;
+    public Optional<ZonedDateTime> getHometownLastChangedTime() {
+        return Optional.ofNullable(hometownLastChangedTime);
     }
 
     public Coordinate getHometownLocation() {

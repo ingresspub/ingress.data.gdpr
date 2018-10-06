@@ -17,7 +17,7 @@
 
 package ingress.data.gdpr.web.controllers;
 
-import ingress.data.gdpr.web.services.Summarizer;
+import ingress.data.gdpr.web.services.Importer;
 import ingress.data.gdpr.web.utils.ExceptionUtil;
 import ingress.data.gdpr.web.utils.zip.ZipFileExtractor;
 import net.lingala.zip4j.exception.ZipException;
@@ -52,10 +52,10 @@ public class FileUploadController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileUploadController.class);
 
-    private final Summarizer summarizer;
+    private final Importer importer;
 
-    public FileUploadController(@Autowired final Summarizer summarizer) {
-        this.summarizer = summarizer;
+    public FileUploadController(@Autowired final Importer importer) {
+        this.importer = importer;
     }
 
     @GetMapping("/upload")
@@ -77,7 +77,7 @@ public class FileUploadController {
             File tempZipFile = Files.createTempFile("ingress-data-" + uploaded.getOriginalFilename(), null).toFile();
             uploaded.transferTo(tempZipFile);
             final List<Path> files = ZipFileExtractor.extract(tempZipFile, unzipPassword).collect(Collectors.toList());
-            summarizer.parseAndSaveRawDataReport(files);
+            importer.parseAndSaveRawDataReport(files);
             if (!tempZipFile.delete()) {
                 LOGGER.warn("Unable to clean up temp zip file: {}", tempZipFile);
             }

@@ -20,6 +20,7 @@ package ingress.data.gdpr.models.records.opr;
 import io.sgr.geometry.Coordinate;
 
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 /**
  * @author SgrAlpha
@@ -73,40 +74,40 @@ public class OprSubmissionLogItem {
         return assignedTime;
     }
 
-    public String getComment() {
-        return comment;
+    public Optional<String> getComment() {
+        return Optional.ofNullable(comment);
     }
 
-    public Integer getRatingForCultural() {
-        return ratingForCultural;
+    public Optional<Integer> getRatingForCultural() {
+        return Optional.ofNullable(ratingForCultural);
     }
 
-    public Integer getRatingForText() {
-        return ratingForText;
+    public Optional<Integer> getRatingForText() {
+        return Optional.ofNullable(ratingForText);
     }
 
     public boolean isDuplicate() {
         return duplicate;
     }
 
-    public String getDuplicateTo() {
-        return duplicateTo;
+    public Optional<String> getDuplicateTo() {
+        return Optional.ofNullable(duplicateTo);
     }
 
-    public Integer getRatingForLocation() {
-        return ratingForLocation;
+    public Optional<Integer> getRatingForLocation() {
+        return Optional.ofNullable(ratingForLocation);
     }
 
-    public Coordinate getSuggestedLocation() {
-        return suggestedLocation;
+    public Optional<Coordinate> getSuggestedLocation() {
+        return Optional.ofNullable(suggestedLocation);
     }
 
-    public Integer getRatingForQuality() {
-        return ratingForQuality;
+    public Optional<Integer> getRatingForQuality() {
+        return Optional.ofNullable(ratingForQuality);
     }
 
-    public Integer getRatingForSafety() {
-        return ratingForSafety;
+    public Optional<Integer> getRatingForSafety() {
+        return Optional.ofNullable(ratingForSafety);
     }
 
     public boolean isOneStar() {
@@ -117,11 +118,11 @@ public class OprSubmissionLogItem {
         return submissionTime;
     }
 
-    public Integer getRatingForUniqueness() {
-        return ratingForUniqueness;
+    public Optional<Integer> getRatingForUniqueness() {
+        return Optional.ofNullable(ratingForUniqueness);
     }
 
-    public String getWhatIsIt() {
-        return whatIsIt;
+    public Optional<String> getWhatIsIt() {
+        return Optional.ofNullable(whatIsIt);
     }
 }
