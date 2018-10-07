@@ -84,6 +84,9 @@ CREATE TABLE `gdpr_raw_opr_agreements` (
   `portal_id` INT    NOT NULL
 );
 
+CREATE INDEX `gdpr_raw_opr_agreements_time`
+  ON `gdpr_raw_opr_agreements` (`time`);
+
 DROP TABLE IF EXISTS `gdpr_raw_opr_assignments`;
 
 CREATE TABLE `gdpr_raw_opr_assignments` (
@@ -91,9 +94,16 @@ CREATE TABLE `gdpr_raw_opr_assignments` (
   `time`         BIGINT   NOT NULL
 );
 
+CREATE INDEX `gdpr_raw_opr_assignments_candidate_id`
+  ON `gdpr_raw_opr_assignments` (`candidate_id`);
+
+CREATE INDEX `gdpr_raw_opr_assignments_time`
+  ON `gdpr_raw_opr_assignments` (`time`);
+
 DROP TABLE IF EXISTS `gdpr_raw_opr_submissions`;
 
 CREATE TABLE `gdpr_raw_opr_submissions` (
+  `id`                  BIGINT   NOT NULL AUTO_INCREMENT PRIMARY KEY,
   candidate_id          CHAR(32) NOT NULL,
   assigned_time         BIGINT   NOT NULL,
   comment               TEXT,
@@ -112,12 +122,57 @@ CREATE TABLE `gdpr_raw_opr_submissions` (
   what_is_it            TEXT
 );
 
+CREATE INDEX `gdpr_raw_opr_submissions_candidate_id`
+  ON `gdpr_raw_opr_submissions` (`candidate_id`);
+
+CREATE INDEX `gdpr_raw_opr_submissions_assigned_time`
+  ON `gdpr_raw_opr_submissions` (`assigned_time`);
+
+CREATE INDEX `gdpr_raw_opr_submissions_rating_for_cultural`
+  ON `gdpr_raw_opr_submissions` (`rating_for_cultural`);
+
+CREATE INDEX `gdpr_raw_opr_submissions_rating_for_text`
+  ON `gdpr_raw_opr_submissions` (`rating_for_text`);
+
+CREATE INDEX `gdpr_raw_opr_submissions_rating_for_location`
+  ON `gdpr_raw_opr_submissions` (`rating_for_location`);
+
+CREATE INDEX `gdpr_raw_opr_submissions_rating_for_quality`
+  ON `gdpr_raw_opr_submissions` (`rating_for_quality`);
+
+CREATE INDEX `gdpr_raw_opr_submissions_rating_for_safety`
+  ON `gdpr_raw_opr_submissions` (`rating_for_safety`);
+
+CREATE INDEX `gdpr_raw_opr_submissions_rating_for_uniqueness`
+  ON `gdpr_raw_opr_submissions` (`rating_for_uniqueness`);
+
+CREATE INDEX `gdpr_raw_opr_submissions_is_duplicate`
+  ON `gdpr_raw_opr_submissions` (`is_duplicate`);
+
+CREATE INDEX `gdpr_raw_opr_submissions_duplicate_to`
+  ON `gdpr_raw_opr_submissions` (`duplicate_to`);
+
+CREATE INDEX `gdpr_raw_opr_submissions_suggested_loc_latE6`
+  ON `gdpr_raw_opr_submissions` (`suggested_loc_latE6`);
+
+CREATE INDEX `gdpr_raw_opr_submissions_suggested_loc_lngE6`
+  ON `gdpr_raw_opr_submissions` (`suggested_loc_lngE6`);
+
+CREATE INDEX `gdpr_raw_opr_submissions_is_one_star`
+  ON `gdpr_raw_opr_submissions` (`is_one_star`);
+
+CREATE INDEX `gdpr_raw_opr_submissions_submission_time`
+  ON `gdpr_raw_opr_submissions` (`submission_time`);
+
 DROP TABLE IF EXISTS `gdpr_raw_all_portals_approved`;
 
 CREATE TABLE `gdpr_raw_all_portals_approved` (
   `time`      BIGINT NOT NULL,
   `portal_id` INT    NOT NULL
 );
+
+CREATE INDEX `gdpr_raw_all_portals_approved_time`
+  ON `gdpr_raw_all_portals_approved` (`time`);
 
 DROP TABLE IF EXISTS `gdpr_raw_seer_portals`;
 
@@ -126,6 +181,9 @@ CREATE TABLE `gdpr_raw_seer_portals` (
   `portal_id` INT    NOT NULL
 );
 
+CREATE INDEX `gdpr_raw_seer_portals_time`
+  ON `gdpr_raw_seer_portals` (`time`);
+
 DROP TABLE IF EXISTS `gdpr_raw_portals_visited`;
 
 CREATE TABLE `gdpr_raw_portals_visited` (
@@ -133,10 +191,485 @@ CREATE TABLE `gdpr_raw_portals_visited` (
   `portal_id` INT    NOT NULL
 );
 
+CREATE INDEX `gdpr_raw_portals_visited_time`
+  ON `gdpr_raw_portals_visited` (`time`);
+
 DROP TABLE IF EXISTS `gdpr_raw_xm_collected`;
 
 CREATE TABLE `gdpr_raw_xm_collected` (
   `time`  BIGINT NOT NULL,
   `value` FLOAT  NOT NULL
 );
+
+CREATE INDEX `gdpr_raw_xm_collected_time`
+  ON `gdpr_raw_xm_collected` (`time`);
+
+CREATE INDEX `gdpr_raw_xm_collected_value`
+  ON `gdpr_raw_xm_collected` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_kilometers_walked`;
+
+CREATE TABLE `gdpr_raw_kilometers_walked` (
+  `time`  BIGINT NOT NULL,
+  `value` FLOAT  NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_kilometers_walked_time`
+  ON `gdpr_raw_kilometers_walked` (`time`);
+
+CREATE INDEX `gdpr_raw_kilometers_walked_value`
+  ON `gdpr_raw_kilometers_walked` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_mind_units_controlled`;
+
+CREATE TABLE `gdpr_raw_mind_units_controlled` (
+  `time`  BIGINT NOT NULL,
+  `value` FLOAT  NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_mind_units_controlled_time`
+  ON `gdpr_raw_mind_units_controlled` (`time`);
+
+CREATE INDEX `gdpr_raw_mind_units_controlled_value`
+  ON `gdpr_raw_mind_units_controlled` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_mind_units_controlled_active`;
+
+CREATE TABLE `gdpr_raw_mind_units_controlled_active` (
+  `time`  BIGINT NOT NULL,
+  `value` INT    NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_mind_units_controlled_active_time`
+  ON `gdpr_raw_mind_units_controlled_active` (`time`);
+
+CREATE INDEX `gdpr_raw_mind_units_controlled_active_value`
+  ON `gdpr_raw_mind_units_controlled_active` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_fields_created`;
+
+CREATE TABLE `gdpr_raw_fields_created` (
+  `time`  BIGINT NOT NULL,
+  `value` FLOAT  NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_fields_created_time`
+  ON `gdpr_raw_fields_created` (`time`);
+
+CREATE INDEX `gdpr_raw_fields_created_value`
+  ON `gdpr_raw_fields_created` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_fields_created_active`;
+
+CREATE TABLE `gdpr_raw_fields_created_active` (
+  `time`  BIGINT NOT NULL,
+  `value` INT    NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_fields_created_active_time`
+  ON `gdpr_raw_fields_created_active` (`time`);
+
+CREATE INDEX `gdpr_raw_fields_created_active_value`
+  ON `gdpr_raw_fields_created_active` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_links_created`;
+
+CREATE TABLE `gdpr_raw_links_created` (
+  `time`  BIGINT NOT NULL,
+  `value` FLOAT  NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_links_created_time`
+  ON `gdpr_raw_links_created` (`time`);
+
+CREATE INDEX `gdpr_raw_links_created_value`
+  ON `gdpr_raw_links_created` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_link_length_in_km`;
+
+CREATE TABLE `gdpr_raw_link_length_in_km` (
+  `time`  BIGINT NOT NULL,
+  `value` DOUBLE NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_link_length_in_km_time`
+  ON `gdpr_raw_link_length_in_km` (`time`);
+
+CREATE INDEX `gdpr_raw_link_length_in_km_value`
+  ON `gdpr_raw_link_length_in_km` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_links_created_active`;
+
+CREATE TABLE `gdpr_raw_links_created_active` (
+  `time`  BIGINT NOT NULL,
+  `value` INT    NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_links_created_active_time`
+  ON `gdpr_raw_links_created_active` (`time`);
+
+CREATE INDEX `gdpr_raw_links_created_active_value`
+  ON `gdpr_raw_links_created_active` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_portals_captured`;
+
+CREATE TABLE `gdpr_raw_portals_captured` (
+  `time`  BIGINT NOT NULL,
+  `value` INT    NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_portals_captured_time`
+  ON `gdpr_raw_portals_captured` (`time`);
+
+CREATE INDEX `gdpr_raw_portals_captured_value`
+  ON `gdpr_raw_portals_captured` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_portals_owned`;
+
+CREATE TABLE `gdpr_raw_portals_owned` (
+  `time`  BIGINT NOT NULL,
+  `value` INT    NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_portals_owned_time`
+  ON `gdpr_raw_portals_owned` (`time`);
+
+CREATE INDEX `gdpr_raw_portals_owned_value`
+  ON `gdpr_raw_portals_owned` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_resonators_deployed`;
+
+CREATE TABLE `gdpr_raw_resonators_deployed` (
+  `time`  BIGINT NOT NULL,
+  `value` FLOAT  NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_resonators_deployed_time`
+  ON `gdpr_raw_resonators_deployed` (`time`);
+
+CREATE INDEX `gdpr_raw_resonators_deployed_value`
+  ON `gdpr_raw_resonators_deployed` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_mods_deployed`;
+
+CREATE TABLE `gdpr_raw_mods_deployed` (
+  `time`  BIGINT NOT NULL,
+  `value` FLOAT  NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_mods_deployed_time`
+  ON `gdpr_raw_mods_deployed` (`time`);
+
+CREATE INDEX `gdpr_raw_mods_deployed_value`
+  ON `gdpr_raw_mods_deployed` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_xm_recharged`;
+
+CREATE TABLE `gdpr_raw_xm_recharged` (
+  `time`  BIGINT NOT NULL,
+  `value` FLOAT  NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_xm_recharged_time`
+  ON `gdpr_raw_xm_recharged` (`time`);
+
+CREATE INDEX `gdpr_raw_xm_recharged_value`
+  ON `gdpr_raw_xm_recharged` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_resonators_destroyed`;
+
+CREATE TABLE `gdpr_raw_resonators_destroyed` (
+  `time`  BIGINT NOT NULL,
+  `value` FLOAT  NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_resonators_destroyed_time`
+  ON `gdpr_raw_resonators_destroyed` (`time`);
+
+CREATE INDEX `gdpr_raw_resonators_destroyed_value`
+  ON `gdpr_raw_resonators_destroyed` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_portals_neutralized`;
+
+CREATE TABLE `gdpr_raw_portals_neutralized` (
+  `time`  BIGINT NOT NULL,
+  `value` INT    NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_portals_neutralized_time`
+  ON `gdpr_raw_portals_neutralized` (`time`);
+
+CREATE INDEX `gdpr_raw_portals_neutralized_value`
+  ON `gdpr_raw_portals_neutralized` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_links_destroyed`;
+
+CREATE TABLE `gdpr_raw_links_destroyed` (
+  `time`  BIGINT NOT NULL,
+  `value` FLOAT  NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_links_destroyed_time`
+  ON `gdpr_raw_links_destroyed` (`time`);
+
+CREATE INDEX `gdpr_raw_links_destroyed_value`
+  ON `gdpr_raw_links_destroyed` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_fields_destroyed`;
+
+CREATE TABLE `gdpr_raw_fields_destroyed` (
+  `time`  BIGINT NOT NULL,
+  `value` FLOAT  NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_fields_destroyed_time`
+  ON `gdpr_raw_fields_destroyed` (`time`);
+
+CREATE INDEX `gdpr_raw_fields_destroyed_value`
+  ON `gdpr_raw_fields_destroyed` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_mind_units_times_days_held`;
+
+CREATE TABLE `gdpr_raw_mind_units_times_days_held` (
+  `time`  BIGINT NOT NULL,
+  `value` DOUBLE NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_mind_units_times_days_held_time`
+  ON `gdpr_raw_mind_units_times_days_held` (`time`);
+
+CREATE INDEX `gdpr_raw_mind_units_times_days_held_value`
+  ON `gdpr_raw_mind_units_times_days_held` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_field_held_days`;
+
+CREATE TABLE `gdpr_raw_field_held_days` (
+  `time`  BIGINT NOT NULL,
+  `value` DOUBLE NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_field_held_days_time`
+  ON `gdpr_raw_field_held_days` (`time`);
+
+CREATE INDEX `gdpr_raw_field_held_days_value`
+  ON `gdpr_raw_field_held_days` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_link_length_times_days_held`;
+
+CREATE TABLE `gdpr_raw_link_length_times_days_held` (
+  `time`  BIGINT NOT NULL,
+  `value` DOUBLE NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_link_length_times_days_held_time`
+  ON `gdpr_raw_link_length_times_days_held` (`time`);
+
+CREATE INDEX `gdpr_raw_link_length_times_days_held_value`
+  ON `gdpr_raw_link_length_times_days_held` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_link_held_days`;
+
+CREATE TABLE `gdpr_raw_link_held_days` (
+  `time`  BIGINT NOT NULL,
+  `value` DOUBLE NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_link_held_days_time`
+  ON `gdpr_raw_link_held_days` (`time`);
+
+CREATE INDEX `gdpr_raw_link_held_days_value`
+  ON `gdpr_raw_link_held_days` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_portal_held_days`;
+
+CREATE TABLE `gdpr_raw_portal_held_days` (
+  `time`  BIGINT NOT NULL,
+  `value` DOUBLE NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_portal_held_days_time`
+  ON `gdpr_raw_portal_held_days` (`time`);
+
+CREATE INDEX `gdpr_raw_portal_held_days_value`
+  ON `gdpr_raw_portal_held_days` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_hacks`;
+
+CREATE TABLE `gdpr_raw_hacks` (
+  `time`  BIGINT NOT NULL,
+  `value` FLOAT  NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_hacks_time`
+  ON `gdpr_raw_hacks` (`time`);
+
+CREATE INDEX `gdpr_raw_hacks_value`
+  ON `gdpr_raw_hacks` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_glyph_hack_points`;
+
+CREATE TABLE `gdpr_raw_glyph_hack_points` (
+  `time`  BIGINT NOT NULL,
+  `value` FLOAT  NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_glyph_hack_points_time`
+  ON `gdpr_raw_glyph_hack_points` (`time`);
+
+CREATE INDEX `gdpr_raw_glyph_hack_points_value`
+  ON `gdpr_raw_glyph_hack_points` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_glyph_hack_1_perfect`;
+
+CREATE TABLE `gdpr_raw_glyph_hack_1_perfect` (
+  `time`  BIGINT NOT NULL,
+  `value` FLOAT  NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_glyph_hack_1_perfect_time`
+  ON `gdpr_raw_glyph_hack_1_perfect` (`time`);
+
+CREATE INDEX `gdpr_raw_glyph_hack_1_perfect_value`
+  ON `gdpr_raw_glyph_hack_1_perfect` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_glyph_hack_3_perfect`;
+
+CREATE TABLE `gdpr_raw_glyph_hack_3_perfect` (
+  `time`  BIGINT NOT NULL,
+  `value` FLOAT  NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_glyph_hack_3_perfect_time`
+  ON `gdpr_raw_glyph_hack_1_perfect` (`time`);
+
+CREATE INDEX `gdpr_raw_glyph_hack_3_perfect_value`
+  ON `gdpr_raw_glyph_hack_1_perfect` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_glyph_hack_4_perfect`;
+
+CREATE TABLE `gdpr_raw_glyph_hack_4_perfect` (
+  `time`  BIGINT NOT NULL,
+  `value` FLOAT  NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_glyph_hack_4_perfect_time`
+  ON `gdpr_raw_glyph_hack_1_perfect` (`time`);
+
+CREATE INDEX `gdpr_raw_glyph_hack_4_perfect_value`
+  ON `gdpr_raw_glyph_hack_1_perfect` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_glyph_hack_5_perfect`;
+
+CREATE TABLE `gdpr_raw_glyph_hack_5_perfect` (
+  `time`  BIGINT NOT NULL,
+  `value` FLOAT  NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_glyph_hack_5_perfect_time`
+  ON `gdpr_raw_glyph_hack_1_perfect` (`time`);
+
+CREATE INDEX `gdpr_raw_glyph_hack_5_perfect_value`
+  ON `gdpr_raw_glyph_hack_1_perfect` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_agents_recruited`;
+
+CREATE TABLE `gdpr_raw_agents_recruited` (
+  `time`  BIGINT NOT NULL,
+  `value` INT    NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_agents_recruited_time`
+  ON `gdpr_raw_agents_recruited` (`time`);
+
+CREATE INDEX `gdpr_raw_agents_recruited_value`
+  ON `gdpr_raw_agents_recruited` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_exo5_control_fields_created`;
+
+CREATE TABLE `gdpr_raw_exo5_control_fields_created` (
+  `time`  BIGINT NOT NULL,
+  `value` FLOAT  NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_exo5_control_fields_created_time`
+  ON `gdpr_raw_exo5_control_fields_created` (`time`);
+
+CREATE INDEX `gdpr_raw_exo5_control_fields_created_value`
+  ON `gdpr_raw_exo5_control_fields_created` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_magus_builder_slots_deployed`;
+
+CREATE TABLE `gdpr_raw_magus_builder_slots_deployed` (
+  `time`           BIGINT NOT NULL,
+  `unique_slot_id` INT    NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_magus_builder_slots_deployed_time`
+  ON `gdpr_raw_magus_builder_slots_deployed` (`time`);
+
+DROP TABLE IF EXISTS `gdpr_raw_neutralizer_unique_portal_destroyed`;
+
+CREATE TABLE `gdpr_raw_neutralizer_unique_portal_destroyed` (
+  `time`  BIGINT NOT NULL,
+  `value` INT    NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_neutralizer_unique_portal_destroyed_time`
+  ON `gdpr_raw_neutralizer_unique_portal_destroyed` (`time`);
+
+CREATE INDEX `gdpr_raw_neutralizer_unique_portal_destroyed_value`
+  ON `gdpr_raw_neutralizer_unique_portal_destroyed` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_event_mission_day_points`;
+
+CREATE TABLE `gdpr_raw_event_mission_day_points` (
+  `time`  BIGINT NOT NULL,
+  `value` INT    NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_event_mission_day_points_time`
+  ON `gdpr_raw_event_mission_day_points` (`time`);
+
+CREATE INDEX `gdpr_raw_event_mission_day_points_value`
+  ON `gdpr_raw_event_mission_day_points` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_missions_completed`;
+
+CREATE TABLE `gdpr_raw_missions_completed` (
+  `time`  BIGINT NOT NULL,
+  `value` INT    NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_missions_completed_time`
+  ON `gdpr_raw_missions_completed` (`time`);
+
+CREATE INDEX `gdpr_raw_missions_completed_value`
+  ON `gdpr_raw_missions_completed` (`value`);
+
+DROP TABLE IF EXISTS `gdpr_raw_zendesk_tickets`;
+
+CREATE TABLE `gdpr_raw_zendesk_tickets` (
+  `time`    BIGINT NOT NULL,
+  `subject` VARCHAR(128),
+  `comment` TEXT   NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_zendesk_tickets_time`
+  ON `gdpr_raw_zendesk_tickets` (`time`);
+
+DROP TABLE IF EXISTS `gdpr_raw_store_purchases`;
+
+CREATE TABLE `gdpr_raw_store_purchases` (
+  `time`                    BIGINT       NOT NULL,
+  `transaction_type`        VARCHAR(16)  NOT NULL,
+  `item`                    VARCHAR(128) NOT NULL,
+  `cmu_balance`             INT,
+  `transaction_description` TEXT         NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_store_purchases_time`
+  ON `gdpr_raw_store_purchases` (`time`);
+
+CREATE INDEX `gdpr_raw_store_purchases_transaction_type`
+  ON `gdpr_raw_store_purchases` (`transaction_type`);
 

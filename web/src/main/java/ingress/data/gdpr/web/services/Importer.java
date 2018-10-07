@@ -23,11 +23,15 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import ingress.data.gdpr.models.records.CommMention;
 import ingress.data.gdpr.models.records.GameLog;
+import ingress.data.gdpr.models.records.StorePurchase;
 import ingress.data.gdpr.models.records.TimestampedRecord;
 import ingress.data.gdpr.models.records.UsedDevice;
+import ingress.data.gdpr.models.records.ZendeskTicket;
+import ingress.data.gdpr.models.records.mission.Mission;
 import ingress.data.gdpr.models.records.opr.OprAssignmentLogItem;
 import ingress.data.gdpr.models.records.opr.OprProfile;
 import ingress.data.gdpr.models.records.opr.OprSubmissionLogItem;
+import ingress.data.gdpr.models.records.profile.AgentProfile;
 import ingress.data.gdpr.models.reports.RawDataReport;
 import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.parsers.RawDataParser;
@@ -77,8 +81,6 @@ public class Importer {
         this.primaryDataSource = primaryDataSource;
         notNull(jdbcTemplate, "Missing JDBC template");
         this.jdbcTemplate = jdbcTemplate;
-        this.jdbcTemplate.query("SELECT 1", (RowCallbackHandler) -> {
-        });
         final int cores = Runtime.getRuntime().availableProcessors();
         executor = new ThreadPoolExecutor(
                 cores, cores,
@@ -98,83 +100,141 @@ public class Importer {
 
         CompletableFuture
                 .allOf(
+                        persistAgentProfile(report.getAgentProfile()),
                         persistGameLogs(report.getGameLogs()),
                         persistCommMentions(report.getCommMentions()),
                         persistUsedDevices(report.getUsedDevices()),
                         persistOprProfile(report.getOprProfile()),
-                        persistOprAgreements(report.getOprAgreements()),
+                        bulkSaveTimestampedInteger("INSERT INTO gdpr_raw_opr_agreements(time,portal_id) VALUES(?,?)", report.getOprAgreements()),
                         persistOprAssignments(report.getOprAssignmentLogs()),
                         persistOprSubmissions(report.getOprSubmissionLogs()),
-                        persistAllPortalsApproved(report.getAllPortalsApproved()),
-                        persistSeerPortals(report.getSeerPortals()),
-                        persistPortalsVisited(report.getPortalsVisited()),
-                        persistXmCollected(report.getXmCollected())
+                        bulkSaveTimestampedInteger("INSERT INTO gdpr_raw_all_portals_approved(time,portal_id) VALUES(?,?)", report.getAllPortalsApproved()),
+                        bulkSaveTimestampedInteger("INSERT INTO gdpr_raw_seer_portals(time,portal_id) VALUES(?,?)", report.getSeerPortals()),
+                        bulkSaveTimestampedInteger("INSERT INTO gdpr_raw_portals_visited(time,portal_id) VALUES(?,?)", report.getPortalsVisited()),
+                        bulkSaveTimestampedFloat("INSERT INTO gdpr_raw_xm_collected(time,value) VALUES(?,?)", report.getXmCollected()),
+                        bulkSaveTimestampedFloat("INSERT INTO gdpr_raw_kilometers_walked(time,value) VALUES(?,?)", report.getKilometersWalked()),
+                        bulkSaveTimestampedFloat("INSERT INTO gdpr_raw_mind_units_controlled(time,value) VALUES(?,?)", report.getMindUnitsControlled()),
+                        bulkSaveTimestampedInteger("INSERT INTO gdpr_raw_mind_units_controlled_active(time,value) VALUES(?,?)", report.getMindUnitsControlledActive()),
+                        bulkSaveTimestampedFloat("INSERT INTO gdpr_raw_fields_created(time,value) VALUES(?,?)", report.getFieldsCreated()),
+                        bulkSaveTimestampedInteger("INSERT INTO gdpr_raw_fields_created_active(time,value) VALUES(?,?)", report.getFieldsCreatedActive()),
+                        bulkSaveTimestampedFloat("INSERT INTO gdpr_raw_links_created(time,value) VALUES(?,?)", report.getLinksCreated()),
+                        bulkSaveTimestampedDouble("INSERT INTO gdpr_raw_link_length_in_km(time,value) VALUES(?,?)", report.getLinkLengthInKm()),
+                        bulkSaveTimestampedInteger("INSERT INTO gdpr_raw_links_created_active(time,value) VALUES(?,?)", report.getLinksCreatedActive()),
+                        bulkSaveTimestampedInteger("INSERT INTO gdpr_raw_portals_captured(time,value) VALUES(?,?)", report.getPortalsCaptured()),
+                        bulkSaveTimestampedInteger("INSERT INTO gdpr_raw_portals_owned(time,value) VALUES(?,?)", report.getPortalsOwned()),
+                        bulkSaveTimestampedFloat("INSERT INTO gdpr_raw_resonators_deployed(time,value) VALUES(?,?)", report.getResonatorsDeployed()),
+                        bulkSaveTimestampedFloat("INSERT INTO gdpr_raw_mods_deployed(time,value) VALUES(?,?)", report.getModsDeployed()),
+                        bulkSaveTimestampedFloat("INSERT INTO gdpr_raw_xm_recharged(time,value) VALUES(?,?)", report.getXmRecharged()),
+                        bulkSaveTimestampedFloat("INSERT INTO gdpr_raw_resonators_destroyed(time,value) VALUES(?,?)", report.getResonatorsDestroyed()),
+                        bulkSaveTimestampedInteger("INSERT INTO gdpr_raw_portals_neutralized(time,value) VALUES(?,?)", report.getPortalsNeutralized()),
+                        bulkSaveTimestampedFloat("INSERT INTO gdpr_raw_links_destroyed(time,value) VALUES(?,?)", report.getLinksDestroyed()),
+                        bulkSaveTimestampedFloat("INSERT INTO gdpr_raw_fields_destroyed(time,value) VALUES(?,?)", report.getFieldsDestroyed()),
+                        bulkSaveTimestampedDouble("INSERT INTO gdpr_raw_mind_units_times_days_held(time,value) VALUES(?,?)", report.getMindUnitsTimesDaysHeld()),
+                        bulkSaveTimestampedDouble("INSERT INTO gdpr_raw_field_held_days(time,value) VALUES(?,?)", report.getFieldHeldDays()),
+                        bulkSaveTimestampedDouble("INSERT INTO gdpr_raw_link_length_times_days_held(time,value) VALUES(?,?)", report.getLinkLengthInKmTimesDaysHeld()),
+                        bulkSaveTimestampedDouble("INSERT INTO gdpr_raw_link_held_days(time,value) VALUES(?,?)", report.getLinkHeldDays()),
+                        bulkSaveTimestampedDouble("INSERT INTO gdpr_raw_portal_held_days(time,value) VALUES(?,?)", report.getPortalHeldDays()),
+                        bulkSaveTimestampedFloat("INSERT INTO gdpr_raw_hacks(time,value) VALUES(?,?)", report.getHacks()),
+                        bulkSaveTimestampedFloat("INSERT INTO gdpr_raw_glyph_hack_points(time,value) VALUES(?,?)", report.getGlyphHackPoints()),
+                        bulkSaveTimestampedFloat("INSERT INTO gdpr_raw_glyph_hack_1_perfect(time,value) VALUES(?,?)", report.getGlyphHackOnePerfect()),
+                        bulkSaveTimestampedFloat("INSERT INTO gdpr_raw_glyph_hack_3_perfect(time,value) VALUES(?,?)", report.getGlyphHackThreePerfect()),
+                        bulkSaveTimestampedFloat("INSERT INTO gdpr_raw_glyph_hack_4_perfect(time,value) VALUES(?,?)", report.getGlyphHackFourPerfect()),
+                        bulkSaveTimestampedFloat("INSERT INTO gdpr_raw_glyph_hack_5_perfect(time,value) VALUES(?,?)", report.getGlyphHackFivePerfect()),
+                        bulkSaveTimestampedInteger("INSERT INTO gdpr_raw_agents_recruited(time,value) VALUES(?,?)", report.getAgentsRecruited()),
+                        bulkSaveTimestampedFloat("INSERT INTO gdpr_raw_exo5_control_fields_created(time,value) VALUES(?,?)", report.getExo5ControlFieldsCreated()),
+                        bulkSaveTimestampedInteger("INSERT INTO gdpr_raw_magus_builder_slots_deployed(time,unique_slot_id) VALUES(?,?)", report.getMagusBuilderSlotsDeployed()),
+                        bulkSaveTimestampedInteger("INSERT INTO gdpr_raw_neutralizer_unique_portal_destroyed(time,value) VALUES(?,?)", report.getNeutralizerUniquePortalsDestroyed()),
+                        bulkSaveTimestampedInteger("INSERT INTO gdpr_raw_event_mission_day_points(time,value) VALUES(?,?)", report.getMissionDayPoints()),
+                        bulkSaveTimestampedInteger("INSERT INTO gdpr_raw_missions_completed(time,value) VALUES(?,?)", report.getMissionsCompleted()),
+                        persistMissionsCreated(report.getMissionsCreated()),
+                        persistZendeskTickets(report.getZendeskTickets()),
+                        persistStorePurchases(report.getStorePurchases())
                 )
                 .join();
         LOGGER.info("Finished saving all data into database.");
     }
 
-    private CompletableFuture<Void> persistXmCollected(final ReportDetails<List<TimestampedRecord<Float>>> xmCollected) {
-        if (xmCollected == null || !xmCollected.isOk()) {
+    private CompletableFuture<Void> persistMissionsCreated(final ReportDetails<List<Mission>> report) {
+        if (report == null || !report.isOk()) {
             return CompletableFuture.completedFuture(null);
         }
-        final List<TimestampedRecord<Float>> records = xmCollected.getData();
-        if (records.isEmpty()) {
+        final List<Mission> missions = report.getData();
+        if (missions.isEmpty()) {
             return CompletableFuture.completedFuture(null);
         }
-        final String sql = "INSERT INTO gdpr_raw_xm_collected(time,value) VALUES(?,?)";
+        return CompletableFuture.completedFuture(null);
+    }
+
+    private CompletableFuture<Void> persistAgentProfile(final ReportDetails<AgentProfile> report) {
+        if (report == null || !report.isOk()) {
+            return CompletableFuture.completedFuture(null);
+        }
+        final AgentProfile profile = report.getData();
+        if (profile == null) {
+            return CompletableFuture.completedFuture(null);
+        }
+        return CompletableFuture.completedFuture(null);
+    }
+
+    private CompletableFuture<Void> persistStorePurchases(final ReportDetails<List<StorePurchase>> report) {
+        if (report == null || !report.isOk()) {
+            return CompletableFuture.completedFuture(null);
+        }
+        final List<StorePurchase> purchases = report.getData();
+        if (purchases.isEmpty()) {
+            return CompletableFuture.completedFuture(null);
+        }
+        final String sql = "INSERT INTO gdpr_raw_store_purchases(time,transaction_type,item,cmu_balance,transaction_description) VALUES(?,?,?,?,?)";
         return CompletableFuture.runAsync(() -> {
-            final List<List<TimestampedRecord<Float>>> batches = Lists.partition(new ArrayList<>(records), DEFAULT_BATCH_SIZE);
-            bulkSaveTimestampedFloat(sql, batches);
-            LOGGER.info("Saved {} XM collected records.", records.size());
+            final List<List<StorePurchase>> batches = Lists.partition(new ArrayList<>(purchases), DEFAULT_BATCH_SIZE);
+            batches.forEach(batch -> jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+                @Override
+                public void setValues(@SuppressWarnings("NullableProblems") final PreparedStatement ps, final int i) throws SQLException {
+                    final StorePurchase record = batch.get(i);
+                    ps.setLong(1, record.getTime().toInstant().getEpochSecond());
+                    ps.setString(2, record.getTransactionType());
+                    ps.setString(3, record.getItem());
+                    if (record.getCmuBalance().isPresent()) {
+                        ps.setInt(4, record.getCmuBalance().get());
+                    } else {
+                        ps.setNull(4, Types.INTEGER);
+                    }
+                    ps.setString(5, record.getTransactionDescription());
+                }
+
+                @Override public int getBatchSize() {
+                    return batch.size();
+                }
+            }));
+            LOGGER.info("Saved {} Zendesk tickets.", purchases.size());
         }, executor);
     }
 
-    private CompletableFuture<Void> persistPortalsVisited(final ReportDetails<List<TimestampedRecord<Integer>>> portalsVisited) {
-        if (portalsVisited == null || !portalsVisited.isOk()) {
+    private CompletableFuture<Void> persistZendeskTickets(final ReportDetails<List<ZendeskTicket>> report) {
+        if (report == null || !report.isOk()) {
             return CompletableFuture.completedFuture(null);
         }
-        final List<TimestampedRecord<Integer>> portals = portalsVisited.getData();
-        if (portals.isEmpty()) {
+        final List<ZendeskTicket> tickets = report.getData();
+        if (tickets.isEmpty()) {
             return CompletableFuture.completedFuture(null);
         }
-        final String sql = "INSERT INTO gdpr_raw_portals_visited(time,portal_id) VALUES(?,?)";
+        final String sql = "INSERT INTO gdpr_raw_zendesk_tickets(time,subject,comment) VALUES(?,?,?)";
         return CompletableFuture.runAsync(() -> {
-            final List<List<TimestampedRecord<Integer>>> batches = Lists.partition(new ArrayList<>(portals), DEFAULT_BATCH_SIZE);
-            bulkSaveTimestampedInteger(sql, batches);
-            LOGGER.info("Saved {} visited portals.", portals.size());
-        }, executor);
-    }
+            final List<List<ZendeskTicket>> batches = Lists.partition(new ArrayList<>(tickets), DEFAULT_BATCH_SIZE);
+            batches.forEach(batch -> jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+                @Override
+                public void setValues(@SuppressWarnings("NullableProblems") final PreparedStatement ps, final int i) throws SQLException {
+                    final ZendeskTicket record = batch.get(i);
+                    ps.setLong(1, record.getTime().toInstant().getEpochSecond());
+                    ps.setString(2, record.getSubject());
+                    ps.setString(3, record.getComment());
+                }
 
-    private CompletableFuture<Void> persistSeerPortals(final ReportDetails<List<TimestampedRecord<Integer>>> seerPortals) {
-        if (seerPortals == null || !seerPortals.isOk()) {
-            return CompletableFuture.completedFuture(null);
-        }
-        final List<TimestampedRecord<Integer>> portals = seerPortals.getData();
-        if (portals.isEmpty()) {
-            return CompletableFuture.completedFuture(null);
-        }
-        final String sql = "INSERT INTO gdpr_raw_seer_portals(time,portal_id) VALUES(?,?)";
-        return CompletableFuture.runAsync(() -> {
-            final List<List<TimestampedRecord<Integer>>> batches = Lists.partition(new ArrayList<>(portals), DEFAULT_BATCH_SIZE);
-            bulkSaveTimestampedInteger(sql, batches);
-            LOGGER.info("Saved {} seer portals.", portals.size());
-        }, executor);
-    }
-
-    private CompletableFuture<Void> persistAllPortalsApproved(final ReportDetails<List<TimestampedRecord<Integer>>> allPortalsApproved) {
-        if (allPortalsApproved == null || !allPortalsApproved.isOk()) {
-            return CompletableFuture.completedFuture(null);
-        }
-        final List<TimestampedRecord<Integer>> approvals = allPortalsApproved.getData();
-        if (approvals.isEmpty()) {
-            return CompletableFuture.completedFuture(null);
-        }
-        final String sql = "INSERT INTO gdpr_raw_all_portals_approved(time,portal_id) VALUES(?,?)";
-        return CompletableFuture.runAsync(() -> {
-            final List<List<TimestampedRecord<Integer>>> batches = Lists.partition(new ArrayList<>(approvals), DEFAULT_BATCH_SIZE);
-            bulkSaveTimestampedInteger(sql, batches);
-            LOGGER.info("Saved {} approved portals.", approvals.size());
+                @Override public int getBatchSize() {
+                    return batch.size();
+                }
+            }));
+            LOGGER.info("Saved {} Zendesk tickets.", tickets.size());
         }, executor);
     }
 
@@ -194,7 +254,8 @@ public class Importer {
         return CompletableFuture.runAsync(() -> {
             final List<List<OprSubmissionLogItem>> batches = Lists.partition(new ArrayList<>(submissions), DEFAULT_BATCH_SIZE);
             batches.forEach(batch -> jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-                @Override public void setValues(final PreparedStatement ps, final int i) throws SQLException {
+                @Override
+                public void setValues(@SuppressWarnings("NullableProblems") final PreparedStatement ps, final int i) throws SQLException {
                     final OprSubmissionLogItem record = batch.get(i);
                     ps.setString(1, record.getCandidateId());
                     ps.setLong(2, record.getAssignedTime().toInstant().getEpochSecond());
@@ -264,7 +325,8 @@ public class Importer {
         return CompletableFuture.runAsync(() -> {
             final List<List<OprAssignmentLogItem>> batches = Lists.partition(new ArrayList<>(assignments), DEFAULT_BATCH_SIZE);
             batches.forEach(batch -> jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-                @Override public void setValues(final PreparedStatement ps, final int i) throws SQLException {
+                @Override
+                public void setValues(@SuppressWarnings("NullableProblems") final PreparedStatement ps, final int i) throws SQLException {
                     final OprAssignmentLogItem record = batch.get(i);
                     ps.setString(1, record.getCandidateId());
                     ps.setLong(2, record.getTime().toInstant().getEpochSecond());
@@ -275,22 +337,6 @@ public class Importer {
                 }
             }));
             LOGGER.info("Saved {} OPR assignments.", assignments.size());
-        }, executor);
-    }
-
-    private CompletableFuture<Void> persistOprAgreements(final ReportDetails<List<TimestampedRecord<Integer>>> oprAgreements) {
-        if (oprAgreements == null || !oprAgreements.isOk()) {
-            return CompletableFuture.completedFuture(null);
-        }
-        final List<TimestampedRecord<Integer>> agreements = oprAgreements.getData();
-        if (agreements.isEmpty()) {
-            return CompletableFuture.completedFuture(null);
-        }
-        final String sql = "INSERT INTO gdpr_raw_opr_agreements(time,portal_id) VALUES(?,?)";
-        return CompletableFuture.runAsync(() -> {
-            final List<List<TimestampedRecord<Integer>>> batches = Lists.partition(new ArrayList<>(agreements), DEFAULT_BATCH_SIZE);
-            bulkSaveTimestampedInteger(sql, batches);
-            LOGGER.info("Saved {} OPR agreements.", agreements.size());
         }, executor);
     }
 
@@ -332,7 +378,7 @@ public class Importer {
         return CompletableFuture.runAsync(() -> {
             jdbcTemplate.batchUpdate("INSERT INTO gdpr_raw_used_devices(name) VALUES(?)", new BatchPreparedStatementSetter() {
                 @Override
-                public void setValues(final PreparedStatement ps, final int i) throws SQLException {
+                public void setValues(@SuppressWarnings("NullableProblems") final PreparedStatement ps, final int i) throws SQLException {
                     UsedDevice device = devices.get(i);
                     ps.setString(1, device.getDeviceName());
                 }
@@ -357,7 +403,8 @@ public class Importer {
             final String sql = "INSERT INTO gdpr_raw_comm_mentions(time,message) VALUES(?,?)";
             final List<List<CommMention>> batches = Lists.partition(new ArrayList<>(mentions), DEFAULT_BATCH_SIZE);
             batches.forEach(batch -> jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-                @Override public void setValues(final PreparedStatement ps, final int i) throws SQLException {
+                @Override
+                public void setValues(@SuppressWarnings("NullableProblems") final PreparedStatement ps, final int i) throws SQLException {
                     final CommMention mention = batch.get(i);
                     ps.setLong(1, mention.getTime().toInstant().getEpochSecond());
                     ps.setString(2, mention.getMessage());
@@ -383,7 +430,8 @@ public class Importer {
             final String sql = "INSERT INTO gdpr_raw_game_logs(time,loc_latE6,loc_lngE6,tracker_trigger,comment) VALUES(?,?,?,?,?)";
             final List<List<GameLog>> batches = Lists.partition(new ArrayList<>(logs), DEFAULT_BATCH_SIZE);
             batches.forEach(batch -> jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-                @Override public void setValues(final PreparedStatement ps, final int i) throws SQLException {
+                @Override
+                public void setValues(@SuppressWarnings("NullableProblems") final PreparedStatement ps, final int i) throws SQLException {
                     final GameLog log = batch.get(i);
                     ps.setLong(1, log.getTime().toInstant().getEpochSecond());
                     final Optional<Coordinate> loc = log.getLocation();
@@ -406,60 +454,82 @@ public class Importer {
         }, executor);
     }
 
-    private void bulkSaveTimestampedInteger(final String sql, final List<List<TimestampedRecord<Integer>>> batches) {
-        batches.forEach(batch -> jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-            @Override public void setValues(final PreparedStatement ps, final int i) throws SQLException {
-                final TimestampedRecord<Integer> record = batch.get(i);
-                ps.setLong(1, record.getTime().toInstant().getEpochSecond());
-                ps.setInt(2, record.getValue());
-            }
+    private CompletableFuture<Void> bulkSaveTimestampedInteger(final String sql, final ReportDetails<List<TimestampedRecord<Integer>>> report) {
+        if (report == null || !report.isOk()) {
+            return CompletableFuture.completedFuture(null);
+        }
+        final List<TimestampedRecord<Integer>> records = report.getData();
+        if (records.isEmpty()) {
+            return CompletableFuture.completedFuture(null);
+        }
+        return CompletableFuture.runAsync(() -> {
+            final List<List<TimestampedRecord<Integer>>> batches = Lists.partition(new ArrayList<>(records), DEFAULT_BATCH_SIZE);
+            batches.forEach(batch -> jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+                @Override
+                public void setValues(@SuppressWarnings("NullableProblems") final PreparedStatement ps, final int i) throws SQLException {
+                    final TimestampedRecord<Integer> record = batch.get(i);
+                    ps.setLong(1, record.getTime().toInstant().getEpochSecond());
+                    ps.setInt(2, record.getValue());
+                }
 
-            @Override public int getBatchSize() {
-                return batch.size();
-            }
-        }));
+                @Override public int getBatchSize() {
+                    return batch.size();
+                }
+            }));
+            LOGGER.info("Saved {} records.", records.size());
+        }, executor);
     }
 
-    private void bulkSaveTimestampedLong(final String sql, final List<List<TimestampedRecord<Long>>> batches) {
-        batches.forEach(batch -> jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-            @Override public void setValues(final PreparedStatement ps, final int i) throws SQLException {
-                final TimestampedRecord<Long> record = batch.get(i);
-                ps.setLong(1, record.getTime().toInstant().getEpochSecond());
-                ps.setLong(2, record.getValue());
-            }
+    private CompletableFuture<Void> bulkSaveTimestampedFloat(final String sql, final ReportDetails<List<TimestampedRecord<Float>>> report) {
+        if (report == null || !report.isOk()) {
+            return CompletableFuture.completedFuture(null);
+        }
+        final List<TimestampedRecord<Float>> records = report.getData();
+        if (records.isEmpty()) {
+            return CompletableFuture.completedFuture(null);
+        }
+        return CompletableFuture.runAsync(() -> {
+            final List<List<TimestampedRecord<Float>>> batches = Lists.partition(new ArrayList<>(records), DEFAULT_BATCH_SIZE);
+            batches.forEach(batch -> jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+                @Override
+                public void setValues(@SuppressWarnings("NullableProblems") final PreparedStatement ps, final int i) throws SQLException {
+                    final TimestampedRecord<Float> record = batch.get(i);
+                    ps.setLong(1, record.getTime().toInstant().getEpochSecond());
+                    ps.setFloat(2, record.getValue());
+                }
 
-            @Override public int getBatchSize() {
-                return batch.size();
-            }
-        }));
+                @Override public int getBatchSize() {
+                    return batch.size();
+                }
+            }));
+            LOGGER.info("Saved {} records.", records.size());
+        }, executor);
     }
 
-    private void bulkSaveTimestampedFloat(final String sql, final List<List<TimestampedRecord<Float>>> batches) {
-        batches.forEach(batch -> jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-            @Override public void setValues(final PreparedStatement ps, final int i) throws SQLException {
-                final TimestampedRecord<Float> record = batch.get(i);
-                ps.setLong(1, record.getTime().toInstant().getEpochSecond());
-                ps.setFloat(2, record.getValue());
-            }
+    private CompletableFuture<Void> bulkSaveTimestampedDouble(final String sql, final ReportDetails<List<TimestampedRecord<Double>>> report) {
+        if (report == null || !report.isOk()) {
+            return CompletableFuture.completedFuture(null);
+        }
+        final List<TimestampedRecord<Double>> records = report.getData();
+        if (records.isEmpty()) {
+            return CompletableFuture.completedFuture(null);
+        }
+        return CompletableFuture.runAsync(() -> {
+            final List<List<TimestampedRecord<Double>>> batches = Lists.partition(new ArrayList<>(records), DEFAULT_BATCH_SIZE);
+            batches.forEach(batch -> jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+                @Override
+                public void setValues(@SuppressWarnings("NullableProblems") final PreparedStatement ps, final int i) throws SQLException {
+                    final TimestampedRecord<Double> record = batch.get(i);
+                    ps.setLong(1, record.getTime().toInstant().getEpochSecond());
+                    ps.setDouble(2, record.getValue());
+                }
 
-            @Override public int getBatchSize() {
-                return batch.size();
-            }
-        }));
-    }
-
-    private void bulkSaveTimestampedDouble(final String sql, final List<List<TimestampedRecord<Double>>> batches) {
-        batches.forEach(batch -> jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-            @Override public void setValues(final PreparedStatement ps, final int i) throws SQLException {
-                final TimestampedRecord<Double> record = batch.get(i);
-                ps.setLong(1, record.getTime().toInstant().getEpochSecond());
-                ps.setDouble(2, record.getValue());
-            }
-
-            @Override public int getBatchSize() {
-                return batch.size();
-            }
-        }));
+                @Override public int getBatchSize() {
+                    return batch.size();
+                }
+            }));
+            LOGGER.info("Saved {} records.", records.size());
+        }, executor);
     }
 
     private void rebuildRawDateTables() {

@@ -40,8 +40,6 @@ public class Summarizer {
     public Summarizer(@Qualifier("primaryJdbcTemplate") final JdbcTemplate jdbcTemplate) {
         notNull(jdbcTemplate, "Missing JDBC template");
         this.jdbcTemplate = jdbcTemplate;
-        this.jdbcTemplate.query("SELECT 1", (RowCallbackHandler) -> {
-        });
     }
 
     public boolean noDataUploaded() {
