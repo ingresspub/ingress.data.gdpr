@@ -36,23 +36,23 @@ public class PushNotificationFor {
         this.events = events;
     }
 
-    public boolean isCommMention() {
+    public boolean enabledCommMention() {
         return commMention;
     }
 
-    public boolean isPortalAttack() {
+    public boolean enabledPortalAttack() {
         return portalAttack;
     }
 
-    public boolean isFactionActivity() {
+    public boolean enabledFactionActivity() {
         return factionActivity;
     }
 
-    public boolean isNewStory() {
+    public boolean enabledNewStory() {
         return newStory;
     }
 
-    public boolean isEvents() {
+    public boolean enabledEvents() {
         return events;
     }
 }

@@ -22,6 +22,7 @@ import io.sgr.geometry.Coordinate;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author SgrAlpha
@@ -39,14 +40,14 @@ public class AgentProfile {
     private final int agentLevel;
     private final int ap;
     private final int xm;
-    private final int extraXm;
+    private final Integer extraXm;
     private final boolean displayStatsToOthers;
     private final Coordinate lastLocation;
     private final ZonedDateTime lastLocationTime;
-    private final Map<String, Integer> highestMediaIdByFaction;
+    private final Map<String, Integer> highestMediaIdByCategory;
 
-    private final boolean emailNotification;
-    private final boolean emailPromos;
+    private final boolean enabledEmailNotification;
+    private final boolean enabledEmailPromos;
     private final PushNotificationFor pushNotificationFor;
 
     private final boolean hasCapturedPortal;
@@ -67,11 +68,11 @@ public class AgentProfile {
             final ZonedDateTime tosAcceptedTime,
             final String invites,
             final String agentName, final String faction, final int agentLevel,
-            final int ap, final int xm, final int extraXm,
+            final int ap, final int xm, final Integer extraXm,
             final boolean displayStatsToOthers,
             final Coordinate lastLocation, final ZonedDateTime lastLocationTime,
-            final Map<String, Integer> highestMediaIdByFaction,
-            final boolean emailNotification, final boolean emailPromos, final PushNotificationFor pushNotificationFor,
+            final Map<String, Integer> highestMediaIdByCategory,
+            final boolean enabledEmailNotification, final boolean enabledEmailPromos, final PushNotificationFor pushNotificationFor,
             final boolean hasCapturedPortal, final boolean hasCreatedLink, final boolean hasCreatedField,
             final List<String> blockedAgents,
             final List<TutorialState> tutorialState,
@@ -91,9 +92,9 @@ public class AgentProfile {
         this.displayStatsToOthers = displayStatsToOthers;
         this.lastLocation = lastLocation;
         this.lastLocationTime = lastLocationTime;
-        this.highestMediaIdByFaction = highestMediaIdByFaction;
-        this.emailNotification = emailNotification;
-        this.emailPromos = emailPromos;
+        this.highestMediaIdByCategory = highestMediaIdByCategory;
+        this.enabledEmailNotification = enabledEmailNotification;
+        this.enabledEmailPromos = enabledEmailPromos;
         this.pushNotificationFor = pushNotificationFor;
         this.hasCapturedPortal = hasCapturedPortal;
         this.hasCreatedLink = hasCreatedLink;
@@ -144,8 +145,8 @@ public class AgentProfile {
         return xm;
     }
 
-    public int getExtraXm() {
-        return extraXm;
+    public Optional<Integer> getExtraXm() {
+        return Optional.ofNullable(extraXm);
     }
 
     public boolean isDisplayStatsToOthers() {
@@ -160,36 +161,36 @@ public class AgentProfile {
         return lastLocationTime;
     }
 
-    public Map<String, Integer> getHighestMediaIdByFaction() {
-        return highestMediaIdByFaction;
+    public Map<String, Integer> getHighestMediaIdByCategory() {
+        return highestMediaIdByCategory;
     }
 
-    public boolean isEmailNotification() {
-        return emailNotification;
+    public boolean enabledEmailNotification() {
+        return enabledEmailNotification;
     }
 
-    public boolean isEmailPromos() {
-        return emailPromos;
+    public boolean enabledEmailPromos() {
+        return enabledEmailPromos;
     }
 
     public PushNotificationFor getPushNotificationFor() {
         return pushNotificationFor;
     }
 
-    public boolean isHasCapturedPortal() {
+    public boolean hasCapturedPortal() {
         return hasCapturedPortal;
     }
 
-    public boolean isHasCreatedLink() {
+    public boolean hasCreatedLink() {
         return hasCreatedLink;
     }
 
-    public boolean isHasCreatedField() {
+    public boolean hasCreatedField() {
         return hasCreatedField;
     }
 
-    public List<String> getBlockedAgents() {
-        return blockedAgents;
+    public Optional<List<String>> getBlockedAgents() {
+        return Optional.ofNullable(blockedAgents);
     }
 
     public List<TutorialState> getTutorialState() {

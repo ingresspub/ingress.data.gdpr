@@ -32,6 +32,9 @@ import ingress.data.gdpr.models.records.opr.OprAssignmentLogItem;
 import ingress.data.gdpr.models.records.opr.OprProfile;
 import ingress.data.gdpr.models.records.opr.OprSubmissionLogItem;
 import ingress.data.gdpr.models.records.profile.AgentProfile;
+import ingress.data.gdpr.models.records.profile.Badge;
+import ingress.data.gdpr.models.records.profile.PushNotificationFor;
+import ingress.data.gdpr.models.records.profile.TutorialState;
 import ingress.data.gdpr.models.reports.RawDataReport;
 import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.parsers.RawDataParser;
@@ -51,6 +54,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
@@ -173,7 +177,76 @@ public class Importer {
         if (profile == null) {
             return CompletableFuture.completedFuture(null);
         }
-        return CompletableFuture.completedFuture(null);
+        return CompletableFuture.runAsync(() -> {
+            final PushNotificationFor push = profile.getPushNotificationFor();
+            jdbcTemplate.update("INSERT INTO gdpr_raw_agent_profile"
+                    + "(email,creation_time,sms_verified,sms_verification_time,tos_accepted_time,invites,"
+                    + "agent_name,faction,level,ap,xm,extra_xm,display_stats_to_others,"
+                    + "last_loc_latE6,last_loc_lngE6,last_loc_time,"
+                    + "email_notification,email_promos,"
+                    + "push_for_comm_mention,push_for_portal_attack,push_for_faction_activity,push_for_new_story,push_for_events,"
+                    + "has_captured_portal,has_created_link,has_created_field,blocked_agents)"
+                    + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    profile.getEmail(), profile.getCreationTime().toInstant().getEpochSecond(),
+                    profile.getSmsVerification().isVerified(), profile.getSmsVerification().getVerificationTime().toInstant().getEpochSecond(),
+                    profile.getTosAcceptedTime().toInstant().getEpochSecond(), profile.getInvites(),
+                    profile.getAgentName(), profile.getFaction(), profile.getAgentLevel(), profile.getAp(), profile.getXm(), profile.getExtraXm().orElse(null),
+                    profile.isDisplayStatsToOthers(), profile.getLastLocation().getLatE6(), profile.getLastLocation().getLngE6(), profile.getLastLocationTime().toInstant().getEpochSecond(),
+                    profile.enabledEmailNotification(), profile.enabledEmailPromos(),
+                    push.enabledCommMention(), push.enabledPortalAttack(), push.enabledFactionActivity(), push.enabledNewStory(), push.enabledEvents(),
+                    profile.hasCapturedPortal(), profile.hasCreatedLink(), profile.hasCreatedField(), profile.getBlockedAgents().orElse(null));
+            final List<Badge> badges = new ArrayList<>(profile.getBadges());
+            jdbcTemplate.batchUpdate("INSERT INTO gdpr_raw_agent_profile_badges(name,level,time) VALUES(?,?,?)",
+                    new BatchPreparedStatementSetter() {
+                        @Override public void setValues(@SuppressWarnings("NullableProblems") final PreparedStatement ps, final int i) throws SQLException {
+                            final Badge badge = badges.get(i);
+                            ps.setString(1, badge.getName());
+                            ps.setString(2, badge.getLevel().name());
+                            ps.setLong(3, badge.getTime().toInstant().getEpochSecond());
+                        }
+
+                        @Override public int getBatchSize() {
+                            return badges.size();
+                        }
+                    });
+            final List<Map.Entry<String, Integer>> inventory = new ArrayList<>(profile.getInventory().entrySet());
+            jdbcTemplate.batchUpdate("INSERT INTO gdpr_raw_agent_inventory(item,count) VALUES(?,?)", new BatchPreparedStatementSetter() {
+                @Override public void setValues(@SuppressWarnings("NullableProblems") final PreparedStatement ps, final int i) throws SQLException {
+                    final Map.Entry<String, Integer> item = inventory.get(i);
+                    ps.setString(1, item.getKey());
+                    ps.setInt(2, item.getValue());
+                }
+
+                @Override public int getBatchSize() {
+                    return inventory.size();
+                }
+            });
+            final List<Map.Entry<String, Integer>> mediaIdList = new ArrayList<>(profile.getHighestMediaIdByCategory().entrySet());
+            jdbcTemplate.batchUpdate("INSERT INTO gdpr_raw_agent_highest_media_id_by_category(category,media_id) VALUES(?,?)", new BatchPreparedStatementSetter() {
+                @Override public void setValues(@SuppressWarnings("NullableProblems") final PreparedStatement ps, final int i) throws SQLException {
+                    final Map.Entry<String, Integer> entry = mediaIdList.get(i);
+                    ps.setString(1, entry.getKey());
+                    ps.setInt(2, entry.getValue());
+                }
+
+                @Override public int getBatchSize() {
+                    return mediaIdList.size();
+                }
+            });
+            List<TutorialState> states = profile.getTutorialState();
+            jdbcTemplate.batchUpdate("INSERT INTO gdpr_raw_agent_tutorial_state(name,state,time) VALUES(?,?,?)", new BatchPreparedStatementSetter() {
+                @Override public void setValues(@SuppressWarnings("NullableProblems") final PreparedStatement ps, final int i) throws SQLException {
+                    final TutorialState state = states.get(i);
+                    ps.setString(1, state.getName());
+                    ps.setString(2, state.getState());
+                    ps.setLong(3, state.getTime().toInstant().getEpochSecond());
+                }
+
+                @Override public int getBatchSize() {
+                    return states.size();
+                }
+            });
+        });
     }
 
     private CompletableFuture<Void> persistStorePurchases(final ReportDetails<List<StorePurchase>> report) {

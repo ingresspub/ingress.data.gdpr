@@ -15,6 +15,77 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+DROP TABLE IF EXISTS `gdpr_raw_agent_profile`;
+
+CREATE TABLE `gdpr_raw_agent_profile` (
+  `email`                     VARCHAR(128) NOT NULL,
+  `creation_time`             BIGINT       NOT NULL,
+  `sms_verified`              BOOLEAN      NOT NULL,
+  `sms_verification_time`     BIGINT       NOT NULL,
+  `tos_accepted_time`         BIGINT       NOT NULL,
+  `invites`                   VARCHAR(32)  NOT NULL,
+  `agent_name`                VARCHAR(16)  NOT NULL,
+  `faction`                   VARCHAR(16)  NOT NULL,
+  `level`                     INT          NOT NULL,
+  `ap`                        INT          NOT NULL,
+  `xm`                        INT          NOT NULL,
+  `extra_xm`                  INT,
+  `display_stats_to_others`   BOOLEAN      NOT NULL,
+  `last_loc_latE6`            INT          NOT NULL,
+  `last_loc_lngE6`            INT          NOT NULL,
+  `last_loc_time`             BIGINT       NOT NULL,
+  `email_notification`        BOOLEAN      NOT NULL,
+  `email_promos`              BOOLEAN      NOT NULL,
+  `push_for_comm_mention`     BOOLEAN      NOT NULL,
+  `push_for_portal_attack`    BOOLEAN      NOT NULL,
+  `push_for_faction_activity` BOOLEAN      NOT NULL,
+  `push_for_new_story`        BOOLEAN      NOT NULL,
+  `push_for_events`           BOOLEAN      NOT NULL,
+  `has_captured_portal`       BOOLEAN      NOT NULL,
+  `has_created_link`          BOOLEAN      NOT NULL,
+  `has_created_field`         BOOLEAN      NOT NULL,
+  `blocked_agents`            TEXT
+);
+
+DROP TABLE IF EXISTS `gdpr_raw_agent_profile_badges`;
+
+CREATE TABLE `gdpr_raw_agent_profile_badges` (
+  `name`  VARCHAR(32) NOT NULL,
+  `level` VARCHAR(8)  NOT NULL,
+  `time`  BIGINT      NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_agent_profile_badges_name`
+  ON `gdpr_raw_agent_profile_badges` (`name`);
+
+CREATE INDEX `gdpr_raw_agent_profile_badges_level`
+  ON `gdpr_raw_agent_profile_badges` (`level`);
+
+DROP TABLE IF EXISTS `gdpr_raw_agent_inventory`;
+
+CREATE TABLE `gdpr_raw_agent_inventory` (
+  `item`  VARCHAR(32) NOT NULL,
+  `count` INT         NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_agent_inventory_item`
+  ON `gdpr_raw_agent_inventory` (`item`);
+
+DROP TABLE IF EXISTS `gdpr_raw_agent_highest_media_id_by_category`;
+
+CREATE TABLE `gdpr_raw_agent_highest_media_id_by_category` (
+  `category` VARCHAR(16) NOT NULL,
+  `media_id` INT         NOT NULL
+);
+
+DROP TABLE IF EXISTS `gdpr_raw_agent_tutorial_state`;
+
+CREATE TABLE `gdpr_raw_agent_tutorial_state` (
+  `name`  VARCHAR(64)  NOT NULL,
+  `state` VARCHAR(256) NOT NULL,
+  `time`  BIGINT       NOT NULL
+);
+
 DROP TABLE IF EXISTS `gdpr_raw_game_logs`;
 
 CREATE TABLE `gdpr_raw_game_logs` (
@@ -55,26 +126,26 @@ CREATE TABLE `gdpr_raw_used_devices` (
 DROP TABLE IF EXISTS `gdpr_raw_opr_profile`;
 
 CREATE TABLE `gdpr_raw_opr_profile` (
-  email                      VARCHAR(128),
-  bonus_last_change_time     BIGINT NOT NULL,
-  bonus_loc_latE6            INT    NOT NULL,
-  bonus_loc_lngE6            INT    NOT NULL,
-  account_creation_time      BIGINT NOT NULL,
-  total_analyzed             INT    NOT NULL DEFAULT 0,
-  portal_created             INT    NOT NULL DEFAULT 0,
-  portal_rejected            INT    NOT NULL DEFAULT 0,
-  hometown_changed_times     INT    NOT NULL DEFAULT 0,
-  hometown_last_changed_time BIGINT,
-  hometown_loc_latE6         INT    NOT NULL,
-  hometown_loc_lngE6         INT    NOT NULL,
-  last_activity_loc_latE6    INT    NOT NULL,
-  last_activity_loc_lngE6    INT    NOT NULL,
-  language                   VARCHAR(32),
-  last_login_time            BIGINT NOT NULL,
-  performance                VARCHAR(8),
-  quiz_status                VARCHAR(16),
-  quiz_time_taken            BIGINT NOT NULL,
-  training_completion_time   BIGINT NOT NULL
+  `email`                      VARCHAR(128),
+  `bonus_last_change_time`     BIGINT NOT NULL,
+  `bonus_loc_latE6`            INT    NOT NULL,
+  `bonus_loc_lngE6`            INT    NOT NULL,
+  `account_creation_time`      BIGINT NOT NULL,
+  `total_analyzed`             INT    NOT NULL DEFAULT 0,
+  `portal_created`             INT    NOT NULL DEFAULT 0,
+  `portal_rejected`            INT    NOT NULL DEFAULT 0,
+  `hometown_changed_times`     INT    NOT NULL DEFAULT 0,
+  `hometown_last_changed_time` BIGINT,
+  `hometown_loc_latE6`         INT    NOT NULL,
+  `hometown_loc_lngE6`         INT    NOT NULL,
+  `last_activity_loc_latE6`    INT    NOT NULL,
+  `last_activity_loc_lngE6`    INT    NOT NULL,
+  `language`                   VARCHAR(32),
+  `last_login_time`            BIGINT NOT NULL,
+  `performance`                VARCHAR(8),
+  `quiz_status`                VARCHAR(16),
+  `quiz_time_taken`            BIGINT NOT NULL,
+  `training_completion_time`   BIGINT NOT NULL
 );
 
 DROP TABLE IF EXISTS `gdpr_raw_opr_agreements`;
@@ -103,23 +174,23 @@ CREATE INDEX `gdpr_raw_opr_assignments_time`
 DROP TABLE IF EXISTS `gdpr_raw_opr_submissions`;
 
 CREATE TABLE `gdpr_raw_opr_submissions` (
-  `id`                  BIGINT   NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  candidate_id          CHAR(32) NOT NULL,
-  assigned_time         BIGINT   NOT NULL,
-  comment               TEXT,
-  rating_for_cultural   INT,
-  rating_for_text       INT,
-  is_duplicate          BOOLEAN  NOT NULL,
-  duplicate_to          VARCHAR(35),
-  rating_for_location   INT,
-  suggested_loc_latE6   INT,
-  suggested_loc_lngE6   INT,
-  rating_for_quality    INT,
-  rating_for_safety     INT,
-  is_one_star           BOOLEAN  NOT NULL,
-  submission_time       BIGINT   NOT NULL,
-  rating_for_uniqueness INT,
-  what_is_it            TEXT
+  `id`                    BIGINT   NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `candidate_id`          CHAR(32) NOT NULL,
+  `assigned_time`         BIGINT   NOT NULL,
+  `comment`               TEXT,
+  `rating_for_cultural`   INT,
+  `rating_for_text`       INT,
+  `is_duplicate`          BOOLEAN  NOT NULL,
+  `duplicate_to`          VARCHAR(35),
+  `rating_for_location`   INT,
+  `suggested_loc_latE6`   INT,
+  `suggested_loc_lngE6`   INT,
+  `rating_for_quality`    INT,
+  `rating_for_safety`     INT,
+  `is_one_star`           BOOLEAN  NOT NULL,
+  `submission_time`       BIGINT   NOT NULL,
+  `rating_for_uniqueness` INT,
+  `what_is_it`            TEXT
 );
 
 CREATE INDEX `gdpr_raw_opr_submissions_candidate_id`
