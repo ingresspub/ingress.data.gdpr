@@ -17,6 +17,8 @@
 
 package ingress.data.gdpr.web.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.ConstraintValidator;
@@ -27,15 +29,24 @@ import javax.validation.ConstraintValidatorContext;
  */
 public class ZipFileValidator implements ConstraintValidator<ZipFileConstraint, MultipartFile> {
 
+    private static Logger LOGGER = LoggerFactory.getLogger(ZipFileValidator.class);
+
+
     @Override public boolean isValid(final MultipartFile value, final ConstraintValidatorContext context) {
         if (value == null || value.isEmpty()) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("Must pick up a zip file.").addConstraintViolation();
             return false;
         }
-        if (!"application/zip".equalsIgnoreCase(value.getContentType())) {
+        final String filename = value.getOriginalFilename();
+        final String contentType = value.getContentType();
+        if (
+                !"application/zip".equalsIgnoreCase(contentType)
+                && !"application/x-zip-compressed".equalsIgnoreCase(contentType)
+        ) {
+            LOGGER.warn("Unsupported file type for {}: {}", filename, contentType);
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate(String.format("%s(%s) is not a zip file.", value.getOriginalFilename(), value.getContentType())).addConstraintViolation();
+            context.buildConstraintViolationWithTemplate(String.format("%s(%s) is not a zip file.", filename, contentType)).addConstraintViolation();
             return false;
         }
         return true;
