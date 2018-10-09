@@ -31,9 +31,7 @@ services:
           - db_server
   explorer:
     restart: always
-    build:
-      context: .
-    image: ingress_data_explorer
+    image: ingresspub/ingress-data-explorer
     depends_on:
       - db
     ports:

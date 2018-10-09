@@ -54,7 +54,7 @@ Yours sincerely,
 
 3. 下载本 repo 之后，在`终端`或者`命令提示符`窗口里进入`docker`目录并运行：
     ```bash
-    docker-compose up -d --build
+    docker-compose up -d
     ```
 
 ## 许可协议

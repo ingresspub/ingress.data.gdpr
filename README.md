@@ -57,7 +57,7 @@ It's in a [H2 database](http://www.h2database.com) under ```~/.h2/ingress_gdpr``
 
 3. Go to `docker` folder of this repo and run:
     ```bash
-    docker-compose up -d --build
+    docker-compose up -d
     ```
 
 ## License
