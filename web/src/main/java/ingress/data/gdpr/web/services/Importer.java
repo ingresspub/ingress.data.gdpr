@@ -283,7 +283,7 @@ public class Importer {
                     return batch.size();
                 }
             }));
-            LOGGER.info("Saved {} Zendesk tickets.", purchases.size());
+            LOGGER.info("Saved {} store purchases.", purchases.size());
         }, executor);
     }
 
