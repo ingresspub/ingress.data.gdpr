@@ -21,15 +21,19 @@ This will take about 30 days for Niantic to process your request. After done, yo
 
 ## Prerequisites
 1. Download and install [JDK 8](https://www.oracle.com/technetwork/java/javase/downloads/index.html#JDK8)
+2. Download and install git
+  * Windows: [https://git-scm.com/download/win](https://git-scm.com/download/win)
+  * Mac: [https://git-scm.com/download/mac](https://git-scm.com/download/mac)
+  * Linux: [https://git-scm.com/download/linux](https://git-scm.com/download/linux)
 
 ## How to run
-1. Clone or download this repository
-2. Run in Terminal:
+1. Run in Terminal:
     ```$bash
-    cd <path_to_this_repo>
-    ./mvnw clean package spring-boot:run -pl web
+    git clone git@github.com:ingresspub/ingress.data.gdpr.git
+    cd ingress.data.gdpr
+    ./mvnw clean install && ./mvnw spring-boot:run -pl web
     ```
-3. Open [http://127.0.0.1:8080](http://127.0.0.1:8080) in your favorite web browser. 
+2. Open [http://127.0.0.1:8080](http://127.0.0.1:8080) in your favorite web browser. 
 
 ## Where are the data stored on my local?
 It's in a [H2 database](http://www.h2database.com) under ```~/.h2/ingress_gdpr```

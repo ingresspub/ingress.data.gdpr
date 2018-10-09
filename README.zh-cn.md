@@ -19,15 +19,19 @@ Yours sincerely,
 
 ## 安装必须的软件
 1. 下载并安装 [JDK 8](https://www.oracle.com/technetwork/java/javase/downloads/index.html#JDK8)
+2. 下载并安装 git
+  * Windows: [https://git-scm.com/download/win](https://git-scm.com/download/win)
+  * Mac: [https://git-scm.com/download/mac](https://git-scm.com/download/mac)
+  * Linux: [https://git-scm.com/download/linux](https://git-scm.com/download/linux)
 
 ## 如何运行
-1. 克隆或者降本仓库下载到本地，如果你下载的是 zip 包，将它解压到某个目录
-2. 在命令行窗口运行:
+1. 在命令行窗口运行:
     ```$bash
-    cd <克隆或者解压后的目录>
-    ./mvnw clean package spring-boot:run -pl web
+    git clone git@github.com:ingresspub/ingress.data.gdpr.git
+    cd ingress.data.gdpr
+    ./mvnw clean install && ./mvnw spring-boot:run -pl web
     ```
-3. 用浏览器打开 [http://127.0.0.1:8080](http://127.0.0.1:8080) 
+2. 用浏览器打开 [http://127.0.0.1:8080](http://127.0.0.1:8080) 
 
 ## 数据存在本地的什么地方？
 数据被保存在一个 [H2 数据库](http://www.h2database.com) 中，位置在 ```~/.h2/ingress_gdpr```，`~`代表操作系统登录用户的主目录。
