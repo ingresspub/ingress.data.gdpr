@@ -24,3 +24,4 @@ spring:
       max-request-size: "20MB"
   datasource:
     schema: classpath:db/schema.sql
+    initialization-mode: always
