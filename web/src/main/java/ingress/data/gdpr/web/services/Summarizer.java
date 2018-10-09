@@ -54,7 +54,7 @@ public class Summarizer {
     public List<Circle> listVisitedPortals(final String color, final int radius) {
         final String sql = "SELECT DISTINCT loc_latE6, loc_lngE6 FROM gdpr_raw_game_logs"
                 + " WHERE tracker_trigger"
-                + " IN ('captured portal','hacked enemy portal','hacked friendly portal','mod deployed','resonator deployed','resonator upgraded')"
+                + " IN ('captured portal','hacked enemy portal','hacked friendly portal','hacked neutral portal','mod deployed','resonator deployed','resonator upgraded')"
                 + " AND comment != 'fail'";
         return listPortals(sql, color, radius);
     }
