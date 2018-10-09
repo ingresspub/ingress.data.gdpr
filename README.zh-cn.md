@@ -20,9 +20,9 @@ Yours sincerely,
 ## 安装必须的软件
 1. 下载并安装 [JDK 8](https://www.oracle.com/technetwork/java/javase/downloads/index.html#JDK8)
 2. 下载并安装 git
-  * Windows: [https://git-scm.com/download/win](https://git-scm.com/download/win)
-  * Mac: [https://git-scm.com/download/mac](https://git-scm.com/download/mac)
-  * Linux: [https://git-scm.com/download/linux](https://git-scm.com/download/linux)
+    * Windows: [https://git-scm.com/download/win](https://git-scm.com/download/win)
+    * Mac: [https://git-scm.com/download/mac](https://git-scm.com/download/mac)
+    * Linux: [https://git-scm.com/download/linux](https://git-scm.com/download/linux)
 
 ## 如何运行
 1. 在命令行窗口运行:

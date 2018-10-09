@@ -22,9 +22,9 @@ This will take about 30 days for Niantic to process your request. After done, yo
 ## Prerequisites
 1. Download and install [JDK 8](https://www.oracle.com/technetwork/java/javase/downloads/index.html#JDK8)
 2. Download and install git
-  * Windows: [https://git-scm.com/download/win](https://git-scm.com/download/win)
-  * Mac: [https://git-scm.com/download/mac](https://git-scm.com/download/mac)
-  * Linux: [https://git-scm.com/download/linux](https://git-scm.com/download/linux)
+    * Windows: [https://git-scm.com/download/win](https://git-scm.com/download/win)
+    * Mac: [https://git-scm.com/download/mac](https://git-scm.com/download/mac)
+    * Linux: [https://git-scm.com/download/linux](https://git-scm.com/download/linux)
 
 ## How to run
 1. Run in Terminal:
