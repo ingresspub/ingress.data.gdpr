@@ -30,10 +30,12 @@ import ingress.data.gdpr.models.records.ZendeskTicket;
 import ingress.data.gdpr.models.records.mission.Mission;
 import ingress.data.gdpr.models.records.opr.OprAssignmentLogItem;
 import ingress.data.gdpr.models.records.opr.OprProfile;
+import ingress.data.gdpr.models.records.opr.OprSkippedLogItem;
 import ingress.data.gdpr.models.records.opr.OprSubmissionLogItem;
 import ingress.data.gdpr.models.records.profile.AgentProfile;
 import ingress.data.gdpr.models.records.profile.Badge;
 import ingress.data.gdpr.models.records.profile.PushNotificationFor;
+import ingress.data.gdpr.models.records.profile.SmsVerification;
 import ingress.data.gdpr.models.records.profile.TutorialState;
 import ingress.data.gdpr.models.reports.RawDataReport;
 import ingress.data.gdpr.models.reports.ReportDetails;
@@ -110,7 +112,8 @@ public class Importer {
                         persistUsedDevices(report.getUsedDevices()),
                         persistOprProfile(report.getOprProfile()),
                         bulkSaveTimestampedInteger("INSERT INTO gdpr_raw_opr_agreements(time,portal_id) VALUES(?,?)", report.getOprAgreements()),
-                        persistOprAssignments(report.getOprAssignmentLogs()),
+                        persistOprAssignmentLogs(report.getOprAssignmentLogs()),
+                        persistOprSkippedLogs(report.getOprSkippedLogs()),
                         persistOprSubmissions(report.getOprSubmissionLogs()),
                         bulkSaveTimestampedInteger("INSERT INTO gdpr_raw_all_portals_approved(time,portal_id) VALUES(?,?)", report.getAllPortalsApproved()),
                         bulkSaveTimestampedInteger("INSERT INTO gdpr_raw_seer_portals(time,portal_id) VALUES(?,?)", report.getSeerPortals()),
@@ -179,6 +182,7 @@ public class Importer {
         }
         return CompletableFuture.runAsync(() -> {
             final PushNotificationFor push = profile.getPushNotificationFor();
+            SmsVerification smsVerification = profile.getSmsVerification();
             jdbcTemplate.update("INSERT INTO gdpr_raw_agent_profile"
                     + "(email,creation_time,sms_verified,sms_verification_time,tos_accepted_time,invites,"
                     + "agent_name,faction,level,ap,xm,extra_xm,display_stats_to_others,"
@@ -188,7 +192,7 @@ public class Importer {
                     + "has_captured_portal,has_created_link,has_created_field,blocked_agents)"
                     + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                     profile.getEmail(), profile.getCreationTime().toInstant().getEpochSecond(),
-                    profile.getSmsVerification().isVerified(), profile.getSmsVerification().getVerificationTime().toInstant().getEpochSecond(),
+                    smsVerification.isVerified(), smsVerification.getVerificationTime().isPresent() ? smsVerification.getVerificationTime().get().toInstant().getEpochSecond() : null,
                     profile.getTosAcceptedTime().toInstant().getEpochSecond(), profile.getInvites(),
                     profile.getAgentName(), profile.getFaction(), profile.getAgentLevel(), profile.getAp(), profile.getXm(), profile.getExtraXm().orElse(null),
                     profile.isDisplayStatsToOthers(), profile.getLastLocation().getLatE6(), profile.getLastLocation().getLngE6(), profile.getLastLocationTime().toInstant().getEpochSecond(),
@@ -386,7 +390,7 @@ public class Importer {
         }, executor);
     }
 
-    private CompletableFuture<Void> persistOprAssignments(final ReportDetails<List<OprAssignmentLogItem>> oprAssignments) {
+    private CompletableFuture<Void> persistOprAssignmentLogs(final ReportDetails<List<OprAssignmentLogItem>> oprAssignments) {
         if (oprAssignments == null || !oprAssignments.isOk()) {
             return CompletableFuture.completedFuture(null);
         }
@@ -409,7 +413,34 @@ public class Importer {
                     return batch.size();
                 }
             }));
-            LOGGER.info("Saved {} OPR assignments.", assignments.size());
+            LOGGER.info("Saved {} OPR assignment logs.", assignments.size());
+        }, executor);
+    }
+
+    private CompletableFuture<Void> persistOprSkippedLogs(final ReportDetails<List<OprSkippedLogItem>> oprSkippedLogs) {
+        if (oprSkippedLogs == null || !oprSkippedLogs.isOk()) {
+            return CompletableFuture.completedFuture(null);
+        }
+        final List<OprSkippedLogItem> assignments = oprSkippedLogs.getData();
+        if (assignments.isEmpty()) {
+            return CompletableFuture.completedFuture(null);
+        }
+        final String sql = "INSERT INTO gdpr_raw_opr_skipped_logs(candidate_id,time) VALUES(?,?)";
+        return CompletableFuture.runAsync(() -> {
+            final List<List<OprSkippedLogItem>> batches = Lists.partition(new ArrayList<>(assignments), DEFAULT_BATCH_SIZE);
+            batches.forEach(batch -> jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+                @Override
+                public void setValues(@SuppressWarnings("NullableProblems") final PreparedStatement ps, final int i) throws SQLException {
+                    final OprSkippedLogItem record = batch.get(i);
+                    ps.setString(1, record.getCandidateId());
+                    ps.setLong(2, record.getTime().toInstant().getEpochSecond());
+                }
+
+                @Override public int getBatchSize() {
+                    return batch.size();
+                }
+            }));
+            LOGGER.info("Saved {} OPR skipped logs.", assignments.size());
         }, executor);
     }
 

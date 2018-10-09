@@ -21,7 +21,7 @@ CREATE TABLE `gdpr_raw_agent_profile` (
   `email`                     VARCHAR(128) NOT NULL,
   `creation_time`             BIGINT       NOT NULL,
   `sms_verified`              BOOLEAN      NOT NULL,
-  `sms_verification_time`     BIGINT       NOT NULL,
+  `sms_verification_time`     BIGINT,
   `tos_accepted_time`         BIGINT       NOT NULL,
   `invites`                   VARCHAR(32)  NOT NULL,
   `agent_name`                VARCHAR(16)  NOT NULL,
@@ -170,6 +170,19 @@ CREATE INDEX `gdpr_raw_opr_assignments_candidate_id`
 
 CREATE INDEX `gdpr_raw_opr_assignments_time`
   ON `gdpr_raw_opr_assignments` (`time`);
+
+DROP TABLE IF EXISTS `gdpr_raw_opr_skipped_logs`;
+
+CREATE TABLE `gdpr_raw_opr_skipped_logs` (
+  `candidate_id` CHAR(32) NOT NULL,
+  `time`         BIGINT   NOT NULL
+);
+
+CREATE INDEX `gdpr_raw_opr_skipped_logs_candidate_id`
+  ON `gdpr_raw_opr_skipped_logs` (`candidate_id`);
+
+CREATE INDEX `gdpr_raw_opr_skipped_logs_time`
+  ON `gdpr_raw_opr_skipped_logs` (`time`);
 
 DROP TABLE IF EXISTS `gdpr_raw_opr_submissions`;
 
@@ -732,7 +745,7 @@ DROP TABLE IF EXISTS `gdpr_raw_store_purchases`;
 
 CREATE TABLE `gdpr_raw_store_purchases` (
   `time`                    BIGINT       NOT NULL,
-  `transaction_type`        VARCHAR(16)  NOT NULL,
+  `transaction_type`        VARCHAR(32)  NOT NULL,
   `item`                    VARCHAR(128) NOT NULL,
   `cmu_balance`             INT,
   `transaction_description` TEXT         NOT NULL

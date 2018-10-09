@@ -17,8 +17,27 @@
 
 package ingress.data.gdpr.models.records.opr;
 
+import java.time.ZonedDateTime;
+
 /**
  * @author SgrAlpha
  */
 public class OprSkippedLogItem {
+
+    private final String candidateId;
+    private final ZonedDateTime time;
+
+    public OprSkippedLogItem(final String candidateId, final ZonedDateTime time) {
+        this.candidateId = candidateId;
+        this.time = time;
+    }
+
+    public String getCandidateId() {
+        return candidateId;
+    }
+
+    public ZonedDateTime getTime() {
+        return time;
+    }
+
 }

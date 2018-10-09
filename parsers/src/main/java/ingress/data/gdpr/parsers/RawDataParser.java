@@ -53,6 +53,7 @@ import static ingress.data.gdpr.parsers.utils.DataFileNames.NEUTRALIZER_UNIQUE_P
 import static ingress.data.gdpr.parsers.utils.DataFileNames.OPR_AGREEMENTS_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.OPR_ASSIGNMENT_LOG_CSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.OPR_PROFILE_CSV;
+import static ingress.data.gdpr.parsers.utils.DataFileNames.OPR_SKIPPED_LOG_CSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.OPR_SUBMISSION_LOG_CSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.PORTALS_CAPTURED_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.PORTALS_NEUTRALIZED_TSV;
@@ -77,6 +78,7 @@ import ingress.data.gdpr.models.records.ZendeskTicket;
 import ingress.data.gdpr.models.records.mission.Mission;
 import ingress.data.gdpr.models.records.opr.OprAssignmentLogItem;
 import ingress.data.gdpr.models.records.opr.OprProfile;
+import ingress.data.gdpr.models.records.opr.OprSkippedLogItem;
 import ingress.data.gdpr.models.records.opr.OprSubmissionLogItem;
 import ingress.data.gdpr.models.records.profile.AgentProfile;
 import ingress.data.gdpr.models.reports.RawDataReport;
@@ -88,6 +90,7 @@ import ingress.data.gdpr.parsers.impl.GameLogParser;
 import ingress.data.gdpr.parsers.impl.MissionsParser;
 import ingress.data.gdpr.parsers.impl.OprAssignmentLogsParser;
 import ingress.data.gdpr.parsers.impl.OprProfileParser;
+import ingress.data.gdpr.parsers.impl.OprSkippedLogsParser;
 import ingress.data.gdpr.parsers.impl.OprSubmissionLogsParser;
 import ingress.data.gdpr.parsers.impl.StorePurchasesParser;
 import ingress.data.gdpr.parsers.impl.TimestampedDataFileParser;
@@ -175,6 +178,9 @@ public class RawDataParser {
             case OPR_AGREEMENTS_TSV:
                 return parseTimestampDataFileWith(dataFile, IntegerValueParser.getDefault(), executor)
                         .thenApplyAsync(report::setOprAgreements);
+            case OPR_SKIPPED_LOG_CSV:
+                return parseOprSkippedLogs(dataFile, executor)
+                        .thenApplyAsync(report::setOprSkippedLogs);
             case OPR_ASSIGNMENT_LOG_CSV:
                 return parseOprAssignmentLogs(dataFile, executor)
                         .thenApplyAsync(report::setOprAssignmentLogs);
@@ -302,7 +308,7 @@ public class RawDataParser {
                 return parseZendeskTickets(dataFile, executor)
                         .thenApplyAsync(report::setZendeskTickets);
             case STORE_PURCHASES_TSV:
-                return parseStorePurchases(dataFile,executor)
+                return parseStorePurchases(dataFile, executor)
                         .thenApplyAsync(report::setStorePurchases);
             default:
                 LOGGER.warn("Unsupported data file: {}", fileName);
@@ -411,6 +417,18 @@ public class RawDataParser {
         return CompletableFuture
                 .supplyAsync(() -> {
                     final ReportDetails<List<OprAssignmentLogItem>> details = OprAssignmentLogsParser.getDefault().parse(dataFile);
+                    if (!details.isOk()) {
+                        LOGGER.warn("Ran into error when parsing {}: {}", dataFile.getFileName(), details.getError());
+                    }
+                    return details;
+                }, executor);
+    }
+
+    private static CompletableFuture<ReportDetails<List<OprSkippedLogItem>>> parseOprSkippedLogs(
+            final Path dataFile, final Executor executor) {
+        return CompletableFuture
+                .supplyAsync(() -> {
+                    final ReportDetails<List<OprSkippedLogItem>> details = OprSkippedLogsParser.getDefault().parse(dataFile);
                     if (!details.isOk()) {
                         LOGGER.warn("Ran into error when parsing {}: {}", dataFile.getFileName(), details.getError());
                     }

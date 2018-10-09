@@ -17,13 +17,13 @@
 
 package ingress.data.gdpr.parsers.impl;
 
-import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 import static ingress.data.gdpr.parsers.utils.CsvUtil.escapeQuote;
 import static ingress.data.gdpr.parsers.utils.CsvUtil.split;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.NO_DATA;
 
 import ingress.data.gdpr.models.records.opr.OprAssignmentLogItem;
+import ingress.data.gdpr.models.records.opr.OprSkippedLogItem;
 import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.parsers.PlainTextDataFileParser;
 import ingress.data.gdpr.parsers.exceptions.MalformattedRecordException;
@@ -39,36 +39,32 @@ import java.util.List;
 /**
  * @author SgrAlpha
  */
-public class OprAssignmentLogsParser extends PlainTextDataFileParser<List<OprAssignmentLogItem>> {
+public class OprSkippedLogsParser extends PlainTextDataFileParser<List<OprSkippedLogItem>> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OprAssignmentLogsParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OprSkippedLogsParser.class);
 
-    private static final OprAssignmentLogsParser INSTANCE = new OprAssignmentLogsParser();
+    private static final OprSkippedLogsParser INSTANCE = new OprSkippedLogsParser();
     private static final ZonedDateTimeParser TIME_PARSER = ZonedDateTimeParser.getDefault();
 
-    private OprAssignmentLogsParser() {
+    private OprSkippedLogsParser() {
     }
 
-    public static OprAssignmentLogsParser getDefault() {
+    public static OprSkippedLogsParser getDefault() {
         return INSTANCE;
     }
 
-    @Override protected ReportDetails<List<OprAssignmentLogItem>> readLines(final List<String> lines, final Path dataFile) {
+    @Override protected ReportDetails<List<OprSkippedLogItem>> readLines(final List<String> lines, final Path dataFile) {
         notNull(lines, "No line to read from");
         if (lines.size() < 2) {
             return ReportDetails.error(NO_DATA);
         }
         notNull(dataFile, "Data file needs to be specified");
         try {
-            List<OprAssignmentLogItem> data = new LinkedList<>();
+            List<OprSkippedLogItem> data = new LinkedList<>();
             for (int i = 1; i < lines.size(); i++) {
-                final String line = lines.get(i);
-                if (isEmptyString(line)) {
-                    continue;
-                }
-                final String[] columns = split(line);
+                final String[] columns = split(lines.get(i));
                 if (columns.length != 2) {
-                    throw new MalformattedRecordException(String.format("Expecting record with %d columns at line %d but got %d: %s", 2, i, columns.length, line));
+                    throw new MalformattedRecordException(String.format("Expecting record with %d columns at line %d but got %d", 2, i, columns.length));
                 }
                 data.add(parse(columns));
             }
@@ -88,10 +84,10 @@ public class OprAssignmentLogsParser extends PlainTextDataFileParser<List<OprAss
         return LOGGER;
     }
 
-    private OprAssignmentLogItem parse(final String... columns) throws MalformattedRecordException {
+    private OprSkippedLogItem parse(final String... columns) throws MalformattedRecordException {
         notNull(columns, "Missing columns to parse from");
         try {
-            return new OprAssignmentLogItem(escapeQuote(columns[0]), TIME_PARSER.parse(escapeQuote(columns[1])));
+            return new OprSkippedLogItem(escapeQuote(columns[0]), TIME_PARSER.parse(escapeQuote(columns[1])));
         } catch (Exception e) {
             throw new MalformattedRecordException(String.format("Unable to parse OPR assignment log item from %s", Arrays.asList(columns)), e);
         }

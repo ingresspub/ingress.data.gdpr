@@ -35,7 +35,7 @@ public class ZipFileValidator implements ConstraintValidator<ZipFileConstraint, 
         }
         if (!"application/zip".equalsIgnoreCase(value.getContentType())) {
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate(String.format("%s is not a zip file.", value.getOriginalFilename())).addConstraintViolation();
+            context.buildConstraintViolationWithTemplate(String.format("%s(%s) is not a zip file.", value.getOriginalFilename(), value.getContentType())).addConstraintViolation();
             return false;
         }
         return true;

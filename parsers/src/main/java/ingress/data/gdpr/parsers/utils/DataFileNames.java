@@ -60,6 +60,7 @@ public class DataFileNames {
     public static final String MISSION_DAY_POINTS_TSV = "mission_day_points.tsv";
     public static final String OPR_PROFILE_CSV = "OprProfile.csv";
     public static final String OPR_AGREEMENTS_TSV = "opr_agreements.tsv";
+    public static final String OPR_SKIPPED_LOG_CSV = "OprSkippedLog.csv";
     public static final String OPR_ASSIGNMENT_LOG_CSV = "OprAssignmentLog.csv";
     public static final String OPR_SUBMISSION_LOG_CSV = "OprSubmissionLog.csv";
     public static final String ALL_PORTALS_APPROVED_TSV = "all_portals_approved.tsv";

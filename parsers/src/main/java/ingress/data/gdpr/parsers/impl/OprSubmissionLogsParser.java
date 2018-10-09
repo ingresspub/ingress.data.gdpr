@@ -63,9 +63,13 @@ public class OprSubmissionLogsParser extends PlainTextDataFileParser<List<OprSub
         try {
             List<OprSubmissionLogItem> data = new LinkedList<>();
             for (int i = 1; i < lines.size(); i++) {
-                final String[] columns = split(lines.get(i));
+                final String line = lines.get(i);
+                if (isEmptyString(line)) {
+                    continue;
+                }
+                final String[] columns = split(line);
                 if (columns.length != 15) {
-                    throw new MalformattedRecordException(String.format("Expecting record with %d columns at line %d but got %d", 15, i, columns.length));
+                    throw new MalformattedRecordException(String.format("Expecting record with %d columns at line %d but got %d: %s", 15, i, columns.length, line));
                 }
                 data.add(parse(columns));
             }

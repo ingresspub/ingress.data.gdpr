@@ -26,6 +26,7 @@ import ingress.data.gdpr.models.records.ZendeskTicket;
 import ingress.data.gdpr.models.records.mission.Mission;
 import ingress.data.gdpr.models.records.opr.OprAssignmentLogItem;
 import ingress.data.gdpr.models.records.opr.OprProfile;
+import ingress.data.gdpr.models.records.opr.OprSkippedLogItem;
 import ingress.data.gdpr.models.records.opr.OprSubmissionLogItem;
 import ingress.data.gdpr.models.records.profile.AgentProfile;
 import ingress.data.gdpr.models.utils.JsonUtil;
@@ -50,6 +51,7 @@ public class RawDataReport {
     private ReportDetails<OprProfile> oprProfile;
     private ReportDetails<List<TimestampedRecord<Integer>>> oprAgreements;
     private ReportDetails<List<OprAssignmentLogItem>> oprAssignmentLogs;
+    private ReportDetails<List<OprSkippedLogItem>> oprSkippedLogs;
     private ReportDetails<List<OprSubmissionLogItem>> oprSubmissionLogs;
     private ReportDetails<List<TimestampedRecord<Integer>>> allPortalsApproved;
     private ReportDetails<List<TimestampedRecord<Integer>>> seerPortals;
@@ -169,6 +171,15 @@ public class RawDataReport {
 
     public RawDataReport setOprAssignmentLogs(final ReportDetails<List<OprAssignmentLogItem>> oprAssignmentLogs) {
         this.oprAssignmentLogs = oprAssignmentLogs;
+        return this;
+    }
+
+    public ReportDetails<List<OprSkippedLogItem>> getOprSkippedLogs() {
+        return oprSkippedLogs;
+    }
+
+    public RawDataReport setOprSkippedLogs(final ReportDetails<List<OprSkippedLogItem>> oprSkippedLogs) {
+        this.oprSkippedLogs = oprSkippedLogs;
         return this;
     }
 

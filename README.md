@@ -36,13 +36,13 @@ This will take about 30 days for Niantic to process your request. After done, yo
 2. Still in `Terminal` or `Command Prompt` on Windows:
     * Windows users:
        ```$bash
-       ./mvnw.cmd clean install && ./mvnw.cmd spring-boot:run -pl web
+       mvnw.cmd clean install && mvnw.cmd spring-boot:run -pl web
        ```
     * Mac or Linux users:
       ```$bash
       ./mvnw clean install && ./mvnw spring-boot:run -pl web
       ```
-3. Open [http://127.0.0.1:8080](http://127.0.0.1:8080) in your favorite web browser. 
+3. After your saw `Started Application in N seconds`, open [http://127.0.0.1:8080](http://127.0.0.1:8080) in your favorite web browser. 
 
 ## Where are the data stored on my local?
 It's in a [H2 database](http://www.h2database.com) under ```~/.h2/ingress_gdpr```

@@ -33,13 +33,13 @@ Yours sincerely,
 2. 继续在`终端`或者`命令提示符`窗口里运行:
     * Windows 用户:
        ```$bash
-       ./mvnw.cmd clean install && ./mvnw.cmd spring-boot:run -pl web
+       mvnw.cmd clean install && mvnw.cmd spring-boot:run -pl web
        ```
     * Mac or Linux 用户:
       ```$bash
       ./mvnw clean install && ./mvnw spring-boot:run -pl web
       ```
-3. 用浏览器打开 [http://127.0.0.1:8080](http://127.0.0.1:8080) 
+3. 当窗口输出停在`Started Application in N seconds`后，用浏览器打开 [http://127.0.0.1:8080](http://127.0.0.1:8080) 
 
 ## 数据存在本地的什么地方？
 数据被保存在一个 [H2 数据库](http://www.h2database.com) 中，位置在 ```~/.h2/ingress_gdpr```，`~`代表操作系统登录用户的主目录。

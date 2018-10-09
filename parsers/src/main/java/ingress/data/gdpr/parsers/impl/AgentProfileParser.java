@@ -129,6 +129,7 @@ public class AgentProfileParser extends PlainTextDataFileParser<AgentProfile> {
     }
 
     private static AgentProfile transform(final Map<String, Object> data, final Map<String, Map<String, String>> subDataSet) throws MalformattedRecordException {
+        Object extraXm = data.get("Additional XM available from BOOSTED_POWER_CUBE");
         return new AgentProfile(
                 data.get("Email").toString(),
                 TIME_PARSER.parse(data.get("Creation Time").toString()),
@@ -140,7 +141,7 @@ public class AgentProfileParser extends PlainTextDataFileParser<AgentProfile> {
                 Integer.parseInt(data.get("Agent level").toString()),
                 Integer.parseInt(data.get("Action Points (AP)").toString()),
                 Integer.parseInt(data.get("Energy (XM)").toString()),
-                Integer.parseInt(data.get("Additional XM available from BOOSTED_POWER_CUBE").toString()),
+                extraXm == null ? null : Integer.parseInt(extraXm.toString()),
                 Boolean.parseBoolean(data.get("Display stats to others").toString()),
                 Coordinate.parseCommaSeparatedString(data.get("Last Location").toString()),
                 TIME_PARSER.parse(data.get("Last Location Time").toString()),
@@ -217,10 +218,13 @@ public class AgentProfileParser extends PlainTextDataFileParser<AgentProfile> {
 
     private static SmsVerification parseSmsVerification(final String smsVerificationState) throws MalformattedRecordException {
         String[] tmp = smsVerificationState.split(SEPARATOR_WORD_AT);
-        if (tmp.length != 2) {
-            throw new MalformattedRecordException(String.format("Unable to parse SMS verification state from '%s'", smsVerificationState));
+        if (tmp.length == 2 && "VERIFIED".equals(tmp[0])) {
+            return SmsVerification.verified(TIME_PARSER.parse(tmp[1]));
+        } else if (tmp.length == 1 && "UNVERIFIED".equals(tmp[0])) {
+            return SmsVerification.unverified();
+        } else {
+            throw new MalformattedRecordException(String.format("Unable to parse SMS verification state from %s", smsVerificationState));
         }
-        return new SmsVerification("VERIFIED".equals(tmp[0]), TIME_PARSER.parse(tmp[1]));
     }
 
     private enum LineType {

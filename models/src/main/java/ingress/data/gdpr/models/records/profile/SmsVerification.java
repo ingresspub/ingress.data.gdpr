@@ -18,6 +18,7 @@
 package ingress.data.gdpr.models.records.profile;
 
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 /**
  * @author SgrAlpha
@@ -27,17 +28,25 @@ public class SmsVerification {
     private final boolean verified;
     private final ZonedDateTime verificationTime;
 
-    public SmsVerification(final boolean verified, final ZonedDateTime verificationTime) {
+    private SmsVerification(final boolean verified, final ZonedDateTime verificationTime) {
         this.verified = verified;
         this.verificationTime = verificationTime;
+    }
+
+    public static SmsVerification verified(final ZonedDateTime time) {
+        return new SmsVerification(true, time);
+    }
+
+    public static SmsVerification unverified() {
+        return new SmsVerification(false, null);
     }
 
     public boolean isVerified() {
         return verified;
     }
 
-    public ZonedDateTime getVerificationTime() {
-        return verificationTime;
+    public Optional<ZonedDateTime> getVerificationTime() {
+        return Optional.ofNullable(verificationTime);
     }
 
 }
