@@ -23,12 +23,13 @@ This will take about 30 days for Niantic to process your request. After done, yo
 1. Download and install [JDK 8](https://www.oracle.com/technetwork/java/javase/downloads/index.html#JDK8)
 
 ## How to run
-1. Run in Terminal:
+1. Clone or download this repository
+2. Run in Terminal:
     ```$bash
     cd <path_to_this_repo>
     ./mvnw clean package spring-boot:run -pl web
     ```
-2. Open [http://127.0.0.1:8080](http://127.0.0.1:8080) in your favorite web browser. 
+3. Open [http://127.0.0.1:8080](http://127.0.0.1:8080) in your favorite web browser. 
 
 ## Where are the data stored on my local?
 It's in a [H2 database](http://www.h2database.com) under ```~/.h2/ingress_gdpr```
