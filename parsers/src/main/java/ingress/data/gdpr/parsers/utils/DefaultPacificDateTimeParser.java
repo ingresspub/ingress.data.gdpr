@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 /**
  * @author SgrAlpha
@@ -43,7 +44,7 @@ public class DefaultPacificDateTimeParser implements SingleLineValueParser<Zoned
         }
         final String time = columns[0];
         notEmptyString(time, "Missing time info to parse from");
-        LocalDateTime localDateTime = LocalDateTime.parse(time, DateTimeFormatter.ofPattern(pattern));
+        LocalDateTime localDateTime = LocalDateTime.parse(time, DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH));
         return ZonedDateTime.of(localDateTime, ZoneId.of("America/Los_Angeles"));
     }
 

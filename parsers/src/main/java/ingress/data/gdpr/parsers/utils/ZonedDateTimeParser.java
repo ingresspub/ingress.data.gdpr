@@ -22,6 +22,7 @@ import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 /**
  * @author SgrAlpha
@@ -46,7 +47,7 @@ public class ZonedDateTimeParser implements SingleLineValueParser<ZonedDateTime>
         }
         final String time = columns[0];
         notEmptyString(time, "Missing time info to parse from");
-        return ZonedDateTime.parse(time, DateTimeFormatter.ofPattern(GDPR_TIME_PATTERN));
+        return ZonedDateTime.parse(time, DateTimeFormatter.ofPattern(GDPR_TIME_PATTERN, Locale.ENGLISH));
     }
 
 }
