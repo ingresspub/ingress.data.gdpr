@@ -32,6 +32,8 @@ services:
   explorer:
     restart: always
     image: ingresspub/ingress-data-explorer
+    environment:
+      JAVA_OPTS: "-Dspring.profiles.active=prod"
     depends_on:
       - db
     ports:

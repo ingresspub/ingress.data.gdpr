@@ -32,3 +32,5 @@
 # Maven
 target/
 !.mvn/wrapper/maven-wrapper.jar
+
+docker/files/libs/*

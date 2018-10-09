@@ -24,4 +24,4 @@ COPY files/libs /opt/ingress/gdpr/libs
 
 WORKDIR /opt/ingress/gdpr
 
-CMD java $JAVA_OPTS -Dspring.profiles.active=prod -classpath .:/opt/ingress/gdpr/libs/* ingress.data.gdpr.web.Application
+CMD java $JAVA_OPTS -classpath .:/opt/ingress/gdpr/libs/* ingress.data.gdpr.web.Application

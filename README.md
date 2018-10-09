@@ -8,6 +8,7 @@ It provides a user friendly web UI for you to upload the encrypted zip file you 
 
 Everything will be kept exactly on your machine, nothing will be collected and send to backend servers.
 
+
 ## How to get the data
 Send an E-Mail to [privacy@nianticlabs.com](mailto:privacy@nianticlabs.com):
 ```
@@ -19,14 +20,35 @@ Yours sincerely,
 Please remember to change `<account_name>` to your codename in the game.
 This will take about 30 days for Niantic to process your request. After done, you will receive two mails, one contains a link for you to download an encrypted zip file, the other is the password to decrypt the zip file.
 
-## Prerequisites
+
+## Run with Docker
+1. Install Docker
+    * Mac users: [https://docs.docker.com/docker-for-mac/install/](https://docs.docker.com/docker-for-mac/install/)
+    * Windows users: [https://docs.docker.com/docker-for-windows/install/](https://docs.docker.com/docker-for-windows/install/)
+
+2. Open `Terminal` or `Command Promp` if you're on Windows, and run:
+    ```bash
+    docker pull ingresspub/ingress-data-explorer
+    docker run -d --restart=always -p 8080:8080 --name=ingress-data-explorer ingresspub/ingress-data-explorer
+    ```
+3. Open [http://127.0.0.1:8080](http://127.0.0.1:8080) in your favorite web browser.
+
+4. If you want to stop / remove the running container, run:
+    ```bash
+    docker rm -vf ingress-data-explorer
+    ```
+5. If you want to use newer version, please perform step 4 first, then do step 2 and 3.
+
+
+## Run as native Java program
+### Prerequisites
 1. Download and install [JDK 8](https://www.oracle.com/technetwork/java/javase/downloads/index.html#JDK8)
 2. Download and install git
     * Windows: [https://git-scm.com/download/win](https://git-scm.com/download/win)
     * Mac: [https://git-scm.com/download/mac](https://git-scm.com/download/mac)
     * Linux: [https://git-scm.com/download/linux](https://git-scm.com/download/linux)
 
-## How to run
+### Build and run
 1. Run in `Terminal` or `Command Prompt` on Windows:
     ```bash
     git clone git@github.com:ingresspub/ingress.data.gdpr.git
@@ -44,21 +66,9 @@ This will take about 30 days for Niantic to process your request. After done, yo
       ```
 3. After your saw `Started Application in N seconds`, open [http://127.0.0.1:8080](http://127.0.0.1:8080) in your favorite web browser. 
 
-## Where are the data stored on my local?
+### Where are the data stored on my local?
 It's in a [H2 database](http://www.h2database.com) under ```~/.h2/ingress_gdpr```
 
-## Advanced topic: Build and run with Docker
-1. Install Docker
-    * Mac users: [https://docs.docker.com/docker-for-mac/install/](https://docs.docker.com/docker-for-mac/install/)
-    * Windows users: [https://docs.docker.com/docker-for-windows/install/](https://docs.docker.com/docker-for-windows/install/)
-
-2. Install Docker Compose:
-    * Guide: [https://docs.docker.com/compose/install/](https://docs.docker.com/compose/install/)
-
-3. Go to `docker` folder of this repo and run:
-    ```bash
-    docker-compose up -d
-    ```
 
 ## License
 
