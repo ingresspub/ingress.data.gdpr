@@ -28,14 +28,14 @@ This will take about 30 days for Niantic to process your request. After done, yo
 
 ## How to run
 1. Run in `Terminal` or `Command Prompt` on Windows:
-    ```$bash
+    ```bash
     git clone git@github.com:ingresspub/ingress.data.gdpr.git
     cd ingress.data.gdpr
     ./mvnw clean install && ./mvnw spring-boot:run -pl web
     ```
 2. Still in `Terminal` or `Command Prompt` on Windows:
     * Windows users:
-       ```$bash
+       ```bash
        mvnw.cmd clean install && mvnw.cmd spring-boot:run -pl web
        ```
     * Mac or Linux users:
@@ -46,6 +46,19 @@ This will take about 30 days for Niantic to process your request. After done, yo
 
 ## Where are the data stored on my local?
 It's in a [H2 database](http://www.h2database.com) under ```~/.h2/ingress_gdpr```
+
+## Advanced topic: Build and run with Docker
+1. Install Docker
+    * Mac users: [https://docs.docker.com/docker-for-mac/install/](https://docs.docker.com/docker-for-mac/install/)
+    * Windows users: [https://docs.docker.com/docker-for-windows/install/](https://docs.docker.com/docker-for-windows/install/)
+
+2. Install Docker Compose:
+    * Guide: [https://docs.docker.com/compose/install/](https://docs.docker.com/compose/install/)
+
+3. Go to `docker` folder of this repo and run:
+    ```bash
+    docker-compose up -d --build
+    ```
 
 ## License
 

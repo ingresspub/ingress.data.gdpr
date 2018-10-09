@@ -26,13 +26,13 @@ Yours sincerely,
 
 ## 如何运行
 1. 在`终端`或者`命令提示符`窗口里运行:
-    ```$bash
+    ```bash
     git clone git@github.com:ingresspub/ingress.data.gdpr.git
     cd ingress.data.gdpr
     ```
 2. 继续在`终端`或者`命令提示符`窗口里运行:
     * Windows 用户:
-       ```$bash
+       ```bash
        mvnw.cmd clean install && mvnw.cmd spring-boot:run -pl web
        ```
     * Mac or Linux 用户:
@@ -43,6 +43,19 @@ Yours sincerely,
 
 ## 数据存在本地的什么地方？
 数据被保存在一个 [H2 数据库](http://www.h2database.com) 中，位置在 ```~/.h2/ingress_gdpr```，`~`代表操作系统登录用户的主目录。
+
+## 进阶：使用 Docker 来构建和运行本程序
+1. 安装 Docker
+    * Mac 用户：[https://docs.docker.com/docker-for-mac/install/](https://docs.docker.com/docker-for-mac/install/)
+    * Windows 用户：[https://docs.docker.com/docker-for-windows/install/](https://docs.docker.com/docker-for-windows/install/)
+
+2. 安装 Docker Compose:
+    * 指引：[https://docs.docker.com/compose/install/](https://docs.docker.com/compose/install/)
+
+3. 下载本 repo 之后，在`终端`或者`命令提示符`窗口里进入`docker`目录并运行：
+    ```bash
+    docker-compose up -d --build
+    ```
 
 ## 许可协议
 

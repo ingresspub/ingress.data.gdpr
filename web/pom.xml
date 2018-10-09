@@ -32,7 +32,7 @@
     <properties>
         <basepom.check.skip-dependency>true</basepom.check.skip-dependency>
         <mainClass>ingress.data.gdpr.web.Application</mainClass>
-        <docker.basedir>${project.basedir}/docker</docker.basedir>
+        <docker.basedir>${project.basedir}/../docker</docker.basedir>
     </properties>
 
     <dependencies>
