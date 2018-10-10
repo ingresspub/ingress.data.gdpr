@@ -36,7 +36,7 @@ public class IndexController {
 
     @GetMapping("/")
     public String index() {
-        if (summarizer.noDataUploaded()) {
+        if (summarizer.noGameLogData()) {
             return "redirect:/upload";
         }
         return "redirect:/player/badges";

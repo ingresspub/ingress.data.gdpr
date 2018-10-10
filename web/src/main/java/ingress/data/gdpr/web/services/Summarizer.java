@@ -49,7 +49,7 @@ public class Summarizer {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public boolean noDataUploaded() {
+    public boolean noGameLogData() {
         return countGameLogs() <= 0;
     }
 
@@ -92,4 +92,10 @@ public class Summarizer {
             return new TimelineItem<>("badge", String.format("%s %s", level, name), timeStr, new InAppMedal(level, name, url));
         });
     }
+
+    public boolean noBadgesData() {
+        final Integer count = jdbcTemplate.queryForObject("SELECT COUNT(1) FROM gdpr_raw_agent_profile_badges", Integer.class);
+        return Optional.ofNullable(count).orElse(0) <= 0;
+    }
+
 }

@@ -23,3 +23,9 @@ CREATE TABLE IF NOT EXISTS `gdpr_raw_game_logs` (
   `tracker_trigger` VARCHAR(64),
   `comment` TEXT
 );
+
+CREATE TABLE IF NOT EXISTS `gdpr_raw_agent_profile_badges` (
+  `name`  VARCHAR(32) NOT NULL,
+  `level` VARCHAR(8)  NOT NULL,
+  `time`  BIGINT      NOT NULL
+);

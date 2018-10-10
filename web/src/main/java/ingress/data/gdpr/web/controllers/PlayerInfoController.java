@@ -39,6 +39,9 @@ public class PlayerInfoController {
 
     @GetMapping("/player/badges")
     public String listBadges(final ModelMap map) {
+        if (summarizer.noBadgesData()) {
+            return "redirect:/upload";
+        }
         map.addAttribute("timeline", summarizer.listBadgeTimeline(ZoneId.systemDefault()));
         return "player/badges";
     }

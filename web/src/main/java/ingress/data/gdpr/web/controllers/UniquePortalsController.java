@@ -47,6 +47,9 @@ public class UniquePortalsController {
             @RequestParam(value = "color", required = false) String color,
             @RequestParam(value = "radius", required = false, defaultValue = "20") int radius,
             final ModelMap map) {
+        if (summarizer.noGameLogData()) {
+            return "redirect:/upload";
+        }
         String displayColor = Optional.ofNullable(color).orElse("#ff00ff");
         final List<Circle> capturedPortals = summarizer.listCapturedPortals(displayColor, radius);
         final List<Circle> visitedPortals = summarizer.listVisitedPortals(displayColor, radius);
