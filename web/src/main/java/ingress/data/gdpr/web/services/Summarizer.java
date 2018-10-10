@@ -20,11 +20,18 @@ package ingress.data.gdpr.web.services;
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 
 import ingress.data.gdpr.models.analyzed.Circle;
+import ingress.data.gdpr.models.analyzed.InAppMedal;
+import ingress.data.gdpr.models.analyzed.TimelineItem;
+import ingress.data.gdpr.models.records.profile.BadgeLevel;
 import io.sgr.geometry.Coordinate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -75,4 +82,14 @@ public class Summarizer {
         return Optional.ofNullable(count).orElse(0);
     }
 
+    public List<TimelineItem<?>> listBadgeTimeline(final ZoneId zoneId) {
+        return jdbcTemplate.query("SELECT * FROM gdpr_raw_agent_profile_badges ORDER BY time DESC", (rs, rowNum) -> {
+            final BadgeLevel level = BadgeLevel.valueOf(rs.getString("level"));
+            final String name = rs.getString("name");
+            final ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(rs.getLong("time")), zoneId);
+            final String timeStr = time.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            final String url = null;
+            return new TimelineItem<>("badge", String.format("%s %s", level, name), timeStr, new InAppMedal(level, name, url));
+        });
+    }
 }

@@ -24,11 +24,18 @@ Yours sincerely,
     * Mac users: [https://docs.docker.com/docker-for-mac/install/](https://docs.docker.com/docker-for-mac/install/)
     * Windows users: [https://docs.docker.com/docker-for-windows/install/](https://docs.docker.com/docker-for-windows/install/)
 
-2. 打开 `终端`，如果你是 Windows 用户，则打开 `命令提示符`，然后运行:
-    ```bash
-    docker pull ingresspub/ingress-data-explorer
-    docker run -d --restart=always -p 8080:8080 --name=ingress-data-explorer ingresspub/ingress-data-explorer
-    ```
+2. 运行应用
+    * Mac 或者 Linux 用户，请打开 `终端`，然后运行：
+      ```bash
+      docker pull ingresspub/ingress-data-explorer
+      docker run -d --restart=always -p 8080:8080 -v $HOME/.h2:/root/.h2:rw --name=ingress-data-explorer ingresspub/ingress-data-explorer
+      ```
+    * Windows 用户，请打开 `命令提示符`，然后运行：
+      ```bash
+      docker pull ingresspub/ingress-data-explorer
+      docker run -d --restart=always -p 8080:8080 -v %HOMEDRIVE%%HOMEPATH%/.h2:/root/.h2:rw --name=ingress-data-explorer ingresspub/ingress-data-explorer
+      ```
+    
 3. 用浏览器打开 [http://127.0.0.1:8080](http://127.0.0.1:8080)
 
 4. 如果有需要停止或者删除运行的 Docker 实例（数据也会被删除），则运行：

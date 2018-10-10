@@ -174,7 +174,7 @@ public class AgentProfileParser extends PlainTextDataFileParser<AgentProfile> {
                 .entrySet()
                 .stream()
                 .map(entry -> {
-                    String tmp[] = entry.getKey().split(" ");
+                    String tmp[] = entry.getKey().split(" ", 2);
                     ZonedDateTime time = TIME_PARSER.parse(entry.getValue());
                     return new Badge(tmp[1], BadgeLevel.valueOf(tmp[0].toUpperCase()), time);
                 })

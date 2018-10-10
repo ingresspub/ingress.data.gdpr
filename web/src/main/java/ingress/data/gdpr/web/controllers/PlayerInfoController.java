@@ -20,26 +20,26 @@ package ingress.data.gdpr.web.controllers;
 import ingress.data.gdpr.web.services.Summarizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.time.ZoneId;
 
 /**
  * @author SgrAlpha
  */
 @Controller
-public class IndexController {
+public class PlayerInfoController {
 
     private final Summarizer summarizer;
 
-    public IndexController(@Autowired final Summarizer summarizer) {
+    public PlayerInfoController(@Autowired final Summarizer summarizer) {
         this.summarizer = summarizer;
     }
 
-    @GetMapping("/")
-    public String index() {
-        if (summarizer.noDataUploaded()) {
-            return "redirect:/upload";
-        }
-        return "redirect:/player/badges";
+    @GetMapping("/player/badges")
+    public String listBadges(final ModelMap map) {
+        map.addAttribute("timeline", summarizer.listBadgeTimeline(ZoneId.systemDefault()));
+        return "player/badges";
     }
-
 }

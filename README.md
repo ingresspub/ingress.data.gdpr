@@ -26,11 +26,18 @@ This will take about 30 days for Niantic to process your request. After done, yo
     * Mac users: [https://docs.docker.com/docker-for-mac/install/](https://docs.docker.com/docker-for-mac/install/)
     * Windows users: [https://docs.docker.com/docker-for-windows/install/](https://docs.docker.com/docker-for-windows/install/)
 
-2. Open `Terminal` or `Command Promp` if you're on Windows, and run:
-    ```bash
-    docker pull ingresspub/ingress-data-explorer
-    docker run -d --restart=always -p 8080:8080 --name=ingress-data-explorer ingresspub/ingress-data-explorer
-    ```
+2. Run application
+    * Mac or Linux users, please open `Terminal`, then run:
+      ```bash
+      docker pull ingresspub/ingress-data-explorer
+      docker run -d --restart=always -p 8080:8080 -v $HOME/.h2:/root/.h2:rw --name=ingress-data-explorer ingresspub/ingress-data-explorer
+      ```
+    * Windows users, please open `Command Prompt`, then run:
+      ```bash
+      docker pull ingresspub/ingress-data-explorer
+      docker run -d --restart=always -p 8080:8080 -v %HOMEDRIVE%%HOMEPATH%/.h2:/root/.h2:rw --name=ingress-data-explorer ingresspub/ingress-data-explorer
+      ```
+
 3. Open [http://127.0.0.1:8080](http://127.0.0.1:8080) in your favorite web browser.
 
 4. If you want to stop / remove the running container, run:

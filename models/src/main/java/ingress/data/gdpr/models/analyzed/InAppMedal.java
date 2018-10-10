@@ -15,31 +15,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.web.controllers;
+package ingress.data.gdpr.models.analyzed;
 
-import ingress.data.gdpr.web.services.Summarizer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import ingress.data.gdpr.models.records.profile.BadgeLevel;
+
+import java.util.Optional;
 
 /**
  * @author SgrAlpha
  */
-@Controller
-public class IndexController {
+public class InAppMedal {
 
-    private final Summarizer summarizer;
+    private final BadgeLevel level;
+    private final String name;
+    private final String url;
 
-    public IndexController(@Autowired final Summarizer summarizer) {
-        this.summarizer = summarizer;
+    public InAppMedal(final BadgeLevel level, final String name, final String url) {
+        this.level = level;
+        this.name = name;
+        this.url = url;
     }
 
-    @GetMapping("/")
-    public String index() {
-        if (summarizer.noDataUploaded()) {
-            return "redirect:/upload";
-        }
-        return "redirect:/player/badges";
+    public BadgeLevel getLevel() {
+        return level;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public Optional<String> getUrl() {
+        return Optional.ofNullable(url);
+    }
 }
