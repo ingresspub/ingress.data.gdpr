@@ -38,7 +38,7 @@ Yours sincerely,
     
 3. 用浏览器打开 [http://127.0.0.1:8080](http://127.0.0.1:8080)
 
-4. 如果有需要停止或者删除运行的 Docker 实例（数据也会被删除），则运行：
+4. 如果有需要停止或者删除运行的 Docker 实例（数据会被保留），则运行：
     ```bash
     docker rm -vf ingress-data-explorer
     ```
@@ -70,7 +70,8 @@ Yours sincerely,
       ```
 3. 当窗口输出停在`Started Application in N seconds`后，用浏览器打开 [http://127.0.0.1:8080](http://127.0.0.1:8080) 
 
-### 数据存在本地的什么地方？
+
+## 数据存在本地的什么地方？
 数据被保存在一个 [H2 数据库](http://www.h2database.com) 中，位置在 ```~/.h2/ingress_gdpr```，`~`代表操作系统登录用户的主目录。
 
 

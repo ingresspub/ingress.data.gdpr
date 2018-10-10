@@ -40,7 +40,7 @@ This will take about 30 days for Niantic to process your request. After done, yo
 
 3. Open [http://127.0.0.1:8080](http://127.0.0.1:8080) in your favorite web browser.
 
-4. If you want to stop / remove the running container, run:
+4. If you want to stop / remove the running container (data will be kept), run:
     ```bash
     docker rm -vf ingress-data-explorer
     ```
@@ -73,7 +73,8 @@ This will take about 30 days for Niantic to process your request. After done, yo
       ```
 3. After your saw `Started Application in N seconds`, open [http://127.0.0.1:8080](http://127.0.0.1:8080) in your favorite web browser. 
 
-### Where are the data stored on my local?
+
+## Where are the data stored on my local?
 It's in a [H2 database](http://www.h2database.com) under ```~/.h2/ingress_gdpr```
 
 
