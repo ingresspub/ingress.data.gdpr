@@ -20,6 +20,8 @@ package ingress.data.gdpr.web.services;
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 
 import ingress.data.gdpr.models.analyzed.Circle;
+import ingress.data.gdpr.models.analyzed.CommMessageInTimeline;
+import ingress.data.gdpr.models.analyzed.Feed;
 import ingress.data.gdpr.models.analyzed.InAppMedal;
 import ingress.data.gdpr.models.analyzed.TimelineItem;
 import ingress.data.gdpr.models.records.profile.BadgeLevel;
@@ -86,7 +88,8 @@ public class Summarizer {
         return jdbcTemplate.query("SELECT * FROM gdpr_raw_agent_profile_badges ORDER BY time DESC", (rs, rowNum) -> {
             final BadgeLevel level = BadgeLevel.valueOf(rs.getString("level"));
             final String name = rs.getString("name");
-            final ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(rs.getLong("time")), zoneId);
+            final ZoneId targetZoneId = Optional.ofNullable(zoneId).orElse(ZoneId.of("UTC"));
+            final ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(rs.getLong("time")), targetZoneId);
             final String timeStr = time.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             final String url = null;
             return new TimelineItem<>("badge", String.format("%s %s", level, name), timeStr, new InAppMedal(level, name, url));
@@ -96,6 +99,34 @@ public class Summarizer {
     public boolean noBadgesData() {
         final Integer count = jdbcTemplate.queryForObject("SELECT COUNT(1) FROM gdpr_raw_agent_profile_badges", Integer.class);
         return Optional.ofNullable(count).orElse(0) <= 0;
+    }
+
+    public Feed listCommMessages(final ZoneId zoneId, final Integer curPage, final Integer pageSize) {
+        final String sql = "SELECT time AS time, null AS loc_latE6, null AS loc_lngE6, message AS message FROM gdpr_raw_comm_mentions WHERE time < ?"
+                + " UNION ALL"
+                + " (SELECT time AS time, loc_latE6 AS loc_latE6, loc_lngE6 AS loc_lngE6, comment AS message FROM gdpr_raw_game_logs WHERE time < ? AND tracker_trigger = 'send comm message')"
+                + " ORDER BY time DESC LIMIT ?, ?";
+        int page = Optional.ofNullable(curPage).orElse(1);
+        int size = Optional.ofNullable(pageSize).orElse(100);
+        int offset = (page - 1) * size;
+        List<CommMessageInTimeline> messages = jdbcTemplate.query(
+                sql,
+                (rs, rowNum) -> {
+                    final ZoneId targetZoneId = Optional.ofNullable(zoneId).orElse(ZoneId.of("UTC"));
+                    final long timestamp = rs.getLong("time");
+                    final ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(timestamp), targetZoneId);
+                    final String dateStr = time.toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE);
+                    final String timeStr = time.toLocalTime().format(DateTimeFormatter.ISO_LOCAL_TIME);
+                    Coordinate loc = null;
+                    if (rs.getObject("loc_latE6") != null
+                            && rs.getObject("loc_lngE6") != null) {
+                        loc = new Coordinate(rs.getInt("loc_latE6") / 1e6, rs.getInt("loc_lngE6") / 1e6);
+                    }
+                    return new CommMessageInTimeline(dateStr, timeStr, loc, rs.getString("message"));
+                },
+                offset, size
+        );
+        return new Feed<>(messages, page, size);
     }
 
 }
