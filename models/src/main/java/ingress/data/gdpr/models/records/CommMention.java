@@ -27,7 +27,7 @@ public class CommMention {
     public static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
     private final ZonedDateTime time;
-    private final String message;
+    private String message;
 
     public CommMention(final ZonedDateTime time, final String message) {
         this.time = time;
@@ -40,5 +40,9 @@ public class CommMention {
 
     public String getMessage() {
         return message;
+    }
+
+    public void setMessage(final String message) {
+        this.message = message;
     }
 }

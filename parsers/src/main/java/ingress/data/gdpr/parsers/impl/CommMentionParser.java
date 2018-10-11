@@ -58,7 +58,7 @@ public class CommMentionParser extends PlainTextDataFileParser<List<CommMention>
         }
         notNull(dataFile, "Data file needs to be specified");
         try {
-            List<CommMention> data = new LinkedList<>();
+            LinkedList<CommMention> data = new LinkedList<>();
             for (int i = 1; i < lines.size(); i++) {    // Skip first line (header)
                 final String line = lines.get(i);
                 if (isEmptyString(line)) {
@@ -69,7 +69,11 @@ public class CommMentionParser extends PlainTextDataFileParser<List<CommMention>
                 try {
                     time = TIME_PARSER.parse(columns[0]);
                 } catch (Exception e) {
-                    return ReportDetails.error(String.format("Expecting a valid timestamp (%s) at the beginning of line %d, but got %s", CommMention.TIME_PATTERN, i, columns[0]));
+                    CommMention last = data.getLast();
+                    String msg = last.getMessage() + "\n" + line;
+                    last.setMessage(msg);
+                    LOGGER.warn("Line {} does not start with timestamp, might still be message content, appended to last message. Details: {}", i, line);
+                    continue;
                 }
                 data.add(new CommMention(time, columns[1]));
             }

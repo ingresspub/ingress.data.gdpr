@@ -86,7 +86,12 @@ public class MissionsParser extends PlainTextDataFileParser<List<Mission>> {
             } else if (line.startsWith(SEPARATOR_TAB + SEPARATOR_TAB + SEPARATOR_TAB + SEPARATOR_TAB)) {
                 String[] tmp = line.split(SEPARATOR_TAB);
                 if (tmp.length < 10) {
-                    return ReportDetails.error(String.format("Expecting a row of mission version at line %d with at least %d columns in it, but got only %d columns: %s", i, 10, tmp.length, line));
+                    line = line + "\n" + lines.get(++i);
+                    LOGGER.warn("Line {} and {} now merged to {}", i - 1, i, line);
+                    tmp = line.split(SEPARATOR_TAB);
+                    if (tmp.length < 10) {
+                        return ReportDetails.error(String.format("Expecting a row of mission version at line %d with at least %d columns in it, but got only %d columns: %s", i, 10, tmp.length, line));
+                    }
                 }
                 MissionDetail version = parseMissionVersion(tmp);
                 versionStack.push(version);
