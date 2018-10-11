@@ -83,6 +83,7 @@ public class OprProfileParser extends PlainTextDataFileParser<OprProfile> {
     private OprProfile parse(final String... columns) throws MalformattedRecordException {
         notNull(columns, "Missing columns to parse from");
         try {
+            String quizTakenTime = escapeQuote(columns[15]);
             return new OprProfile(
                     escapeQuote(columns[0]),
                     TIME_PARSER.parse(escapeQuote(columns[1])),
@@ -99,7 +100,7 @@ public class OprProfileParser extends PlainTextDataFileParser<OprProfile> {
                     TIME_PARSER.parse(escapeQuote(columns[12])),
                     escapeQuote(columns[13]),
                     escapeQuote(columns[14]),
-                    TIME_PARSER.parse(escapeQuote(columns[15])),
+                    isEmptyString(quizTakenTime) ? null : TIME_PARSER.parse(quizTakenTime),
                     TIME_PARSER.parse(escapeQuote(columns[16]))
             );
         } catch (Exception e) {

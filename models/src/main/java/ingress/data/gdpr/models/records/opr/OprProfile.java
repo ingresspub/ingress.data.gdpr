@@ -135,8 +135,8 @@ public class OprProfile {
         return quizStatus;
     }
 
-    public ZonedDateTime getQuizTimeTaken() {
-        return quizTimeTaken;
+    public Optional<ZonedDateTime> getQuizTimeTaken() {
+        return Optional.ofNullable(quizTimeTaken);
     }
 
     public ZonedDateTime getTrainingCompletionTime() {

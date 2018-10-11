@@ -144,7 +144,7 @@ CREATE TABLE `gdpr_raw_opr_profile` (
   `last_login_time`            BIGINT NOT NULL,
   `performance`                VARCHAR(8),
   `quiz_status`                VARCHAR(16),
-  `quiz_time_taken`            BIGINT NOT NULL,
+  `quiz_time_taken`            BIGINT,
   `training_completion_time`   BIGINT NOT NULL
 );
 

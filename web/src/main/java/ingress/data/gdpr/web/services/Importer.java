@@ -54,6 +54,7 @@ import java.nio.file.Path;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -456,6 +457,7 @@ public class Importer {
                     + "last_activity_loc_latE6,last_activity_loc_lngE6,language,last_login_time,performance,"
                     + "quiz_status,quiz_time_taken,training_completion_time)"
                     + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            final Optional<ZonedDateTime> quizTimeTaken = profile.getQuizTimeTaken();
             jdbcTemplate.update(sql,
                     profile.getEmailAddress(),
                     profile.getBonusLastChangedTime().toInstant().getEpochSecond(), profile.getBonusLocation().getLatE6(), profile.getBonusLocation().getLngE6(),
@@ -465,7 +467,8 @@ public class Importer {
                     profile.getHometownLocation().getLatE6(), profile.getHometownLocation().getLngE6(),
                     profile.getLastActivityLocation().getLatE6(), profile.getLastActivityLocation().getLngE6(),
                     profile.getLanguage(), profile.getLastLoginTime().toInstant().getEpochSecond(), profile.getPerformance(),
-                    profile.getQuizStatus(), profile.getQuizTimeTaken().toInstant().getEpochSecond(), profile.getTrainingCompletionTime().toInstant().getEpochSecond()
+                    profile.getQuizStatus(), quizTimeTaken.isPresent() ? quizTimeTaken.get().toInstant().getEpochSecond() : null,
+                    profile.getTrainingCompletionTime().toInstant().getEpochSecond()
             );
             LOGGER.info("Saved OPR profile.");
         }, executor);
