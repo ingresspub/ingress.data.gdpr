@@ -25,17 +25,16 @@ import ingress.data.gdpr.models.analyzed.Feed;
 import ingress.data.gdpr.models.analyzed.InAppMedal;
 import ingress.data.gdpr.models.analyzed.TimelineItem;
 import ingress.data.gdpr.models.records.profile.BadgeLevel;
+import ingress.data.gdpr.parsers.utils.TimeZoneUtil;
 import io.sgr.geometry.Coordinate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -84,15 +83,13 @@ public class Summarizer {
         return Optional.ofNullable(count).orElse(0);
     }
 
-    public List<TimelineItem<?>> listBadgeTimeline(final ZoneId zoneId) {
+    public List<TimelineItem<?>> listBadgeTimeline(final Locale userLocale, final ZoneId userZoneId) {
         return jdbcTemplate.query("SELECT * FROM gdpr_raw_agent_profile_badges ORDER BY time DESC", (rs, rowNum) -> {
             final BadgeLevel level = BadgeLevel.valueOf(rs.getString("level"));
             final String name = rs.getString("name");
-            final ZoneId targetZoneId = Optional.ofNullable(zoneId).orElse(ZoneId.of("UTC"));
-            final ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(rs.getLong("time")), targetZoneId);
-            final String timeStr = time.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            final String dateTimeStr = TimeZoneUtil.epochSecondToLocalDateTime(rs.getLong("time"), userLocale, userZoneId);
             final String url = null;
-            return new TimelineItem<>("badge", String.format("%s %s", level, name), timeStr, new InAppMedal(level, name, url));
+            return new TimelineItem<>("badge", String.format("%s %s", level, name), dateTimeStr, new InAppMedal(level, name, url));
         });
     }
 
@@ -101,7 +98,7 @@ public class Summarizer {
         return Optional.ofNullable(count).orElse(0) <= 0;
     }
 
-    public Feed listCommMessages(final ZoneId zoneId, final Integer curPage, final Integer pageSize) {
+    public Feed listCommMessages(final Integer curPage, final Integer pageSize, final Locale userLocale, final ZoneId userZoneId) {
         final String sql = "SELECT time AS time, null AS loc_latE6, null AS loc_lngE6, message AS message FROM gdpr_raw_comm_mentions WHERE time < ?"
                 + " UNION ALL"
                 + " (SELECT time AS time, loc_latE6 AS loc_latE6, loc_lngE6 AS loc_lngE6, comment AS message FROM gdpr_raw_game_logs WHERE time < ? AND tracker_trigger = 'send comm message')"
@@ -112,16 +109,13 @@ public class Summarizer {
         List<CommMessageInTimeline> messages = jdbcTemplate.query(
                 sql,
                 (rs, rowNum) -> {
-                    final ZoneId targetZoneId = Optional.ofNullable(zoneId).orElse(ZoneId.of("UTC"));
-                    final long timestamp = rs.getLong("time");
-                    final ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(timestamp), targetZoneId);
-                    final String dateStr = time.toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE);
-                    final String timeStr = time.toLocalTime().format(DateTimeFormatter.ISO_LOCAL_TIME);
                     Coordinate loc = null;
                     if (rs.getObject("loc_latE6") != null
                             && rs.getObject("loc_lngE6") != null) {
                         loc = new Coordinate(rs.getInt("loc_latE6") / 1e6, rs.getInt("loc_lngE6") / 1e6);
                     }
+                    final String dateStr = TimeZoneUtil.epochSecondToLocalDate(rs.getLong("time"), userLocale, userZoneId);
+                    final String timeStr = TimeZoneUtil.epochSecondToLocalTime(rs.getLong("time"), userLocale, userZoneId);
                     return new CommMessageInTimeline(dateStr, timeStr, loc, rs.getString("message"));
                 },
                 offset, size

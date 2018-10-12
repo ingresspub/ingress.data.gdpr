@@ -17,13 +17,14 @@
 
 package ingress.data.gdpr.web.controllers;
 
+import static ingress.data.gdpr.parsers.utils.TimeZoneUtil.DEFAULT_LOCALE;
+import static ingress.data.gdpr.parsers.utils.TimeZoneUtil.DEFAULT_ZONE_ID;
+
 import ingress.data.gdpr.web.services.Summarizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import java.time.ZoneId;
 
 /**
  * @author SgrAlpha
@@ -42,7 +43,7 @@ public class PlayerInfoController {
         if (summarizer.noBadgesData()) {
             return "redirect:/upload";
         }
-        map.addAttribute("timeline", summarizer.listBadgeTimeline(ZoneId.systemDefault()));
+        map.addAttribute("timeline", summarizer.listBadgeTimeline(DEFAULT_LOCALE, DEFAULT_ZONE_ID));
         return "player/badges";
     }
 }
