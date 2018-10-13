@@ -150,10 +150,6 @@
             right: auto;
         }
 
-        .timeline-badge.default {
-            background-color: #3f903f !important;
-        }
-
         .timeline-badge.secured {
             background-color: #ff6600 !important;
         }
@@ -173,7 +169,7 @@
             margin-top: 5px;
         }
 
-        @media (max-width: 767px) {
+        @media (max-width: 1023px) {
             ul.timeline:before {
                 left: 40px;
             }
@@ -212,24 +208,26 @@
     <div class="page-header">
         <h1 id="timeline">Timeline</h1>
     </div>
-    <ul th:if="${feed.data.empty}">
+    <ul th:if="${feed.data.isEmpty()}">
         <li>You don't have any timeline yet.</li>
     </ul>
     <ul class="timeline">
         <li th:each="item : ${feed.data}" th:object="${item}" th:class="'timeline-' + ${item.type}">
             <div class="timeline-badge secured" th:if="${item.secured}"><i class="fas fa-lock"></i></div>
-            <div class="timeline-badge default" th:unless="${item.secured}"></div>
+            <div class="timeline-badge bg-default" th:unless="${item.secured}"></div>
             <div class="timeline-panel">
                 <div class="timeline-heading">
-                    <h4 class="timeline-title" th:text="${item.from} ? ${item.from} : 'You:'"></h4>
+                    <h4 class="timeline-title" th:text="${item.from} ? ${item.from} : 'You'"></h4>
                     <p>
                         <small class="text-muted">
-                            <i class="far fa-clock"></i> <span th:text="${item.time}"></span>
+                            <i class="fas fa-clock fa-fw"></i> <span th:text="${item.time}"></span>
                         </small>
                         <br class="clear" />
-                        <a th:if="${item.location}" target="_blank" th:href="'https://www.google.com/maps?z=17&q=' + ${item.location.lat} + '+' + ${item.location.lng}">
+                        <a th:if="${item.location}" target="_blank"
+                           th:href="'https://www.google.com/maps?z=17&q=' + ${item.location.lat} + '+' + ${item.location.lng}">
                             <small class="text-muted">
-                                <i class="fas fa-map-marker-alt"></i> <span th:text="${item.location.lat} + ',' + ${item.location.lng}"></span>
+                                <i class="fas fa-map-marker-alt fa-fw"></i> <span
+                                    th:text="${item.location.lat} + ',' + ${item.location.lng}"></span>
                             </small>
                         </a>
                     </p>

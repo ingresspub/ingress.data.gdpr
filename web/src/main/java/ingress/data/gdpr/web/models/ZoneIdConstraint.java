@@ -15,20 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.parsers.utils;
+package ingress.data.gdpr.web.models;
 
-import java.time.ZoneId;
-import java.util.Locale;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.validation.Constraint;
+import javax.validation.Payload;
 
 /**
  * @author SgrAlpha
  */
-public class TimeZoneConstants {
+@Target( { ElementType.METHOD, ElementType.FIELD })
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy = ZipFileValidator.class)
+public @interface ZoneIdConstraint {
 
-    public static final ZoneId UTC_ZONE_ID = ZoneId.of("UTC");
+    String message() default "Unsupported timezone ID!";
 
-    public static final ZoneId DEFAULT_ZONE_ID = UTC_ZONE_ID;
+    Class<?>[] groups() default {};
 
-    public static final Locale DEFAULT_LOCALE = Locale.US;
+    Class<? extends Payload>[] payload() default {};
 
 }

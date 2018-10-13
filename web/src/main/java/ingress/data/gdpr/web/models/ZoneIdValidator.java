@@ -15,11 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.web.controllers;
+package ingress.data.gdpr.web.models;
 
+import ingress.data.gdpr.models.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.time.ZoneId;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -27,26 +29,22 @@ import javax.validation.ConstraintValidatorContext;
 /**
  * @author SgrAlpha
  */
-public class ZipFileValidator implements ConstraintValidator<ZipFileConstraint, MultipartFile> {
+public class ZoneIdValidator implements ConstraintValidator<ZoneIdConstraint, String> {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(ZipFileValidator.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(ZoneIdValidator.class);
 
-
-    @Override public boolean isValid(final MultipartFile value, final ConstraintValidatorContext context) {
-        if (value == null || value.isEmpty()) {
+    @Override public boolean isValid(final String value, final ConstraintValidatorContext context) {
+        if (Preconditions.isEmptyString(value)) {
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate("Must pick up a zip file.").addConstraintViolation();
+            context.buildConstraintViolationWithTemplate("Missing timezone ID.").addConstraintViolation();
             return false;
         }
-        final String filename = value.getOriginalFilename();
-        final String contentType = value.getContentType();
-        if (
-                !"application/zip".equalsIgnoreCase(contentType)
-                && !"application/x-zip-compressed".equalsIgnoreCase(contentType)
-        ) {
-            LOGGER.warn("Unsupported file type for {}: {}", filename, contentType);
+        try {
+            ZoneId.of(value);
+        } catch (Exception e) {
+            LOGGER.warn("Unsupported timezone ID: {}", value);
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate(String.format("%s(%s) is not a zip file.", filename, contentType)).addConstraintViolation();
+            context.buildConstraintViolationWithTemplate(String.format("Unsupported timezone ID: %s", value)).addConstraintViolation();
             return false;
         }
         return true;

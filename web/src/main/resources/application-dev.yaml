@@ -19,7 +19,7 @@ spring:
   profiles: dev
   datasource:
     primary:
-      jdbc-url: jdbc:h2:file:~/.h2/ingress_gdpr
+      jdbc-url: jdbc:h2:file:~/.h2/ingress_gdpr;MODE=MySQL
       driver-class-name: "org.h2.Driver"
       username: sa
       password:

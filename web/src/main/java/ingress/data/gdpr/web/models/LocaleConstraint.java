@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.web.controllers;
+package ingress.data.gdpr.web.models;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -31,9 +31,9 @@ import javax.validation.Payload;
 @Target( { ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ZipFileValidator.class)
-public @interface ZipFileConstraint {
+public @interface LocaleConstraint {
 
-    String message() default "Invalid zip file!";
+    String message() default "Unsupported locale!";
 
     Class<?>[] groups() default {};
 

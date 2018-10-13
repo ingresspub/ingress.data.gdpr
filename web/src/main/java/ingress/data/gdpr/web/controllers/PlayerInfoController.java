@@ -17,15 +17,17 @@
 
 package ingress.data.gdpr.web.controllers;
 
-import static ingress.data.gdpr.parsers.utils.TimeZoneConstants.DEFAULT_LOCALE;
-import static ingress.data.gdpr.parsers.utils.TimeZoneConstants.DEFAULT_ZONE_ID;
-
-import ingress.data.gdpr.web.services.Summarizer;
+import ingress.data.gdpr.models.analyzed.Circle;
+import ingress.data.gdpr.models.utils.JsonUtil;
+import ingress.data.gdpr.web.services.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author SgrAlpha
@@ -33,18 +35,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class PlayerInfoController {
 
-    private final Summarizer summarizer;
+    private final PlayerService playerService;
 
-    public PlayerInfoController(@Autowired final Summarizer summarizer) {
-        this.summarizer = summarizer;
+    public PlayerInfoController(@Autowired final PlayerService playerService) {
+        this.playerService = playerService;
     }
 
     @GetMapping("/player/badges")
     public String listBadges(final ModelMap map) {
-        if (summarizer.noBadgesData()) {
+        if (playerService.noBadgesData()) {
             return "redirect:/upload";
         }
-        map.addAttribute("timeline", summarizer.listBadgeTimeline(DEFAULT_LOCALE, DEFAULT_ZONE_ID));
+        map.addAttribute("timeline", playerService.listBadgeTimeline());
         return "player/badges";
     }
 
@@ -53,10 +55,31 @@ public class PlayerInfoController {
             @RequestParam(value = "curPage", required = false) Integer curPage,
             @RequestParam(value = "perPage", required = false) Integer perPage,
             final ModelMap map) {
-        if (summarizer.noGameLogData() && summarizer.noCommMentions()) {
+        if (playerService.noGameLogData() && playerService.noCommMentions()) {
             return "redirect:/upload";
         }
-        map.addAttribute("feed", summarizer.listCommMessages(curPage, perPage, DEFAULT_LOCALE, DEFAULT_ZONE_ID));
+        map.addAttribute("feed", playerService.listCommMessages(curPage, perPage));
         return "player/comm/messages";
     }
+
+    @GetMapping("/player/unique_portals")
+    public String index(
+            @RequestParam(value = "excludeCaptured", required = false, defaultValue = "false") boolean excludeCaptured,
+            @RequestParam(value = "color", required = false) String color,
+            @RequestParam(value = "radius", required = false, defaultValue = "20") int radius,
+            final ModelMap map) {
+        if (playerService.noGameLogData()) {
+            return "redirect:/upload";
+        }
+        String displayColor = Optional.ofNullable(color).orElse("#ff00ff");
+        final List<Circle> capturedPortals = playerService.listCapturedPortals(displayColor, radius);
+        final List<Circle> visitedPortals = playerService.listVisitedPortals(displayColor, radius);
+        if (excludeCaptured) {
+            visitedPortals.removeAll(capturedPortals);
+        }
+        map.addAttribute("capturedPortals", JsonUtil.toJson(capturedPortals));
+        map.addAttribute("visitedPortals", JsonUtil.toJson(visitedPortals));
+        return "player/unique_portals";
+    }
+
 }

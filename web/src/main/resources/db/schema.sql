@@ -15,6 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+CREATE TABLE IF NOT EXISTS `gdpr_user_preferences` (
+  `key`   VARCHAR(32)  NOT NULL PRIMARY KEY,
+  `value` VARCHAR(128) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS `gdpr_raw_game_logs` (
   `id`              BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `time`            BIGINT NOT NULL,

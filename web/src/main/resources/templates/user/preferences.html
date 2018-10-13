@@ -1,0 +1,56 @@
+<!--
+  ~ Copyright (C) 2014-2018 SgrAlpha
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/dashboard}">
+<head>
+    <title>Preferences</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="row">
+        <form id="encrypted_zip_upload_form" class="col-sm-8 offset-sm-2 border border-light p-5"
+              th:action="@{/user/preferences}" th:object="${userPreferences}"
+              enctype="multipart/form-data" method="post">
+            <p class="h4 text-center mb-4">Preferences</p>
+            <div class="form-row mb-3">
+                <label class="col-sm-4 col-form-label" for="language">Language <em>(required)</em></label>
+                <div class="col-sm-8">
+                    <select id="language" class="form-control" th:field="*{languageTag}">
+                        <option th:each="locale : ${T(ingress.data.gdpr.web.utils.Constants).ALL_AVAILABLE_LOCALES}" th:value="${locale.toLanguageTag()}" th:text="${locale.displayName}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row mb-3">
+                <label class="col-sm-4 col-form-label" for="zone">Timezone <em>(required)</em></label>
+                <div class="col-sm-8">
+                    <select id="zone" class="form-control" th:field="*{zoneId}">
+                        <option th:each="zoneId : ${T(ingress.data.gdpr.web.utils.Constants).ALL_AVAILABLE_ZONES}" th:value="${zoneId.id}" th:text="${zoneId.id}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <button class="btn btn-default btn-block my-4" type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

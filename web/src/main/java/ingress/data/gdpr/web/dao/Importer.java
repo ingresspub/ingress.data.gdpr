@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.web.services;
+package ingress.data.gdpr.web.dao;
 
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 
@@ -48,7 +48,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
 import java.sql.PreparedStatement;
@@ -70,7 +70,7 @@ import javax.sql.DataSource;
 /**
  * @author SgrAlpha
  */
-@Service
+@Component
 public class Importer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Importer.class);

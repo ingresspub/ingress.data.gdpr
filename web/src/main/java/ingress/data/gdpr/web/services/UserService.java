@@ -15,20 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.parsers.utils;
+package ingress.data.gdpr.web.services;
 
-import java.time.ZoneId;
-import java.util.Locale;
+import ingress.data.gdpr.web.dao.UserDao;
+import ingress.data.gdpr.web.models.UserPreferences;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author SgrAlpha
  */
-public class TimeZoneConstants {
+@Service
+public class UserService {
 
-    public static final ZoneId UTC_ZONE_ID = ZoneId.of("UTC");
+    private final UserDao userDao;
 
-    public static final ZoneId DEFAULT_ZONE_ID = UTC_ZONE_ID;
+    public UserService(@Autowired final UserDao userDao) {
+        this.userDao = userDao;
+    }
 
-    public static final Locale DEFAULT_LOCALE = Locale.US;
+    public UserPreferences getUserPreferences() {
+        return userDao.getUserPreferences();
+    }
 
+    public void saveUserService(final UserPreferences userPreferences) {
+        userDao.saveUserService(userPreferences);
+    }
 }

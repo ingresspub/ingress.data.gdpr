@@ -1,0 +1,1 @@
+INSERT INTO `GDPR_USER_PREFERENCES`(`KEY`,`VALUE`) VALUES ('language_tag', 'en_US'),('zone_id','America/Los_Angeles') ON DUPLICATE KEY UPDATE `KEY` = VALUES(`KEY`);

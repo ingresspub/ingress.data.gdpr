@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ingress.data.gdpr.web.services;
+package ingress.data.gdpr.web.dao;
 
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 
@@ -30,7 +30,7 @@ import ingress.data.gdpr.parsers.utils.TimeZoneUtil;
 import io.sgr.geometry.Coordinate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.ZoneId;
 import java.time.format.FormatStyle;
@@ -42,12 +42,12 @@ import java.util.Optional;
 /**
  * @author SgrAlpha
  */
-@Service
-public class Summarizer {
+@Component
+public class RawDataDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public Summarizer(@Qualifier("primaryJdbcTemplate") final JdbcTemplate jdbcTemplate) {
+    public RawDataDao(@Qualifier("primaryJdbcTemplate") final JdbcTemplate jdbcTemplate) {
         notNull(jdbcTemplate, "Missing JDBC template");
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -81,11 +81,11 @@ public class Summarizer {
         });
     }
 
-    public List<TimelineItem<?>> listBadgeTimeline(final Locale userLocale, final ZoneId userZoneId) {
+    public List<TimelineItem<?>> listBadgeTimeline(final Locale userLocale, final ZoneId userZoneId, final FormatStyle formatStyle) {
         return jdbcTemplate.query("SELECT * FROM gdpr_raw_agent_profile_badges ORDER BY time DESC", (rs, rowNum) -> {
             final BadgeLevel level = BadgeLevel.valueOf(rs.getString("level"));
             final String name = rs.getString("name");
-            final String dateTimeStr = TimeZoneUtil.epochSecondToZonedDateTime(rs.getLong("time"), userLocale, userZoneId, FormatStyle.FULL);
+            final String dateTimeStr = TimeZoneUtil.epochSecondToZonedDateTime(rs.getLong("time"), userLocale, userZoneId, formatStyle);
             final String url = null;
             return new TimelineItem<>("badge", String.format("%s %s", level, name), dateTimeStr, new InAppMedal(level, name, url));
         });
@@ -101,7 +101,7 @@ public class Summarizer {
         return Optional.ofNullable(count).orElse(0) <= 0;
     }
 
-    public Feed<CommMessageInTimeline> listCommMessages(final Integer curPage, final Integer pageSize, final Locale userLocale, final ZoneId userZoneId) {
+    public Feed<CommMessageInTimeline> listCommMessages(final Integer curPage, final Integer pageSize, final Locale userLocale, final ZoneId userZoneId, final FormatStyle formatStyle) {
         final String sql = "SELECT time AS time, null AS loc_latE6, null AS loc_lngE6, secured AS secured, from_agent AS from_agent, message AS message, 'RECEIVED' AS type FROM gdpr_raw_comm_mentions"
                 + " UNION ALL"
                 + " (SELECT time AS time, loc_latE6 AS loc_latE6, loc_lngE6 AS loc_lngE6, 'false' AS secured, null AS from_agent, comment AS message, 'SENT' AS type FROM gdpr_raw_game_logs WHERE tracker_trigger = 'send comm message')"
@@ -117,7 +117,7 @@ public class Summarizer {
                             && rs.getObject("loc_lngE6") != null) {
                         loc = new Coordinate(rs.getInt("loc_latE6") / 1e6, rs.getInt("loc_lngE6") / 1e6);
                     }
-                    final String timeStr = TimeZoneUtil.epochSecondToZonedDateTime(rs.getLong("time"), userLocale, userZoneId, FormatStyle.FULL);
+                    final String timeStr = TimeZoneUtil.epochSecondToZonedDateTime(rs.getLong("time"), userLocale, userZoneId, formatStyle);
                     return new CommMessageInTimeline(timeStr, loc, rs.getBoolean("secured"), rs.getString("from_agent"), rs.getString("message"), CommMessageType.valueOf(rs.getString("type")));
                 },
                 offset, size

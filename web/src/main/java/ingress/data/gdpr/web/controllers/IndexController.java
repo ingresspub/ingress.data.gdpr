@@ -17,7 +17,7 @@
 
 package ingress.data.gdpr.web.controllers;
 
-import ingress.data.gdpr.web.services.Summarizer;
+import ingress.data.gdpr.web.dao.RawDataDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,15 +28,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class IndexController {
 
-    private final Summarizer summarizer;
+    private final RawDataDao rawDataDao;
 
-    public IndexController(@Autowired final Summarizer summarizer) {
-        this.summarizer = summarizer;
+    public IndexController(@Autowired final RawDataDao rawDataDao) {
+        this.rawDataDao = rawDataDao;
     }
 
     @GetMapping("/")
     public String index() {
-        if (summarizer.noGameLogData()) {
+        if (rawDataDao.noGameLogData()) {
             return "redirect:/upload";
         }
         return "redirect:/player/badges";
