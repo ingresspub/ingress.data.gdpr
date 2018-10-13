@@ -9,6 +9,12 @@ It provides a user friendly web UI for you to upload the encrypted zip file you 
 Everything will be kept exactly on your machine, nothing will be collected and send to backend servers.
 
 
+## Features
+* View badge acquisition time
+* View comm conversations (both way)
+* Generate UPC / UPV JSON for IITC Draw Tools
+
+
 ## How to get the data
 Send an E-Mail to [privacy@nianticlabs.com](mailto:privacy@nianticlabs.com):
 ```

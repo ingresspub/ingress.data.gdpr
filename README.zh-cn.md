@@ -7,6 +7,12 @@ Ingress Data Explorer 是一个帮你浏览 Ingress 游戏数据的可视化工�
 虽然交互界面是以上传文件的形式提供，其实仅仅是上传到运行在你本地的 web 服务器，所有的数据均只存在你的电脑本地，不会以任何形式上传至任何第三方服务器。
 
 
+## 功能列表
+* 查看勋章（牌子）的获得时间
+* 查看频道对话（包括你发的和别人发给你的）
+* 导出 UPC / UPV 到 IITC Draw Tools
+
+
 ## 如何获取数据
 给 [privacy@nianticlabs.com](mailto:privacy@nianticlabs.com) 发邮件，主题任意，内容模版如下:
 ```
