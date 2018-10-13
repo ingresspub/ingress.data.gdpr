@@ -17,14 +17,15 @@
 
 package ingress.data.gdpr.web.controllers;
 
-import static ingress.data.gdpr.parsers.utils.TimeZoneUtil.DEFAULT_LOCALE;
-import static ingress.data.gdpr.parsers.utils.TimeZoneUtil.DEFAULT_ZONE_ID;
+import static ingress.data.gdpr.parsers.utils.TimeZoneConstants.DEFAULT_LOCALE;
+import static ingress.data.gdpr.parsers.utils.TimeZoneConstants.DEFAULT_ZONE_ID;
 
 import ingress.data.gdpr.web.services.Summarizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @author SgrAlpha
@@ -45,5 +46,17 @@ public class PlayerInfoController {
         }
         map.addAttribute("timeline", summarizer.listBadgeTimeline(DEFAULT_LOCALE, DEFAULT_ZONE_ID));
         return "player/badges";
+    }
+
+    @GetMapping("/player/comm/messages")
+    public String listCommMessages(
+            @RequestParam(value = "curPage", required = false) Integer curPage,
+            @RequestParam(value = "perPage", required = false) Integer perPage,
+            final ModelMap map) {
+        if (summarizer.noGameLogData() && summarizer.noCommMentions()) {
+            return "redirect:/upload";
+        }
+        map.addAttribute("feed", summarizer.listCommMessages(curPage, perPage, DEFAULT_LOCALE, DEFAULT_ZONE_ID));
+        return "player/comm/messages";
     }
 }

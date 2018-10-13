@@ -27,15 +27,27 @@ public class CommMention {
     public static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
     private final ZonedDateTime time;
+    private final boolean secured;
+    private final String from;
     private String message;
 
-    public CommMention(final ZonedDateTime time, final String message) {
+    public CommMention(final ZonedDateTime time, final boolean secured, final String from, final String message) {
         this.time = time;
+        this.secured = secured;
+        this.from = from;
         this.message = message;
     }
 
     public ZonedDateTime getTime() {
         return time;
+    }
+
+    public boolean isSecured() {
+        return secured;
+    }
+
+    public String getFrom() {
+        return from;
     }
 
     public String getMessage() {

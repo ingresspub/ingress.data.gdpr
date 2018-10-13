@@ -17,34 +17,39 @@
 
 package ingress.data.gdpr.models.analyzed;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author SgrAlpha
  */
 public class Feed<T> {
 
-    private final List<T> messages;
-    private final Integer curPage;
-    private final Integer pageSize;
+    private final List<T> data;
+    private final int curPage;
+    private final int pageSize;
 
-    public Feed(final List<T> messages, final Integer curPage, final Integer pageSize) {
-        this.messages = messages;
+    public Feed(final List<T> data, final int curPage, final int pageSize) {
+        this.data = data;
         this.curPage = curPage;
         this.pageSize = pageSize;
     }
 
-    public List<T> getMessages() {
-        return Collections.unmodifiableList(messages);
+    @JsonProperty("data")
+    public List<T> getData() {
+        return Collections.unmodifiableList(data);
     }
 
-    public Optional<Integer> getCurPage() {
-        return Optional.ofNullable(curPage);
+    @JsonProperty("curPage")
+    public int getCurPage() {
+        return curPage;
     }
 
-    public Optional<Integer> getPageSize() {
-        return Optional.ofNullable(pageSize);
+    @JsonProperty("pageSize")
+    public int getPageSize() {
+        return pageSize;
     }
+
 }

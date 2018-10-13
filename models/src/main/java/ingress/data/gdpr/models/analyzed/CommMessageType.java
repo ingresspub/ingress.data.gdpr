@@ -15,25 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-CREATE TABLE IF NOT EXISTS `gdpr_raw_game_logs` (
-  `id`              BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `time`            BIGINT NOT NULL,
-  `loc_latE6`       INT,
-  `loc_lngE6`       INT,
-  `tracker_trigger` VARCHAR(64),
-  `comment`         TEXT
-);
+package ingress.data.gdpr.models.analyzed;
 
-CREATE TABLE IF NOT EXISTS `gdpr_raw_comm_mentions` (
-  `id`         BIGINT      NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `time`       BIGINT      NOT NULL,
-  `secured`    BOOLEAN     NOT NULL,
-  `from_agent` VARCHAR(16) NOT NULL,
-  `message`    TEXT
-);
+/**
+ * @author SgrAlpha
+ */
+public enum CommMessageType {
 
-CREATE TABLE IF NOT EXISTS `gdpr_raw_agent_profile_badges` (
-  `name`  VARCHAR(32) NOT NULL,
-  `level` VARCHAR(8)  NOT NULL,
-  `time`  BIGINT      NOT NULL
-);
+    RECEIVED,
+    SENT,
+    ;
+}

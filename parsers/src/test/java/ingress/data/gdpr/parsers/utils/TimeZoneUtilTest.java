@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 import java.time.ZoneId;
+import java.time.format.FormatStyle;
 import java.util.Locale;
 
 /**
@@ -33,36 +34,36 @@ public class TimeZoneUtilTest {
     @Test
     public void testParseLocalDate() {
         long timestamp = 1539369230;    // Fri, 12 Oct 2018 18:33:50 GMT
-        final String dateInChina = TimeZoneUtil.epochSecondToLocalDate(timestamp, Locale.CHINESE, ZoneId.of("GMT+8"));
+        final String dateInChina = TimeZoneUtil.epochSecondToLocalDate(timestamp, Locale.CHINESE, ZoneId.of("GMT+8"), FormatStyle.MEDIUM);
         assertEquals("2018-10-13", dateInChina);
-        final String timeInChina = TimeZoneUtil.epochSecondToLocalTime(timestamp, Locale.CHINESE, ZoneId.of("GMT+8"));
+        final String timeInChina = TimeZoneUtil.epochSecondToLocalTime(timestamp, Locale.CHINESE, ZoneId.of("GMT+8"), FormatStyle.MEDIUM);
         assertEquals("2:33:50", timeInChina);
-        final String dateTimeInChina = TimeZoneUtil.epochSecondToLocalDateTime(timestamp, Locale.CHINESE, ZoneId.of("GMT+8"));
+        final String dateTimeInChina = TimeZoneUtil.epochSecondToLocalDateTime(timestamp, Locale.CHINESE, ZoneId.of("GMT+8"), FormatStyle.MEDIUM);
         assertEquals("2018-10-13 2:33:50", dateTimeInChina);
-        final String dateInLA = TimeZoneUtil.epochSecondToLocalDate(timestamp, Locale.US, ZoneId.of("America/Los_Angeles"));
+        final String dateInLA = TimeZoneUtil.epochSecondToLocalDate(timestamp, Locale.US, ZoneId.of("America/Los_Angeles"), FormatStyle.MEDIUM);
         assertEquals("Oct 12, 2018", dateInLA);
-        final String timeInLA = TimeZoneUtil.epochSecondToLocalTime(timestamp, Locale.US, ZoneId.of("America/Los_Angeles"));
+        final String timeInLA = TimeZoneUtil.epochSecondToLocalTime(timestamp, Locale.US, ZoneId.of("America/Los_Angeles"), FormatStyle.MEDIUM);
         assertEquals("11:33:50 AM", timeInLA);
-        final String dateTimeInLA = TimeZoneUtil.epochSecondToLocalDateTime(timestamp, Locale.US, ZoneId.of("America/Los_Angeles"));
+        final String dateTimeInLA = TimeZoneUtil.epochSecondToLocalDateTime(timestamp, Locale.US, ZoneId.of("America/Los_Angeles"), FormatStyle.MEDIUM);
         assertEquals("Oct 12, 2018 11:33:50 AM", dateTimeInLA);
     }
 
     @Test
     public void testParseFromInvalidEpochSecond() {
         try {
-            TimeZoneUtil.epochSecondToLocalDate(-1, Locale.getDefault(), ZoneId.systemDefault());
+            TimeZoneUtil.epochSecondToLocalDate(-1, Locale.getDefault(), ZoneId.systemDefault(), null);
             fail();
         } catch (IllegalArgumentException e) {
             // Ignore
         }
         try {
-            TimeZoneUtil.epochSecondToLocalTime(-1, Locale.getDefault(), ZoneId.systemDefault());
+            TimeZoneUtil.epochSecondToLocalTime(-1, Locale.getDefault(), ZoneId.systemDefault(), null);
             fail();
         } catch (IllegalArgumentException e) {
             // Ignore
         }
         try {
-            TimeZoneUtil.epochSecondToLocalDateTime(-1, Locale.getDefault(), ZoneId.systemDefault());
+            TimeZoneUtil.epochSecondToLocalDateTime(-1, Locale.getDefault(), ZoneId.systemDefault(), null);
             fail();
         } catch (IllegalArgumentException e) {
             // Ignore

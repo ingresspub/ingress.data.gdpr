@@ -34,37 +34,52 @@ import java.util.Optional;
  */
 public class TimeZoneUtil {
 
-    public static String epochSecondToLocalDateTime(final long epochSecond, final Locale userLocale, final ZoneId userZoneId) {
+    public static String epochSecondToZonedDateTime(final long epochSecond, final Locale userLocale, final ZoneId userZoneId, final FormatStyle formatStyle) {
         if (epochSecond < 0) {
             throw new IllegalArgumentException(String.format("Invalid epoch second: %d", epochSecond));
         }
         final Locale targetLocale = Optional.ofNullable(userLocale).orElse(DEFAULT_LOCALE);
         final ZoneId targetZoneId = Optional.ofNullable(userZoneId).orElse(DEFAULT_ZONE_ID);
+        final FormatStyle targetFormatStyle = Optional.ofNullable(formatStyle).orElse(FormatStyle.FULL);
         final ZonedDateTime utcDateTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(epochSecond), UTC_ZONE_ID);
         final ZonedDateTime userDateTime = utcDateTime.withZoneSameInstant(targetZoneId);
-        return userDateTime.toLocalDateTime().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(targetLocale));
+        return userDateTime.format(DateTimeFormatter.ofLocalizedDateTime(targetFormatStyle).withLocale(targetLocale));
     }
 
-    public static String epochSecondToLocalDate(final long epochSecond, final Locale userLocale, final ZoneId userZoneId) {
+    public static String epochSecondToLocalDateTime(final long epochSecond, final Locale userLocale, final ZoneId userZoneId, final FormatStyle formatStyle) {
         if (epochSecond < 0) {
             throw new IllegalArgumentException(String.format("Invalid epoch second: %d", epochSecond));
         }
         final Locale targetLocale = Optional.ofNullable(userLocale).orElse(DEFAULT_LOCALE);
         final ZoneId targetZoneId = Optional.ofNullable(userZoneId).orElse(DEFAULT_ZONE_ID);
+        final FormatStyle targetFormatStyle = Optional.ofNullable(formatStyle).orElse(FormatStyle.MEDIUM);
         final ZonedDateTime utcDateTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(epochSecond), UTC_ZONE_ID);
         final ZonedDateTime userDateTime = utcDateTime.withZoneSameInstant(targetZoneId);
-        return userDateTime.toLocalDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(targetLocale));
+        return userDateTime.toLocalDateTime().format(DateTimeFormatter.ofLocalizedDateTime(targetFormatStyle).withLocale(targetLocale));
     }
 
-    public static String epochSecondToLocalTime(final long epochSecond, final Locale userLocale, final ZoneId userZoneId) {
+    public static String epochSecondToLocalDate(final long epochSecond, final Locale userLocale, final ZoneId userZoneId, final FormatStyle formatStyle) {
         if (epochSecond < 0) {
             throw new IllegalArgumentException(String.format("Invalid epoch second: %d", epochSecond));
         }
         final Locale targetLocale = Optional.ofNullable(userLocale).orElse(DEFAULT_LOCALE);
         final ZoneId targetZoneId = Optional.ofNullable(userZoneId).orElse(DEFAULT_ZONE_ID);
+        final FormatStyle targetFormatStyle = Optional.ofNullable(formatStyle).orElse(FormatStyle.MEDIUM);
         final ZonedDateTime utcDateTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(epochSecond), UTC_ZONE_ID);
         final ZonedDateTime userDateTime = utcDateTime.withZoneSameInstant(targetZoneId);
-        return userDateTime.toLocalTime().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM).withLocale(targetLocale));
+        return userDateTime.toLocalDate().format(DateTimeFormatter.ofLocalizedDate(targetFormatStyle).withLocale(targetLocale));
+    }
+
+    public static String epochSecondToLocalTime(final long epochSecond, final Locale userLocale, final ZoneId userZoneId, final FormatStyle formatStyle) {
+        if (epochSecond < 0) {
+            throw new IllegalArgumentException(String.format("Invalid epoch second: %d", epochSecond));
+        }
+        final Locale targetLocale = Optional.ofNullable(userLocale).orElse(DEFAULT_LOCALE);
+        final ZoneId targetZoneId = Optional.ofNullable(userZoneId).orElse(DEFAULT_ZONE_ID);
+        final FormatStyle targetFormatStyle = Optional.ofNullable(formatStyle).orElse(FormatStyle.MEDIUM);
+        final ZonedDateTime utcDateTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(epochSecond), UTC_ZONE_ID);
+        final ZonedDateTime userDateTime = utcDateTime.withZoneSameInstant(targetZoneId);
+        return userDateTime.toLocalTime().format(DateTimeFormatter.ofLocalizedTime(targetFormatStyle).withLocale(targetLocale));
     }
 
 }

@@ -507,14 +507,16 @@ public class Importer {
             return CompletableFuture.completedFuture(null);
         }
         return CompletableFuture.runAsync(() -> {
-            final String sql = "INSERT INTO gdpr_raw_comm_mentions(time,message) VALUES(?,?)";
+            final String sql = "INSERT INTO gdpr_raw_comm_mentions(time,secured,from_agent,message) VALUES(?,?,?,?)";
             final List<List<CommMention>> batches = Lists.partition(new ArrayList<>(mentions), DEFAULT_BATCH_SIZE);
             batches.forEach(batch -> jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
                 @Override
                 public void setValues(@SuppressWarnings("NullableProblems") final PreparedStatement ps, final int i) throws SQLException {
                     final CommMention mention = batch.get(i);
                     ps.setLong(1, mention.getTime().toInstant().getEpochSecond());
-                    ps.setString(2, mention.getMessage());
+                    ps.setBoolean(2, mention.isSecured());
+                    ps.setString(3, mention.getFrom());
+                    ps.setString(4, mention.getMessage());
                 }
 
                 @Override public int getBatchSize() {

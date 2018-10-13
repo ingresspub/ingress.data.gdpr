@@ -75,7 +75,15 @@ public class CommMentionParser extends PlainTextDataFileParser<List<CommMention>
                     LOGGER.warn("Line {} does not start with timestamp, might still be message content, appended to last message. Details: {}", i, line);
                     continue;
                 }
-                data.add(new CommMention(time, columns[1]));
+                String message = columns[1];
+                boolean secured = false;
+                if (message.startsWith("[secure] ")) {
+                    secured = true;
+                    message = message.substring("[secure] ".length());
+                }
+                String from = message.substring(0, message.indexOf(":"));
+                message = message.substring(from.length() + 2);
+                data.add(new CommMention(time, secured, from, message));
             }
             if (data.size() > 1) {
                 LOGGER.info("Parsed {} records from {}", data.size(), dataFile.getFileName());

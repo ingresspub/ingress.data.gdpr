@@ -21,6 +21,7 @@ import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 
 import ingress.data.gdpr.models.analyzed.Circle;
 import ingress.data.gdpr.models.analyzed.CommMessageInTimeline;
+import ingress.data.gdpr.models.analyzed.CommMessageType;
 import ingress.data.gdpr.models.analyzed.Feed;
 import ingress.data.gdpr.models.analyzed.InAppMedal;
 import ingress.data.gdpr.models.analyzed.TimelineItem;
@@ -32,6 +33,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneId;
+import java.time.format.FormatStyle;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -51,7 +53,8 @@ public class Summarizer {
     }
 
     public boolean noGameLogData() {
-        return countGameLogs() <= 0;
+        final Integer count = jdbcTemplate.queryForObject("SELECT COUNT(1) FROM gdpr_raw_game_logs", Integer.class);
+        return Optional.ofNullable(count).orElse(0) <= 0;
     }
 
     public List<Circle> listCapturedPortals(final String color, final int radius) {
@@ -78,16 +81,11 @@ public class Summarizer {
         });
     }
 
-    private int countGameLogs() {
-        final Integer count = jdbcTemplate.queryForObject("SELECT COUNT(1) FROM gdpr_raw_game_logs", Integer.class);
-        return Optional.ofNullable(count).orElse(0);
-    }
-
     public List<TimelineItem<?>> listBadgeTimeline(final Locale userLocale, final ZoneId userZoneId) {
         return jdbcTemplate.query("SELECT * FROM gdpr_raw_agent_profile_badges ORDER BY time DESC", (rs, rowNum) -> {
             final BadgeLevel level = BadgeLevel.valueOf(rs.getString("level"));
             final String name = rs.getString("name");
-            final String dateTimeStr = TimeZoneUtil.epochSecondToLocalDateTime(rs.getLong("time"), userLocale, userZoneId);
+            final String dateTimeStr = TimeZoneUtil.epochSecondToZonedDateTime(rs.getLong("time"), userLocale, userZoneId, FormatStyle.FULL);
             final String url = null;
             return new TimelineItem<>("badge", String.format("%s %s", level, name), dateTimeStr, new InAppMedal(level, name, url));
         });
@@ -98,13 +96,18 @@ public class Summarizer {
         return Optional.ofNullable(count).orElse(0) <= 0;
     }
 
-    public Feed listCommMessages(final Integer curPage, final Integer pageSize, final Locale userLocale, final ZoneId userZoneId) {
-        final String sql = "SELECT time AS time, null AS loc_latE6, null AS loc_lngE6, message AS message FROM gdpr_raw_comm_mentions WHERE time < ?"
+    public boolean noCommMentions() {
+        final Integer count = jdbcTemplate.queryForObject("SELECT COUNT(1) FROM gdpr_raw_comm_mentions", Integer.class);
+        return Optional.ofNullable(count).orElse(0) <= 0;
+    }
+
+    public Feed<CommMessageInTimeline> listCommMessages(final Integer curPage, final Integer pageSize, final Locale userLocale, final ZoneId userZoneId) {
+        final String sql = "SELECT time AS time, null AS loc_latE6, null AS loc_lngE6, secured AS secured, from_agent AS from_agent, message AS message, 'RECEIVED' AS type FROM gdpr_raw_comm_mentions"
                 + " UNION ALL"
-                + " (SELECT time AS time, loc_latE6 AS loc_latE6, loc_lngE6 AS loc_lngE6, comment AS message FROM gdpr_raw_game_logs WHERE time < ? AND tracker_trigger = 'send comm message')"
+                + " (SELECT time AS time, loc_latE6 AS loc_latE6, loc_lngE6 AS loc_lngE6, 'false' AS secured, null AS from_agent, comment AS message, 'SENT' AS type FROM gdpr_raw_game_logs WHERE tracker_trigger = 'send comm message')"
                 + " ORDER BY time DESC LIMIT ?, ?";
         int page = Optional.ofNullable(curPage).orElse(1);
-        int size = Optional.ofNullable(pageSize).orElse(100);
+        int size = Optional.ofNullable(pageSize).orElse(Integer.MAX_VALUE);
         int offset = (page - 1) * size;
         List<CommMessageInTimeline> messages = jdbcTemplate.query(
                 sql,
@@ -114,9 +117,8 @@ public class Summarizer {
                             && rs.getObject("loc_lngE6") != null) {
                         loc = new Coordinate(rs.getInt("loc_latE6") / 1e6, rs.getInt("loc_lngE6") / 1e6);
                     }
-                    final String dateStr = TimeZoneUtil.epochSecondToLocalDate(rs.getLong("time"), userLocale, userZoneId);
-                    final String timeStr = TimeZoneUtil.epochSecondToLocalTime(rs.getLong("time"), userLocale, userZoneId);
-                    return new CommMessageInTimeline(dateStr, timeStr, loc, rs.getString("message"));
+                    final String timeStr = TimeZoneUtil.epochSecondToZonedDateTime(rs.getLong("time"), userLocale, userZoneId, FormatStyle.FULL);
+                    return new CommMessageInTimeline(timeStr, loc, rs.getBoolean("secured"), rs.getString("from_agent"), rs.getString("message"), CommMessageType.valueOf(rs.getString("type")));
                 },
                 offset, size
         );

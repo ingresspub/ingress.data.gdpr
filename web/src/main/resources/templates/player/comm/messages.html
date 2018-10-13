@@ -1,0 +1,251 @@
+<!--
+  ~ Copyright (C) 2014-2018 SgrAlpha
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/dashboard}">
+<head>
+    <title>Badges</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+<body>
+<div layout:fragment="content">
+    <style>
+        .timeline {
+            list-style: none;
+            padding: 20px 0 20px;
+            position: relative;
+        }
+
+        .timeline:before {
+            top: 0;
+            bottom: 0;
+            position: absolute;
+            content: " ";
+            width: 3px;
+            background-color: #eeeeee;
+            left: 50%;
+            margin-left: -1.5px;
+        }
+
+        .timeline > li {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .timeline > li:before,
+        .timeline > li:after {
+            content: " ";
+            display: table;
+        }
+
+        .timeline > li:after {
+            clear: both;
+        }
+
+        .timeline > li:before,
+        .timeline > li:after {
+            content: " ";
+            display: table;
+        }
+
+        .timeline > li:after {
+            clear: both;
+        }
+
+        .timeline > li > .timeline-panel {
+            width: 46%;
+            float: left;
+            border: 1px solid #d4d4d4;
+            border-radius: 2px;
+            padding: 20px;
+            position: relative;
+            -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+        }
+
+        .timeline > li > .timeline-panel:before {
+            position: absolute;
+            top: 26px;
+            display: inline-block;
+            border: 15px solid transparent;
+            border-right-color: #ccc;
+            border-left-color: #ccc;
+            content: " ";
+        }
+
+        .timeline > li > .timeline-panel:after {
+            position: absolute;
+            top: 27px;
+            display: inline-block;
+            border: 14px solid transparent;
+            border-right-color: #ccc;
+            border-left-color: #ccc;
+            content: " ";
+        }
+
+        .timeline > li > .timeline-badge {
+            color: #fff;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            font-size: 1.4em;
+            text-align: center;
+            position: absolute;
+            top: 16px;
+            left: 50%;
+            margin-left: -25px;
+            background-color: #999999;
+            z-index: 100;
+            border-radius: 50%;
+        }
+
+        .timeline > li.timeline-RECEIVED > .timeline-panel {
+            float: left;
+        }
+
+        .timeline > li.timeline-RECEIVED > .timeline-panel:before {
+            border-left-width: 15px;
+            border-right-width: 0;
+            left: auto;
+            right: -15px;
+        }
+
+        .timeline > li.timeline-RECEIVED > .timeline-panel:after {
+            border-left-width: 14px;
+            border-right-width: 0;
+            left: auto;
+            right: -14px;
+        }
+
+        .timeline > li.timeline-SENT > .timeline-panel {
+            float: right;
+        }
+
+        .timeline > li.timeline-SENT > .timeline-panel:before {
+            border-left-width: 0;
+            border-right-width: 15px;
+            left: -15px;
+            right: auto;
+        }
+
+        .timeline > li.timeline-SENT > .timeline-panel:after {
+            border-left-width: 0;
+            border-right-width: 14px;
+            left: -14px;
+            right: auto;
+        }
+
+        .timeline-badge.default {
+            background-color: #3f903f !important;
+        }
+
+        .timeline-badge.secured {
+            background-color: #ff6600 !important;
+        }
+
+        .timeline-title {
+            margin-top: 0;
+            color: inherit;
+            font-weight: 400;
+        }
+
+        .timeline-body > p,
+        .timeline-body > ul {
+            margin-bottom: 0;
+        }
+
+        .timeline-body > p + p {
+            margin-top: 5px;
+        }
+
+        @media (max-width: 767px) {
+            ul.timeline:before {
+                left: 40px;
+            }
+
+            ul.timeline > li > .timeline-panel {
+                width: calc(100% - 90px);
+                width: -moz-calc(100% - 90px);
+                width: -webkit-calc(100% - 90px);
+            }
+
+            ul.timeline > li > .timeline-badge {
+                left: 15px;
+                margin-left: 0;
+                top: 16px;
+            }
+
+            ul.timeline > li > .timeline-panel {
+                float: right;
+            }
+
+            ul.timeline > li > .timeline-panel:before {
+                border-left-width: 0;
+                border-right-width: 15px;
+                left: -15px;
+                right: auto;
+            }
+
+            ul.timeline > li > .timeline-panel:after {
+                border-left-width: 0;
+                border-right-width: 14px;
+                left: -14px;
+                right: auto;
+            }
+        }
+    </style>
+    <div class="page-header">
+        <h1 id="timeline">Timeline</h1>
+    </div>
+    <ul th:if="${feed.data.empty}">
+        <li>You don't have any timeline yet.</li>
+    </ul>
+    <ul class="timeline">
+        <li th:each="item : ${feed.data}" th:object="${item}" th:class="'timeline-' + ${item.type}">
+            <div class="timeline-badge secured" th:if="${item.secured}"><i class="fas fa-lock"></i></div>
+            <div class="timeline-badge default" th:unless="${item.secured}"></div>
+            <div class="timeline-panel">
+                <div class="timeline-heading">
+                    <h4 class="timeline-title" th:text="${item.from} ? ${item.from} : 'You:'"></h4>
+                    <p>
+                        <small class="text-muted">
+                            <i class="far fa-clock"></i> <span th:text="${item.time}"></span>
+                        </small>
+                        <br class="clear" />
+                        <a th:if="${item.location}" target="_blank" th:href="'https://www.google.com/maps?z=17&q=' + ${item.location.lat} + '+' + ${item.location.lng}">
+                            <small class="text-muted">
+                                <i class="fas fa-map-marker-alt"></i> <span th:text="${item.location.lat} + ',' + ${item.location.lng}"></span>
+                            </small>
+                        </a>
+                    </p>
+                </div>
+                <div class="timeline-body">
+                    <p th:text="${item.content}">Content of comm message.</p>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <script type="application/javascript">
+        $(document).ready(function () {
+            $('#topnav-item-comm-messages').toggleClass('active');
+        });
+    </script>
+</div>
+
+</body>
+</html>

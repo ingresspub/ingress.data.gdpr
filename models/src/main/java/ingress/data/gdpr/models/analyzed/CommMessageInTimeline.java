@@ -26,31 +26,44 @@ import java.util.Optional;
  */
 public class CommMessageInTimeline {
 
-    private final String date;
     private final String time;
     private final Coordinate location;
+    private final boolean secured;
+    private final String from;
     private final String content;
+    private final CommMessageType type;
 
-    public CommMessageInTimeline(final String date, final String time, final Coordinate location, final String content) {
-        this.date = date;
+    public CommMessageInTimeline(final String time, final Coordinate location, final boolean secured, final String from, final String content, final CommMessageType type) {
         this.time = time;
         this.location = location;
+        this.secured = secured;
+        this.from = from;
         this.content = content;
-    }
-
-    public String getDate() {
-        return date;
+        this.type = type;
     }
 
     public String getTime() {
         return time;
     }
 
-    public Optional<Coordinate> getLocation() {
-        return Optional.ofNullable(location);
+    public Coordinate getLocation() {
+        return location;
+    }
+
+    public boolean isSecured() {
+        return secured;
+    }
+
+    public String getFrom() {
+        return from;
     }
 
     public String getContent() {
         return content;
     }
+
+    public CommMessageType getType() {
+        return type;
+    }
+
 }

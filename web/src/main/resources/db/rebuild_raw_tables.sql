@@ -109,9 +109,11 @@ CREATE INDEX `gdpr_raw_game_logs_tracker_trigger`
 DROP TABLE IF EXISTS `gdpr_raw_comm_mentions`;
 
 CREATE TABLE `gdpr_raw_comm_mentions` (
-  `id`      BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `time`    BIGINT NOT NULL,
-  `message` TEXT
+  `id`         BIGINT      NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `time`       BIGINT      NOT NULL,
+  `secured`    BOOLEAN     NOT NULL,
+  `from_agent` VARCHAR(16) NOT NULL,
+  `message`    TEXT
 );
 
 CREATE INDEX `gdpr_raw_comm_mentions_time`
