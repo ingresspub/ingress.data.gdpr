@@ -97,7 +97,7 @@ public class OprSubmissionLogsParser extends PlainTextDataFileParser<List<OprSub
         return new MergeResult(columns, i);
     }
 
-    private class MergeResult {
+    private static class MergeResult {
         private final String[] columns;
         private final int index;
 
@@ -105,11 +105,12 @@ public class OprSubmissionLogsParser extends PlainTextDataFileParser<List<OprSub
             this.columns = columns;
             this.index = index;
         }
-        public String[] getColumns() {
+
+        String[] getColumns() {
             return columns;
         }
 
-        public int getIndex() {
+        int getIndex() {
             return index;
         }
     }
