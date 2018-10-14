@@ -1,0 +1,61 @@
+<!--
+  ~ Copyright (C) 2014-2018 SgrAlpha
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/dashboard}">
+<head>
+    <title>UPV</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid m-0 p-0 pt-2" th:if="${googleApiKey}">
+        <time id="player-upc-lastUpdatedTime" class="d-none" datetime=""></time>
+        <div id="map-canvas" style="height: calc(100vh - 56px);">
+            No Data!
+        </div>
+        <script type="text/javascript" th:src="@{/javascripts/map/transform.js(v=${T(ingress.data.gdpr.web.utils.Constants).RESOURCE_VERSION})}"></script>
+        <script type="text/javascript" th:src="@{/javascripts/map/markerclusterer.js(v=${T(ingress.data.gdpr.web.utils.Constants).RESOURCE_VERSION})}"></script>
+        <script type="text/javascript" th:src="@{/app.js(v=${T(ingress.data.gdpr.web.utils.Constants).RESOURCE_VERSION})}"></script>
+        <script type="text/javascript" th:inline="javascript">
+            /*<![CDATA[*/
+            $(document).ready(function() {
+                app.setup({
+                    contextPath: /*[[@{/}]]*/ '',
+                    map: {
+                        provider: 'google',
+                        apiKey: /*[[${googleApiKey}]]*/ undefined,
+                        coordinatesSystem: 'gcj'
+                    }
+                });
+                app.listUpv();
+            });
+            /*]]>*/
+        </script>
+    </div>
+    <div class="container mt-5" th:unless="${googleApiKey}" th:replace="fragments/missing_google_api_key :: content('upv')">
+        This content is going to be replaced.
+    </div>
+    <script type="application/javascript">
+        $(document).ready(function() {
+            $('#topnav-item-maps').toggleClass('active');
+        });
+    </script>
+</div>
+</body>
+</html>

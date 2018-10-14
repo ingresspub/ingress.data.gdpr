@@ -56,32 +56,34 @@
             z-index: 400;
         }
     </style>
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <h4>Badges</h4>
-            <ul class="timeline">
-                <li th:if="${timeline.empty}">
-                    <p>You don't have any timeline yet.</p>
-                </li>
-                <li th:each="item : ${timeline}">
-                    <strong th:text="${item.subject}">Subject</strong>
-                    <strong class="float-right" th:text="${item.time}">Time</strong>
-                    <div th:switch="${item.type}">
-                        <div th:case="'badge'">
-                            <p>
-                                You acquired <span th:text="${item.details.level}"></span> <span th:text="${item.details.name}"></span> badge!
-                            </p>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <h4>Badges</h4>
+                <ul class="timeline">
+                    <li th:if="${timeline.empty}">
+                        <p>You don't have any timeline yet.</p>
+                    </li>
+                    <li th:each="item : ${timeline}">
+                        <strong th:text="${item.subject}">Subject</strong>
+                        <strong class="float-right" th:text="${item.time}">Time</strong>
+                        <div th:switch="${item.type}">
+                            <div th:case="'badge'">
+                                <p>
+                                    You acquired <span th:text="${item.details.level}"></span> <span th:text="${item.details.name}"></span> badge!
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                </li>
-            </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
+        <script type="application/javascript">
+            $(document).ready(function() {
+                $('#topnav-item-profile').toggleClass('active');
+            });
+        </script>
     </div>
-    <script type="application/javascript">
-        $(document).ready(function() {
-            $('#topnav-item-profile').toggleClass('active');
-        });
-    </script>
 </div>
 
 </body>

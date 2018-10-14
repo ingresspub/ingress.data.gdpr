@@ -17,28 +17,29 @@
 
 package ingress.data.gdpr.web.controllers;
 
-import ingress.data.gdpr.models.analyzed.Circle;
-import ingress.data.gdpr.models.utils.JsonUtil;
+import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
+
 import ingress.data.gdpr.web.services.PlayerService;
+import ingress.data.gdpr.web.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
-import java.util.Optional;
-
 /**
  * @author SgrAlpha
  */
 @Controller
-public class PlayerInfoController {
+public class PlayerUiController {
 
     private final PlayerService playerService;
+    private final UserService userService;
 
-    public PlayerInfoController(@Autowired final PlayerService playerService) {
+    public PlayerUiController(
+            @Autowired final PlayerService playerService, @Autowired final UserService userService) {
         this.playerService = playerService;
+        this.userService = userService;
     }
 
     @GetMapping("/player/badges")
@@ -62,24 +63,28 @@ public class PlayerInfoController {
         return "player/comm/messages";
     }
 
-    @GetMapping("/player/unique_portals")
-    public String index(
-            @RequestParam(value = "excludeCaptured", required = false, defaultValue = "false") boolean excludeCaptured,
-            @RequestParam(value = "color", required = false) String color,
-            @RequestParam(value = "radius", required = false, defaultValue = "20") int radius,
-            final ModelMap map) {
+    @GetMapping("/player/portals/upc")
+    public String goToUpcPage(final ModelMap map) {
         if (playerService.noGameLogData()) {
             return "redirect:/upload";
         }
-        String displayColor = Optional.ofNullable(color).orElse("#ff00ff");
-        final List<Circle> capturedPortals = playerService.listCapturedPortals(displayColor, radius);
-        final List<Circle> visitedPortals = playerService.listVisitedPortals(displayColor, radius);
-        if (excludeCaptured) {
-            visitedPortals.removeAll(capturedPortals);
+        final String googleApiKey = userService.getUserPreferences().getGoogleApiKey();
+        if (!isEmptyString(googleApiKey)) {
+            map.addAttribute("googleApiKey", userService.getUserPreferences().getGoogleApiKey());
         }
-        map.addAttribute("capturedPortals", JsonUtil.toJson(capturedPortals));
-        map.addAttribute("visitedPortals", JsonUtil.toJson(visitedPortals));
-        return "player/unique_portals";
+        return "player/portals/upc";
+    }
+
+    @GetMapping("/player/portals/upv")
+    public String goToUpvPage(final ModelMap map) {
+        if (playerService.noGameLogData()) {
+            return "redirect:/upload";
+        }
+        final String googleApiKey = userService.getUserPreferences().getGoogleApiKey();
+        if (!isEmptyString(googleApiKey)) {
+            map.addAttribute("googleApiKey", googleApiKey);
+        }
+        return "player/portals/upv";
     }
 
 }

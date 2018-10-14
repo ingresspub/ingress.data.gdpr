@@ -19,7 +19,6 @@ package ingress.data.gdpr.web.dao;
 
 import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 
-import ingress.data.gdpr.models.analyzed.Circle;
 import ingress.data.gdpr.models.analyzed.CommMessageInTimeline;
 import ingress.data.gdpr.models.analyzed.CommMessageType;
 import ingress.data.gdpr.models.analyzed.Feed;
@@ -57,27 +56,29 @@ public class RawDataDao {
         return Optional.ofNullable(count).orElse(0) <= 0;
     }
 
-    public List<Circle> listCapturedPortals(final String color, final int radius) {
+    public List<Coordinate> listUpc() {
         final String sql = "SELECT DISTINCT loc_latE6, loc_lngE6 FROM gdpr_raw_game_logs WHERE tracker_trigger = 'captured portal'";
-        return listPortals(sql, color, radius);
+        return listPortals(sql);
     }
 
-    public List<Circle> listVisitedPortals(final String color, final int radius) {
-        final String sql = "SELECT DISTINCT loc_latE6, loc_lngE6 FROM gdpr_raw_game_logs"
-                + " WHERE tracker_trigger"
-                + " IN ('captured portal','hacked enemy portal','hacked friendly portal','hacked neutral portal','mod deployed','resonator deployed','resonator upgraded')"
-                + " AND comment != 'fail'";
-        return listPortals(sql, color, radius);
+    public List<Coordinate> listUpv(final boolean excludeCaptured) {
+        String sql = "SELECT DISTINCT loc_latE6, loc_lngE6 FROM gdpr_raw_game_logs WHERE tracker_trigger";
+        if (excludeCaptured) {
+            sql = sql + " IN ('hacked enemy portal','hacked friendly portal','hacked neutral portal','mod deployed','resonator deployed','resonator upgraded')";
+        } else {
+            sql = sql + " IN ('captured portal','hacked enemy portal','hacked friendly portal','hacked neutral portal','mod deployed','resonator deployed','resonator upgraded')";
+        }
+        sql = sql + " AND comment != 'fail'";
+        return listPortals(sql);
     }
 
-    private List<Circle> listPortals(final String sql, final String color, final int radius) {
+    private List<Coordinate> listPortals(final String sql) {
         return jdbcTemplate.query(sql, rs -> {
-            List<Circle> markers = new LinkedList<>();
+            List<Coordinate> locations = new LinkedList<>();
             while (rs.next()) {
-                final Coordinate latLng = new Coordinate(rs.getInt("loc_latE6") / 1e6, rs.getInt("loc_lngE6") / 1e6);
-                markers.add(new Circle(latLng, color, radius));
+                locations.add(new Coordinate(rs.getInt("loc_latE6") / 1e6, rs.getInt("loc_lngE6") / 1e6));
             }
-            return markers;
+            return locations;
         });
     }
 

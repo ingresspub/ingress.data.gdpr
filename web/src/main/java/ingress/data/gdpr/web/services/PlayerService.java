@@ -17,17 +17,18 @@
 
 package ingress.data.gdpr.web.services;
 
-import ingress.data.gdpr.models.analyzed.Circle;
 import ingress.data.gdpr.models.analyzed.CommMessageInTimeline;
 import ingress.data.gdpr.models.analyzed.Feed;
 import ingress.data.gdpr.models.analyzed.TimelineItem;
 import ingress.data.gdpr.web.dao.RawDataDao;
 import ingress.data.gdpr.web.models.UserPreferences;
+import io.sgr.geometry.Coordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneId;
 import java.time.format.FormatStyle;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -47,14 +48,6 @@ public class PlayerService {
 
     public boolean noGameLogData() {
         return rawDataDao.noGameLogData();
-    }
-
-    public List<Circle> listCapturedPortals(final String color, final int radius) {
-        return rawDataDao.listCapturedPortals(color, radius);
-    }
-
-    public List<Circle> listVisitedPortals(final String color, final int radius) {
-        return rawDataDao.listVisitedPortals(color, radius);
     }
 
     public List<TimelineItem<?>> listBadgeTimeline() {
@@ -78,4 +71,19 @@ public class PlayerService {
         final ZoneId userZoneId = ZoneId.of(preferences.getZoneId());
         return rawDataDao.listCommMessages(curPage, pageSize, userLocale, userZoneId, FormatStyle.FULL);
     }
+
+    public List<Coordinate> listUpc() {
+        if (noGameLogData()) {
+            return Collections.emptyList();
+        }
+        return rawDataDao.listUpc();
+    }
+
+    public List<Coordinate> listUpv(final boolean excludeCaptured) {
+        if (noGameLogData()) {
+            return Collections.emptyList();
+        }
+        return rawDataDao.listUpv(excludeCaptured);
+    }
+
 }

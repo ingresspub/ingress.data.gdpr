@@ -49,12 +49,8 @@
 <header th:replace="fragments/navigation :: header">
     This header content is going to be replaced.
 </header>
-<!--Main Layout-->
-<main class="py-5">
-    <div class="container mt-5" layout:fragment="content">
-    </div>
+<main id="content" class="py-5" layout:fragment="content">
 </main>
-<!--Main Layout-->
 <footer th:replace="fragments/footer :: footer" class="footer">
     This footer content is going to be replaced.
 </footer>

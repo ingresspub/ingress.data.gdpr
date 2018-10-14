@@ -39,8 +39,13 @@
                 <li id="topnav-item-comm-messages" class="nav-item">
                     <a class="nav-link" th:href="@{'/player/comm/messages'}">Comm Messages</a>
                 </li>
-                <li id="topnav-item-unique-portals" class="nav-item">
-                    <a class="nav-link" th:href="@{'/player/unique_portals'}">Unique Portals</a>
+                <li id="topnav-item-maps" class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="false">Maps</a>
+                    <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" th:href="@{'/player/portals/upc'}">UPC</a>
+                        <a class="dropdown-item" th:href="@{'/player/portals/upv'}">UPV</a>
+                    </div>
                 </li>
             </ul>
             <ul class="navbar-nav nav-flex-icons">

@@ -33,6 +33,8 @@ import java.util.stream.Collectors;
  */
 public class Constants {
 
+    public static final String RESOURCE_VERSION = "20181014.13";
+
     public static final List<Locale> ALL_AVAILABLE_LOCALES = Collections.unmodifiableList(
             Arrays.stream(Locale.getAvailableLocales())
                     .filter(locale -> Objects.nonNull(locale) && !isEmptyString(locale.getCountry()))
