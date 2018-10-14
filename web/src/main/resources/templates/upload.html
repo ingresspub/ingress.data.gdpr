@@ -33,51 +33,48 @@
             padding-right: 0;
         }
     </style>
-    <div class="row">
-        <form id="encrypted_zip_upload_form" class="col-sm-8 offset-sm-2 border border-light p-5"
-              th:action="@{/upload}" th:object="${uploadForm}"
-              enctype="multipart/form-data" method="post">
-            <p class="h4 text-center mb-4">Upload Data Dump File</p>
-            <p>This will <strong>ONLY</strong> upload to the local web server, nothing will be send to remote servers.</p>
-            <p>Existing data will be replaced (not merged).</p>
-            <p>It might take up to 10 minutes to process and store the whole data set, depends on your computer's performance.</p>
-            <div class="form-row mb-3">
-                <span class="col-sm-4 col-form-label">Zip file <em>(required)</em></span>
-                <div class="col-sm-8">
-                    <input id="file" type="file"
-                           class="custom-file-input"
-                           aria-describedby="file"
-                           th:field="*{file}" th:errorclass="is-invalid">
-                    <label class="custom-file-label" for="file">Choose the file...</label>
-                    <script type="application/javascript">
-                        $('#file').on('change', function() {
-                            var fileName = $(this).val();
-                            console.log(fileName);
-                            $(this).next('.custom-file-label').html(fileName);
-                        })
-                    </script>
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('file')}" th:errors="*{file}" th:errorclass="visible"></div>
+    <div class="container mt-5">
+        <div class="row">
+            <form id="encrypted_zip_upload_form" class="col-sm-8 offset-sm-2 border border-light p-5"
+                  th:action="@{/upload}" th:object="${uploadForm}"
+                  enctype="multipart/form-data" method="post">
+                <p class="h4 text-center mb-4">Upload Data Dump File</p>
+                <p>This will <strong>ONLY</strong> upload to the local web server, nothing will be send to remote servers.</p>
+                <p>Existing data will be replaced (not merged).</p>
+                <p>It might take up to 10 minutes to process and store the whole data set, depends on your computer's performance.</p>
+                <div class="form-row mb-3">
+                    <span class="col-sm-4 col-form-label">Zip file <em>(required)</em></span>
+                    <div class="col-sm-8">
+                        <input id="file" type="file"
+                               class="custom-file-input"
+                               aria-describedby="file"
+                               th:field="*{file}" th:errorclass="is-invalid">
+                        <label class="custom-file-label" for="file">Choose the file...</label>
+                        <script type="application/javascript">
+                            $('#file').on('change', function() {
+                                var fileName = $(this).val();
+                                console.log(fileName);
+                                $(this).next('.custom-file-label').html(fileName);
+                            })
+                        </script>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('file')}" th:errors="*{file}" th:errorclass="visible"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="form-row mb-3">
-                <label class="col-sm-4 col-form-label" for="password">Password</label>
-                <div class="col-sm-8 password-input-holder">
-                    <input id="password" type="password"
-                           class="form-control custom-password-input"
-                           th:field="*{password}" th:errorclass="is-invalid">
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}" th:errorclass="visible"></div>
+                <div class="form-row mb-3">
+                    <label class="col-sm-4 col-form-label" for="password">Password</label>
+                    <div class="col-sm-8 password-input-holder">
+                        <input id="password" type="password"
+                               class="form-control custom-password-input"
+                               th:field="*{password}" th:errorclass="is-invalid">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}" th:errorclass="visible"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="form-row">
-                <button class="btn btn-default btn-block my-4" type="submit">Upload</button>
-            </div>
-        </form>
+                <div class="form-row">
+                    <button class="btn btn-default btn-block my-4" type="submit">Upload</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <script type="application/javascript">
-        $(document).ready(function() {
-            $('#topnav-item-upload').toggleClass('active');
-        });
-    </script>
 </div>
 
 </body>

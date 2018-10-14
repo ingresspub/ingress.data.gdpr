@@ -30,9 +30,6 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-                <li id="topnav-item-upload" class="nav-item">
-                    <a class="nav-link" th:href="@{'/upload'}">Upload</a>
-                </li>
                 <li id="topnav-item-profile" class="nav-item">
                     <a class="nav-link" th:href="@{'/player/badges'}">Profile</a>
                 </li>
@@ -50,10 +47,13 @@
             </ul>
             <ul class="navbar-nav nav-flex-icons">
                 <li class="nav-item">
-                    <a class="nav-link" title="Ingress Data Explorer on Github" href="https://github.com/SgrAlpha/ingress.data.gdpr" target="_blank"><i class="fab fa-github"></i></a>
+                    <a class="nav-link" title="Ingress Data Explorer on Github" href="https://github.com/SgrAlpha/ingress.data.gdpr" target="_blank"><i class="fab fa-github fa-fw"></i></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" title="Preferences" th:href="@{'/user/preferences'}"><i class="fas fa-user-cog"></i></a>
+                    <a class="nav-link" title="Preferences" th:href="@{'/upload'}"><i class="fas fa-upload fa-fw"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" title="Preferences" th:href="@{'/user/preferences'}"><i class="fas fa-user-cog fa-fw"></i></a>
                 </li>
             </ul>
         </div>
