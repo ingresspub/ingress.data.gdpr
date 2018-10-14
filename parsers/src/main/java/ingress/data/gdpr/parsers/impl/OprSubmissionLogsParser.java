@@ -63,14 +63,13 @@ public class OprSubmissionLogsParser extends PlainTextDataFileParser<List<OprSub
         try {
             List<OprSubmissionLogItem> data = new LinkedList<>();
             for (int i = 1; i < lines.size(); i++) {
-                final String line = lines.get(i);
+                String line = lines.get(i);
                 if (isEmptyString(line)) {
                     continue;
                 }
-                final String[] columns = split(line);
-                if (columns.length != 15) {
-                    throw new MalformattedRecordException(String.format("Expecting record with %d columns at line %d but got %d: %s", 15, i, columns.length, line));
-                }
+                MergeResult result = joinNextLineBeforeSplitIfNecessary(i, line, lines);
+                String[] columns = result.getColumns();
+                i = result.getIndex();
                 data.add(parse(columns));
             }
             if (data.size() > 1) {
@@ -82,6 +81,36 @@ public class OprSubmissionLogsParser extends PlainTextDataFileParser<List<OprSub
         } catch (MalformattedRecordException e) {
             LOGGER.error(e.getMessage(), e);
             return ReportDetails.error(e.getMessage());
+        }
+    }
+
+    private MergeResult joinNextLineBeforeSplitIfNecessary(int i, String line, final List<String> lines) throws MalformattedRecordException {
+        String[] columns = split(line);
+        if (columns.length < 15) {
+            i = i + 1;
+            line = line + "\n" + lines.get(i);
+            LOGGER.warn("Line {} and {} now merged to {}", i - 1, i, line);
+            return joinNextLineBeforeSplitIfNecessary(i, line, lines);
+        } else if (columns.length > 15) {
+            throw new MalformattedRecordException(String.format("Expecting record with %d columns at line %d but got %d: %s", 15, i, columns.length, line));
+        }
+        return new MergeResult(columns, i);
+    }
+
+    private class MergeResult {
+        private final String[] columns;
+        private final int index;
+
+        private MergeResult(final String[] columns, final int index) {
+            this.columns = columns;
+            this.index = index;
+        }
+        public String[] getColumns() {
+            return columns;
+        }
+
+        public int getIndex() {
+            return index;
         }
     }
 
