@@ -19,6 +19,7 @@ package ingress.data.gdpr.web.services;
 
 import ingress.data.gdpr.models.analyzed.CommMessageInTimeline;
 import ingress.data.gdpr.models.analyzed.Feed;
+import ingress.data.gdpr.models.analyzed.LevelUpEvent;
 import ingress.data.gdpr.models.analyzed.TimelineItem;
 import ingress.data.gdpr.web.dao.RawDataDao;
 import ingress.data.gdpr.web.models.UserPreferences;
@@ -59,6 +60,13 @@ public class PlayerService {
 
     public boolean noBadgesData() {
         return rawDataDao.noBadgesData();
+    }
+
+    public List<LevelUpEvent> listLevelUpEvent() {
+        final UserPreferences preferences = userService.getUserPreferences();
+        final Locale userLocale = Locale.forLanguageTag(preferences.getLanguageTag());
+        final ZoneId userZoneId = ZoneId.of(preferences.getZoneId());
+        return rawDataDao.listLevelUpEvent(userLocale, userZoneId, FormatStyle.LONG);
     }
 
     public boolean noCommMentions() {
