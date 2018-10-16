@@ -50,7 +50,7 @@ public class PlayerService {
         final UserPreferences preferences = userService.getUserPreferences();
         final Locale userLocale = Locale.forLanguageTag(preferences.getLanguageTag());
         final ZoneId userZoneId = ZoneId.of(preferences.getZoneId());
-        return rawDataDao.listProfileEvents(userLocale, userZoneId, FormatStyle.LONG);
+        return rawDataDao.listProfileEvents(userLocale, userZoneId, FormatStyle.MEDIUM);
     }
 
     public List<Event> listLevelUpEvents() {
