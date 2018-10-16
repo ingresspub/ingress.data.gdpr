@@ -57,7 +57,7 @@ public class PlayerService {
         final UserPreferences preferences = userService.getUserPreferences();
         final Locale userLocale = Locale.forLanguageTag(preferences.getLanguageTag());
         final ZoneId userZoneId = ZoneId.of(preferences.getZoneId());
-        return rawDataDao.listLevelUpEvent(userLocale, userZoneId, FormatStyle.LONG);
+        return rawDataDao.listLevelUpEvent(userLocale, userZoneId, FormatStyle.MEDIUM);
     }
 
     public Feed<CommMessageInTimeline> listCommMessages(final Integer curPage, final Integer pageSize) {

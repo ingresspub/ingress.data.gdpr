@@ -159,7 +159,7 @@
             }
             let bounds = new google.maps.LatLngBounds();
             data.forEach(function (event) {
-                if (!event || !event.location || !event.level || !event.time) {
+                if (!event || !event.location || !event.level || !event.localDate || !event.localTime) {
                     return;
                 }
                 let markerIcon = {
@@ -184,7 +184,7 @@
                     }
                 });
                 let infoWindow = new google.maps.InfoWindow({
-                    content: 'You reached level ' + event.level + ' at ' + event.time
+                    content: 'You reached level ' + event.level + ' at ' + event.localDate + ' ' + event.localTime
                 });
                 marker.addListener('click', function() {
                     infoWindow.open(app.map.instance, marker);

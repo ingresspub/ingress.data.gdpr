@@ -19,7 +19,7 @@ let name = 'ingress-data-explorer';
 let shellCacheName = name + '-shell';
 let dataCacheName = name + '-data';
 let version = '20181016';
-let fix = '1';
+let fix = '2';
 let shellCacheFullName = shellCacheName + '.' + version + '.' + fix;
 let dataCacheFullName = dataCacheName + '.' + version + '.' + fix;
 
