@@ -8,7 +8,7 @@ Ingress Data Explorer 是一个帮你浏览 Ingress 游戏数据的可视化工�
 
 
 ## 功能列表
-* 查看勋章（牌子）的获得时间
+* 查看勋章（牌子）的获得时间、升级的时间及地点（还有地图模式哦）
 * 查看频道对话（包括你发的和别人发给你的）
 * 以地图模式查看 UPC / UPV（需要申请 Google API key）
 * 导出 UPC / UPV 到 IITC Draw Tools

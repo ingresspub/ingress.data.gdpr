@@ -17,34 +17,17 @@
 
 package ingress.data.gdpr.models.analyzed;
 
-import ingress.data.gdpr.models.records.profile.BadgeLevel;
-
-import java.util.Optional;
+import io.sgr.geometry.Coordinate;
 
 /**
  * @author SgrAlpha
  */
-public class InAppMedal {
+public interface Event {
 
-    private final BadgeLevel level;
-    private final String name;
-    private final String url;
+    String getType();
 
-    public InAppMedal(final BadgeLevel level, final String name, final String url) {
-        this.level = level;
-        this.name = name;
-        this.url = url;
-    }
+    Coordinate getLocation();
 
-    public BadgeLevel getLevel() {
-        return level;
-    }
+    long getTimeInMs();
 
-    public String getName() {
-        return name;
-    }
-
-    public Optional<String> getUrl() {
-        return Optional.ofNullable(url);
-    }
 }

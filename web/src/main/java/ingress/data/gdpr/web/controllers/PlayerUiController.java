@@ -42,13 +42,13 @@ public class PlayerUiController {
         this.userService = userService;
     }
 
-    @GetMapping("/player/badges")
-    public String listBadges(final ModelMap map) {
+    @GetMapping("/player/profile/events")
+    public String listProfileEvents(final ModelMap map) {
         if (playerService.noBadgesData()) {
             return "redirect:/upload";
         }
-        map.addAttribute("timeline", playerService.listBadgeTimeline());
-        return "player/badges";
+        map.addAttribute("timeline", playerService.listProfileEvents());
+        return "player/profile/events";
     }
 
     @GetMapping("/player/comm/messages")
@@ -72,7 +72,7 @@ public class PlayerUiController {
         if (!isEmptyString(googleApiKey)) {
             map.addAttribute("googleApiKey", userService.getUserPreferences().getGoogleApiKey());
         }
-        return "player/portals/upc";
+        return "player/maps/upc";
     }
 
     @GetMapping("/player/portals/upv")
@@ -84,7 +84,19 @@ public class PlayerUiController {
         if (!isEmptyString(googleApiKey)) {
             map.addAttribute("googleApiKey", googleApiKey);
         }
-        return "player/portals/upv";
+        return "player/maps/upv";
+    }
+
+    @GetMapping("/player/events/level_up")
+    public String goToLevelUpMapPage(final ModelMap map) {
+        if (playerService.noGameLogData()) {
+            return "redirect:/upload";
+        }
+        final String googleApiKey = userService.getUserPreferences().getGoogleApiKey();
+        if (!isEmptyString(googleApiKey)) {
+            map.addAttribute("googleApiKey", googleApiKey);
+        }
+        return "player/maps/level_up";
     }
 
 }

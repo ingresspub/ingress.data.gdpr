@@ -31,7 +31,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li id="topnav-item-profile" class="nav-item">
-                    <a class="nav-link" th:href="@{'/player/badges'}">Profile</a>
+                    <a class="nav-link" th:href="@{'/player/profile/events'}">Profile</a>
                 </li>
                 <li id="topnav-item-comm-messages" class="nav-item">
                     <a class="nav-link" th:href="@{'/player/comm/messages'}">Comm Messages</a>
@@ -40,6 +40,7 @@
                     <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
                        aria-expanded="false">Maps</a>
                     <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" th:href="@{'/player/events/level_up'}">Level Up</a>
                         <a class="dropdown-item" th:href="@{'/player/portals/upc'}">UPC</a>
                         <a class="dropdown-item" th:href="@{'/player/portals/upv'}">UPV</a>
                     </div>

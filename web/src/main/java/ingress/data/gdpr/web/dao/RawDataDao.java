@@ -21,10 +21,10 @@ import static ingress.data.gdpr.models.utils.Preconditions.notNull;
 
 import ingress.data.gdpr.models.analyzed.CommMessageInTimeline;
 import ingress.data.gdpr.models.analyzed.CommMessageType;
+import ingress.data.gdpr.models.analyzed.Event;
 import ingress.data.gdpr.models.analyzed.Feed;
-import ingress.data.gdpr.models.analyzed.InAppMedal;
 import ingress.data.gdpr.models.analyzed.LevelUpEvent;
-import ingress.data.gdpr.models.analyzed.TimelineItem;
+import ingress.data.gdpr.models.analyzed.NewBadgeEvent;
 import ingress.data.gdpr.models.records.profile.BadgeLevel;
 import ingress.data.gdpr.parsers.utils.TimeZoneUtil;
 import io.sgr.geometry.Coordinate;
@@ -38,6 +38,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author SgrAlpha
@@ -83,19 +84,31 @@ public class RawDataDao {
         });
     }
 
-    public List<TimelineItem<?>> listBadgeTimeline(final Locale userLocale, final ZoneId userZoneId, final FormatStyle formatStyle) {
+    public List<Event> listProfileEvents(final Locale userLocale, final ZoneId userZoneId, final FormatStyle formatStyle) {
+        List<Event> events = listNewBadgeEvent(userLocale, userZoneId, formatStyle);
+        events.addAll(listLevelUpEvent(userLocale, userZoneId, formatStyle));
+        return events.stream()
+                .sorted((event1, event2) -> Long.compare(event2.getTimeInMs(), event1.getTimeInMs()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Event> listNewBadgeEvent(final Locale userLocale, final ZoneId userZoneId, final FormatStyle formatStyle) {
         return jdbcTemplate.query("SELECT * FROM gdpr_raw_agent_profile_badges ORDER BY time DESC", (rs, rowNum) -> {
             final BadgeLevel level = BadgeLevel.valueOf(rs.getString("level"));
             final String name = rs.getString("name");
-            final String dateTimeStr = TimeZoneUtil.epochSecondToZonedDateTime(rs.getLong("time"), userLocale, userZoneId, formatStyle);
+            final long timeInMs = rs.getLong("time");
+            final String localDate = TimeZoneUtil.epochSecondToLocalDate(timeInMs, userLocale, userZoneId, formatStyle);
+            final String localTime = TimeZoneUtil.epochSecondToLocalTime(timeInMs, userLocale, userZoneId, formatStyle);
             final String url = null;
-            return new TimelineItem<>("badge", String.format("%s %s", level, name), dateTimeStr, new InAppMedal(level, name, url));
+            return new NewBadgeEvent(level, name, url, timeInMs, localDate, localTime);
         });
     }
 
-    public List<LevelUpEvent> listLevelUpEvent(final Locale userLocale, final ZoneId userZoneId, final FormatStyle formatStyle) {
+    public List<Event> listLevelUpEvent(final Locale userLocale, final ZoneId userZoneId, final FormatStyle formatStyle) {
         return jdbcTemplate.query("SELECT time,loc_latE6,loc_lngE6,comment FROM gdpr_raw_game_logs where tracker_trigger = 'level up' ORDER BY time DESC", (rs, rowNum) -> {
-            final String dateTimeStr = TimeZoneUtil.epochSecondToZonedDateTime(rs.getLong("time"), userLocale, userZoneId, formatStyle);
+            final long timeInMs = rs.getLong("time");
+            final String localDate = TimeZoneUtil.epochSecondToLocalDate(timeInMs, userLocale, userZoneId, formatStyle);
+            final String localTime = TimeZoneUtil.epochSecondToLocalTime(timeInMs, userLocale, userZoneId, formatStyle);
             Coordinate loc = null;
             if (rs.getObject("loc_latE6") != null
                     && rs.getObject("loc_lngE6") != null) {
@@ -104,7 +117,7 @@ public class RawDataDao {
             String comment = rs.getString("comment");
             comment = comment.substring("nextLevelToken: ".length());
             final int level = Integer.parseInt(comment);
-            return new LevelUpEvent(level, loc, dateTimeStr);
+            return new LevelUpEvent(level, loc, timeInMs, localDate, localTime);
         });
     }
 

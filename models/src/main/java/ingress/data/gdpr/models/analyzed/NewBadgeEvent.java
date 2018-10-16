@@ -20,33 +20,46 @@ package ingress.data.gdpr.models.analyzed;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ingress.data.gdpr.models.records.profile.BadgeLevel;
 import io.sgr.geometry.Coordinate;
 
 /**
  * @author SgrAlpha
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class LevelUpEvent implements Event {
+public class NewBadgeEvent implements Event {
 
-    private static final String TYPE = "level_up";
+    private static final String TYPE = "new_badge";
 
-    private final int level;
-    private final Coordinate location;
+    private final BadgeLevel level;
+    private final String name;
+    private final String url;
     private final long timeInMs;
     private final String localDate;
     private final String localTime;
 
-    public LevelUpEvent(final int level, final Coordinate location, final long timeInMs, final String localDate, final String localTime) {
+    public NewBadgeEvent(final BadgeLevel level, final String name, final String url, final long timeInMs, final String localDate, final String localTime) {
         this.level = level;
-        this.location = location;
+        this.name = name;
+        this.url = url;
         this.timeInMs = timeInMs;
         this.localDate = localDate;
         this.localTime = localTime;
     }
 
     @JsonProperty("level")
-    public int getLevel() {
+    public BadgeLevel getLevel() {
         return level;
+    }
+
+    @JsonProperty("name")
+    public String getName() {
+        return name;
+    }
+
+    @JsonProperty("url")
+    public String getUrl() {
+        return url;
     }
 
     @JsonProperty("localDate")
@@ -66,7 +79,7 @@ public class LevelUpEvent implements Event {
 
     @JsonProperty("location")
     @Override public Coordinate getLocation() {
-        return location;
+        return null;
     }
 
     @JsonIgnore

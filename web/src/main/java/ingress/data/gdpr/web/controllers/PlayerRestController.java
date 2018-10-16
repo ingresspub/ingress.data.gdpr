@@ -18,6 +18,7 @@
 package ingress.data.gdpr.web.controllers;
 
 import ingress.data.gdpr.models.analyzed.Circle;
+import ingress.data.gdpr.models.analyzed.Event;
 import ingress.data.gdpr.web.models.CacheableData;
 import ingress.data.gdpr.web.services.PlayerService;
 import io.sgr.geometry.Coordinate;
@@ -43,6 +44,13 @@ public class PlayerRestController {
 
     public PlayerRestController(@Autowired final PlayerService playerService) {
         this.playerService = playerService;
+    }
+
+    @GetMapping("/r/player/profile/events/level_up.json")
+    public ResponseEntity<CacheableData<List<Event>>> listLevelUpEvents() {
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(1, TimeUnit.DAYS))
+                .body(new CacheableData<>(playerService.listLevelUpEvents(), Clock.systemUTC().millis()));
     }
 
     @GetMapping("/r/player/portals/upc.json")

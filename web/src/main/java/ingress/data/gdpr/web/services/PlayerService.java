@@ -18,9 +18,8 @@
 package ingress.data.gdpr.web.services;
 
 import ingress.data.gdpr.models.analyzed.CommMessageInTimeline;
+import ingress.data.gdpr.models.analyzed.Event;
 import ingress.data.gdpr.models.analyzed.Feed;
-import ingress.data.gdpr.models.analyzed.LevelUpEvent;
-import ingress.data.gdpr.models.analyzed.TimelineItem;
 import ingress.data.gdpr.web.dao.RawDataDao;
 import ingress.data.gdpr.web.models.UserPreferences;
 import io.sgr.geometry.Coordinate;
@@ -47,30 +46,18 @@ public class PlayerService {
         this.userService = userService;
     }
 
-    public boolean noGameLogData() {
-        return rawDataDao.noGameLogData();
-    }
-
-    public List<TimelineItem<?>> listBadgeTimeline() {
+    public List<Event> listProfileEvents() {
         final UserPreferences preferences = userService.getUserPreferences();
         final Locale userLocale = Locale.forLanguageTag(preferences.getLanguageTag());
         final ZoneId userZoneId = ZoneId.of(preferences.getZoneId());
-        return rawDataDao.listBadgeTimeline(userLocale, userZoneId, FormatStyle.LONG);
+        return rawDataDao.listProfileEvents(userLocale, userZoneId, FormatStyle.LONG);
     }
 
-    public boolean noBadgesData() {
-        return rawDataDao.noBadgesData();
-    }
-
-    public List<LevelUpEvent> listLevelUpEvent() {
+    public List<Event> listLevelUpEvents() {
         final UserPreferences preferences = userService.getUserPreferences();
         final Locale userLocale = Locale.forLanguageTag(preferences.getLanguageTag());
         final ZoneId userZoneId = ZoneId.of(preferences.getZoneId());
         return rawDataDao.listLevelUpEvent(userLocale, userZoneId, FormatStyle.LONG);
-    }
-
-    public boolean noCommMentions() {
-        return rawDataDao.noCommMentions();
     }
 
     public Feed<CommMessageInTimeline> listCommMessages(final Integer curPage, final Integer pageSize) {
@@ -92,6 +79,18 @@ public class PlayerService {
             return Collections.emptyList();
         }
         return rawDataDao.listUpv(excludeCaptured);
+    }
+
+    public boolean noGameLogData() {
+        return rawDataDao.noGameLogData();
+    }
+
+    public boolean noBadgesData() {
+        return rawDataDao.noBadgesData();
+    }
+
+    public boolean noCommMentions() {
+        return rawDataDao.noCommMentions();
     }
 
 }

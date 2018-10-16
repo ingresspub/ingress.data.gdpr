@@ -18,8 +18,8 @@
 let name = 'ingress-data-explorer';
 let shellCacheName = name + '-shell';
 let dataCacheName = name + '-data';
-let version = '20181014';
-let fix = '13';
+let version = '20181016';
+let fix = '1';
 let shellCacheFullName = shellCacheName + '.' + version + '.' + fix;
 let dataCacheFullName = dataCacheName + '.' + version + '.' + fix;
 
@@ -38,7 +38,9 @@ let filesToCache = [
     '/images/map/cluster/markercluster_3.png',
     '/images/map/cluster/markercluster_4.png',
     '/images/map/cluster/markercluster_5.png',
-    '/javascripts/map/transform.js'
+    '/javascripts/map/transform.js',
+    'https://use.fontawesome.com/releases/v5.4.1/webfonts/fa-solid-900.woff2',
+    'https://use.fontawesome.com/releases/v5.4.1/webfonts/fa-brands-400.woff2'
 ];
 
 let dataEndpoints = [

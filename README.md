@@ -10,7 +10,7 @@ Everything will be kept exactly on your machine, nothing will be collected and s
 
 
 ## Features
-* View badge acquisition time
+* View badge acquisition time and level up time with location (even on map)
 * View comm conversations (both way)
 * View UPC / UPV on map (require Google API key)
 * Generate UPC / UPV JSON for IITC Draw Tools

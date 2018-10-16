@@ -1,0 +1,148 @@
+<!--
+  ~ Copyright (C) 2014-2018 SgrAlpha
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/dashboard}">
+<head>
+    <title>Events Timeline</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+<body>
+<div layout:fragment="content">
+    <style>
+        #tracking {
+            margin-bottom:1rem
+        }
+        .timeline-header p {
+            margin:0;
+            font-size:1.1rem;
+            color:#fff;
+            text-transform:uppercase;
+            text-align:center;
+            padding:1.6rem 0
+        }
+        .event-list {
+            border:1px solid #e5e5e5
+        }
+        .event-list ul {
+            list-style: none;
+        }
+        .event-item {
+            border-left:1px solid #e5e5e5;
+            position:relative;
+            padding:2rem 1.5rem .5rem 2.5rem;
+            margin-left:3rem;
+            min-height:5rem
+        }
+        .event-item:last-child {
+            padding-bottom:4rem
+        }
+        .event-item .event-datetime {
+            margin-bottom:.5rem
+        }
+        .event-item .event-datetime .event-time {
+            font-size:85%;
+            padding-left:.4rem
+        }
+        .event-item .event-content {
+            padding:.5rem .8rem;
+            background-color:#f4f4f4;
+            border-radius:.5rem
+        }
+        .event-item .event-icon {
+            line-height:2.4rem;
+            position:absolute;
+            left:-1.2rem;
+            width:2.4rem;
+            height:2.4rem;
+            text-align:center;
+            font-size:1.1rem;
+            background-color:#fff;
+            color:#fff
+        }
+        .event-item .event-icon {
+            color:#4cbb87;
+            font-size:.6rem
+        }
+        @media(min-width:992px) {
+            .event-item {
+                margin-left:10rem
+            }
+            .event-item .event-datetime {
+                position:absolute;
+                left:-10rem;
+                width:7.5rem;
+                text-align:right
+            }
+            .event-item .event-datetime .event-time {
+                display:block
+            }
+            .event-item .event-content {
+                padding:0;
+                background-color:transparent
+            }
+        }
+    </style>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-sm-12 col-md-8 offset-md-2">
+                <div id="event-pre"></div>
+                <div id="tracking">
+                    <div class="timeline-header text-center bg-default">
+                        <p class="event-status text-tight">Events</p>
+                    </div>
+                    <div class="event-list">
+                        <ul>
+                            <li class="event-item" th:each="item : ${timeline}">
+                                <div class="event-icon">
+                                    <i class="fas fa-circle fa-4x"></i>
+                                </div>
+                                <div class="event-datetime">
+                                    <span class="event-date" th:text="${item.localDate}"></span>
+                                    <span class="event-time text-muted" th:text="${item.localTime}"></span></div>
+                                <div class="event-content" th:switch="${item.type}">
+                                    <div th:case="'new_badge'">
+                                        <span class="d-block">You acquired <strong th:text="${item.level}"></strong> badge!</span>
+                                        <small class="d-block text-muted" th:text="${item.name}"></small>
+                                    </div>
+                                    <div th:case="'level_up'">
+                                        <span class="d-block">You reached level <strong th:text="${item.level}"></strong>!</span>
+                                        <a th:if="${item.location}" th:href="@{'/player/events/level_up'}">
+                                            <small class="d-block text-muted">
+                                                <i class="fas fa-map-marker-alt fa-fw"></i> <span
+                                                    th:text="${item.location.lat} + ',' + ${item.location.lng}"></span>
+                                            </small>
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="application/javascript">
+            $(document).ready(function() {
+                $('#topnav-item-profile').toggleClass('active');
+            });
+        </script>
+    </div>
+</div>
+
+</body>
+</html>

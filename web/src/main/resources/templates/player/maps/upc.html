@@ -19,7 +19,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/full-map}">
 <head>
-    <title>UPV</title>
+    <title>UPC</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
@@ -29,7 +29,7 @@
         <div id="map-canvas" style="height: calc(100vh - 56px);">
             No Data!
         </div>
-        <a target="_blank" class="btn-on-map-to-iitc text-dark" title="Export data to IITC" th:href="@{/r/player/portals/upv.iitc.json}"><i class="fas fa-file-export fa-fw"></i></a>
+        <a target="_blank" class="btn-on-map-to-iitc text-dark" title="Export data to IITC" th:href="@{/r/player/portals/upc.iitc.json}"><i class="fas fa-file-export fa-fw"></i></a>
         <script type="text/javascript" th:src="@{/javascripts/map/transform.js(v=${T(ingress.data.gdpr.web.utils.Constants).RESOURCE_VERSION})}"></script>
         <script type="text/javascript" th:src="@{/javascripts/map/markerclusterer.js(v=${T(ingress.data.gdpr.web.utils.Constants).RESOURCE_VERSION})}"></script>
         <script type="text/javascript" th:src="@{/app.js(v=${T(ingress.data.gdpr.web.utils.Constants).RESOURCE_VERSION})}"></script>
@@ -40,11 +40,11 @@
                     contextPath: /*[[@{/}]]*/ '',
                     map: {
                         provider: 'google',
-                        apiKey: /*[[${googleApiKey}]]*/ undefined,
+                        apiKey: /*[[${googleApiKey}]]*/ '',
                         coordinatesSystem: 'gcj'
                     }
                 });
-                app.listUpv();
+                app.listUpc();
             });
             /*]]>*/
         </script>
@@ -65,7 +65,7 @@
                 <li class="pb-3">
                     <h5>Or, use IITC plugin</h5>
                     <ol>
-                        <li><a target="_blank" title="Export data to IITC" th:href="@{/r/player/portals/upv.iitc.json}">Click here</a> to export UPV records in JSON format.</li>
+                        <li><a target="_blank" title="Export data to IITC" th:href="@{/r/player/portals/upc.iitc.json}">Click here</a> to export UPC records in JSON format.</li>
                         <li>Paste it in Draw Tools.</li>
                     </ol>
                 </li>

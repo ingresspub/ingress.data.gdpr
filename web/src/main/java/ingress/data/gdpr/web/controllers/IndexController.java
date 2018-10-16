@@ -39,7 +39,7 @@ public class IndexController {
         if (rawDataDao.noGameLogData()) {
             return "redirect:/upload";
         }
-        return "redirect:/player/badges";
+        return "redirect:/player/profile/events";
     }
 
 }

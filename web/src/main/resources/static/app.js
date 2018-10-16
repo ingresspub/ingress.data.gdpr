@@ -65,6 +65,35 @@
         app.map.coordinatesSystem = app.map.coordinatesSystem || 'gcj';
     };
 
+    app.listLevelUpEvents = function () {
+        let url = app.contextPath + 'r/player/events/level_up.json';
+        app.utils.WebUtil.getJson(url, function (result) {
+            if (!result || !result.lastUpdatedTimeMs || !result.data || result.data.length < 1) {
+                app._onError({type: 'no_data'});
+                return;
+            }
+            dataCache.put('events.level_up.result', result);
+            dataCache.put('events.level_up.last_updated', result.lastUpdatedTimeMs ? new Date(result.lastUpdatedTimeMs) : new Date());
+            if (app.map.provider === 'google') {
+                app.map.onReady = function () {
+                    let dataLastUpdatedTimeMs = result.lastUpdatedTimeMs;
+                    let updatedTimeItem = $('#player-events-level_up-lastUpdatedTime');
+                    let timeStr = updatedTimeItem.text();
+                    let uiLastUpdatedTimeMs = timeStr || timeStr !== '' ? parseInt(timeStr, 10) : 0;
+                    if (dataLastUpdatedTimeMs <= uiLastUpdatedTimeMs) {
+                        return;
+                    }
+                    result.lastUpdatedTimeLocal = new Date(result.lastUpdatedTimeMs).toLocaleString();
+                    updatedTimeItem.attr('datetime', result.lastUpdatedTimeLocal).html(result.lastUpdatedTimeMs);
+                    app.utils.MapUtil.renderLevelUpMarkers(result.data);
+                };
+                let script = document.createElement('script');
+                script.src = 'https://maps.googleapis.com/maps/api/js?key=' + app.map.apiKey + '&v=3.exp&libraries=visualization&callback=onMapReady';
+                document.getElementsByTagName('head')[0].appendChild(script);
+            }
+        });
+    };
+
     app.listUpc = function () {
         let url = app.contextPath + 'r/player/portals/upc.json';
         app.utils.WebUtil.getJson(url, function (result) {
@@ -124,13 +153,55 @@
     };
 
     app.utils.MapUtil = {
+        renderLevelUpMarkers: function (data) {
+            if (!data || data.length < 1) {
+                return;
+            }
+            let bounds = new google.maps.LatLngBounds();
+            data.forEach(function (event) {
+                if (!event || !event.location || !event.level || !event.time) {
+                    return;
+                }
+                let markerIcon = {
+                    url: app.contextPath + 'images/map/level_up_marker.svg',
+                    scaledSize: new google.maps.Size(64, 64),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(26,52),
+                    labelOrigin: new google.maps.Point(32,26)
+                };
+                let fixedLoc = 'gcj' === app.map.coordinatesSystem && wgs2gcj ? wgs2gcj(event.location.lat, event.location.lng) : event.location;
+                let fixedLatLng = new google.maps.LatLng(fixedLoc.lat, fixedLoc.lng);
+                let marker = new google.maps.Marker({
+                    map: app.map.instance,
+                    animation: google.maps.Animation.DROP,
+                    position: fixedLatLng,
+                    icon: markerIcon,
+                    label: {
+                        text: ''+ event.level,
+                        color: "#eb3a44",
+                        fontSize: "14px",
+                        fontWeight: "bold"
+                    }
+                });
+                let infoWindow = new google.maps.InfoWindow({
+                    content: 'You reached level ' + event.level + ' at ' + event.time
+                });
+                marker.addListener('click', function() {
+                    infoWindow.open(app.map.instance, marker);
+                });
+                if (marker) {
+                    bounds.extend(marker.getPosition());
+                }
+            });
+            app.map.instance.fitBounds(bounds);
+        },
         renderCoordinatesAsCluster: function (data) {
             if (!data || data.length < 1) {
                 return;
             }
             let bounds = new google.maps.LatLngBounds();
             let markers = [];
-            data.forEach(function(loc) {
+            data.forEach(function (loc) {
                 let marker = app.utils.MapUtil.renderMarkerOnGoogleMap(loc);
                 if (marker) {
                     bounds.extend(marker.getPosition());
@@ -139,7 +210,11 @@
             });
             app.map.instance.fitBounds(bounds);
             let imagePath = app.contextPath + 'images/map/cluster/markercluster_';
-            new MarkerClusterer(app.map.instance, markers, { averageCenter: true, minimumClusterSize: 10, imagePath: imagePath });
+            new MarkerClusterer(app.map.instance, markers, {
+                averageCenter: true,
+                minimumClusterSize: 10,
+                imagePath: imagePath
+            });
         },
         renderMarkerOnGoogleMap: function (loc) {
             if (!loc || !loc.lat || !loc.lng) {
@@ -153,7 +228,7 @@
                 icon: {
                     url: iconImage,
                     size: new google.maps.Size(18, 18),
-                    origin: new google.maps.Point(0,0),
+                    origin: new google.maps.Point(0, 0),
                     anchor: new google.maps.Point(8, 8)
                 }
             });
