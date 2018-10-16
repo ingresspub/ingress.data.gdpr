@@ -66,7 +66,7 @@
     };
 
     app.listLevelUpEvents = function () {
-        let url = app.contextPath + 'r/player/events/level_up.json';
+        let url = app.contextPath + 'r/player/profile/events/level_up.json';
         app.utils.WebUtil.getJson(url, function (result) {
             if (!result || !result.lastUpdatedTimeMs || !result.data || result.data.length < 1) {
                 app._onError({type: 'no_data'});
