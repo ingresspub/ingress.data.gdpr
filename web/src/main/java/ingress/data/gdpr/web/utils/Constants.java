@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 SgrAlpha
+ * Copyright (C) 2014-2019 SgrAlpha
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  */
 public class Constants {
 
-    public static final String RESOURCE_VERSION = "20181016.3";
+    public static final String RESOURCE_VERSION = "20181016.4";
 
     public static final List<Locale> ALL_AVAILABLE_LOCALES = Collections.unmodifiableList(
             Arrays.stream(Locale.getAvailableLocales())

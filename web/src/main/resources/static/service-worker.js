@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 SgrAlpha
+ * Copyright (C) 2014-2019 SgrAlpha
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ let name = 'ingress-data-explorer';
 let shellCacheName = name + '-shell';
 let dataCacheName = name + '-data';
 let version = '20181016';
-let fix = '3';
+let fix = '4';
 let shellCacheFullName = shellCacheName + '.' + version + '.' + fix;
 let dataCacheFullName = dataCacheName + '.' + version + '.' + fix;
 
@@ -44,7 +44,6 @@ let filesToCache = [
 ];
 
 let dataEndpoints = [
-    '/r/player/portals'
 ];
 
 self.addEventListener('install', function (e) {
