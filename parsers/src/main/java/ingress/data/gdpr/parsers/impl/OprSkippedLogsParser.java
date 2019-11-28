@@ -17,17 +17,17 @@
 
 package ingress.data.gdpr.parsers.impl;
 
-import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static ingress.data.gdpr.parsers.utils.CsvUtil.escapeQuote;
 import static ingress.data.gdpr.parsers.utils.CsvUtil.split;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.NO_DATA;
 
-import ingress.data.gdpr.models.records.opr.OprAssignmentLogItem;
 import ingress.data.gdpr.models.records.opr.OprSkippedLogItem;
 import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.parsers.PlainTextDataFileParser;
 import ingress.data.gdpr.parsers.exceptions.MalformattedRecordException;
 import ingress.data.gdpr.parsers.utils.ZonedDateTimeParser;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,11 +54,11 @@ public class OprSkippedLogsParser extends PlainTextDataFileParser<List<OprSkippe
     }
 
     @Override protected ReportDetails<List<OprSkippedLogItem>> readLines(final List<String> lines, final Path dataFile) {
-        notNull(lines, "No line to read from");
+        checkNotNull(lines, "No line to read from");
         if (lines.size() < 2) {
             return ReportDetails.error(NO_DATA);
         }
-        notNull(dataFile, "Data file needs to be specified");
+        checkNotNull(dataFile, "Data file needs to be specified");
         try {
             List<OprSkippedLogItem> data = new LinkedList<>();
             for (int i = 1; i < lines.size(); i++) {
@@ -85,7 +85,7 @@ public class OprSkippedLogsParser extends PlainTextDataFileParser<List<OprSkippe
     }
 
     private OprSkippedLogItem parse(final String... columns) throws MalformattedRecordException {
-        notNull(columns, "Missing columns to parse from");
+        checkNotNull(columns, "Missing columns to parse from");
         try {
             return new OprSkippedLogItem(escapeQuote(columns[0]), TIME_PARSER.parse(escapeQuote(columns[1])));
         } catch (Exception e) {

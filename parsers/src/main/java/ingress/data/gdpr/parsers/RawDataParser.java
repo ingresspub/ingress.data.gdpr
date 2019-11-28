@@ -17,7 +17,8 @@
 
 package ingress.data.gdpr.parsers;
 
-import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.AGENTS_RECRUITED_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.ALL_PORTALS_APPROVED_TSV;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.COMM_MENTIONS_TSV;
@@ -99,6 +100,7 @@ import ingress.data.gdpr.parsers.utils.DoubleValueParser;
 import ingress.data.gdpr.parsers.utils.FloatValueParser;
 import ingress.data.gdpr.parsers.utils.IntegerValueParser;
 import ingress.data.gdpr.parsers.utils.SingleLineValueParser;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,11 +124,8 @@ public class RawDataParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(RawDataParser.class);
 
     public static RawDataReport parse(final List<Path> files) {
-        notNull(files, "Missing files");
-        if (files.isEmpty()) {
-            throw new IllegalArgumentException("No file to parse from");
-        }
-
+        checkNotNull(files, "Missing files");
+        checkArgument(!files.isEmpty(), "No file to parse from");
         final int cores = Runtime.getRuntime().availableProcessors();
         final Executor executor = new ThreadPoolExecutor(
                 cores, cores,
@@ -152,7 +151,7 @@ public class RawDataParser {
 
     private static CompletableFuture<RawDataReport> locateAndParse(
             final Path dataFile, final RawDataReport report, final Executor executor) {
-        notNull(dataFile, "Data file needs to be specified");
+        checkNotNull(dataFile, "Data file needs to be specified");
         final Path fileNamePath = dataFile.getFileName();
         // fix: Maven find-bug plugin keep complaining about NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE
         if (fileNamePath == null) {

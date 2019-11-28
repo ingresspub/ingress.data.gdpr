@@ -17,10 +17,11 @@
 
 package ingress.data.gdpr.models.analyzed;
 
+import io.sgr.geometry.Coordinate;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.sgr.geometry.Coordinate;
 
 /**
  * @author SgrAlpha

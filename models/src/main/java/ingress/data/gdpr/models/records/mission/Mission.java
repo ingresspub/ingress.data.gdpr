@@ -17,7 +17,7 @@
 
 package ingress.data.gdpr.models.records.mission;
 
-import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -84,7 +84,7 @@ public class Mission {
     }
 
     public void addVersions(final MissionDetail version) {
-        notNull(version, "Cannot add NULL version");
+        checkNotNull(version, "Cannot add NULL version");
         this.versions.add(version);
     }
 }

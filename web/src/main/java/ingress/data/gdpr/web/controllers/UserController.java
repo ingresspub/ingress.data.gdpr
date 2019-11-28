@@ -19,6 +19,7 @@ package ingress.data.gdpr.web.controllers;
 
 import ingress.data.gdpr.web.models.UserPreferences;
 import ingress.data.gdpr.web.services.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;

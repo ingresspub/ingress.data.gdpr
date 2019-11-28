@@ -27,6 +27,7 @@ import static org.junit.Assert.assertNull;
 import ingress.data.gdpr.models.records.TimestampedRecord;
 import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.parsers.utils.IntegerValueParser;
+
 import org.junit.Test;
 
 import java.io.IOException;
@@ -84,7 +85,7 @@ public class TimestampedDataFileParserTest {
         Files.delete(temp);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testParseFromNull() {
         DATA_FILE_PARSER.parse(null);
     }

@@ -19,7 +19,6 @@ package ingress.data.gdpr.parsers.utils;
 
 import static org.junit.Assert.assertEquals;
 
-import ingress.data.gdpr.parsers.utils.ZonedDateTimeParser;
 import org.junit.Test;
 
 import java.time.ZoneId;

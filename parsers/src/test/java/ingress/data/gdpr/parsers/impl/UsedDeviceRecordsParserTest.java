@@ -27,6 +27,7 @@ import static org.junit.Assert.assertTrue;
 
 import ingress.data.gdpr.models.records.UsedDevice;
 import ingress.data.gdpr.models.reports.ReportDetails;
+
 import org.junit.Test;
 
 import java.io.IOException;
@@ -80,7 +81,7 @@ public class UsedDeviceRecordsParserTest {
         Files.delete(temp);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testParseFromNull() {
         PARSER.parse(null);
     }

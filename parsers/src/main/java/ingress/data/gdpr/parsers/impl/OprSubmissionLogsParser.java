@@ -17,8 +17,8 @@
 
 package ingress.data.gdpr.parsers.impl;
 
-import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
-import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static ingress.data.gdpr.parsers.utils.CsvUtil.escapeQuote;
 import static ingress.data.gdpr.parsers.utils.CsvUtil.split;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.NO_DATA;
@@ -28,7 +28,9 @@ import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.parsers.PlainTextDataFileParser;
 import ingress.data.gdpr.parsers.exceptions.MalformattedRecordException;
 import ingress.data.gdpr.parsers.utils.ZonedDateTimeParser;
+
 import io.sgr.geometry.Coordinate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,16 +57,16 @@ public class OprSubmissionLogsParser extends PlainTextDataFileParser<List<OprSub
     }
 
     @Override protected ReportDetails<List<OprSubmissionLogItem>> readLines(final List<String> lines, final Path dataFile) {
-        notNull(lines, "No line to read from");
+        checkNotNull(lines, "No line to read from");
         if (lines.size() < 2) {
             return ReportDetails.error(NO_DATA);
         }
-        notNull(dataFile, "Data file needs to be specified");
+        checkNotNull(dataFile, "Data file needs to be specified");
         try {
             List<OprSubmissionLogItem> data = new LinkedList<>();
             for (int i = 1; i < lines.size(); i++) {
                 String line = lines.get(i);
-                if (isEmptyString(line)) {
+                if (isNullOrEmpty(line)) {
                     continue;
                 }
                 MergeResult result = joinNextLineBeforeSplitIfNecessary(i, line, lines);
@@ -120,7 +122,7 @@ public class OprSubmissionLogsParser extends PlainTextDataFileParser<List<OprSub
     }
 
     private OprSubmissionLogItem parse(final String... columns) throws MalformattedRecordException {
-        notNull(columns, "Missing columns to parse from");
+        checkNotNull(columns, "Missing columns to parse from");
         try {
             return new OprSubmissionLogItem(
                     escapeQuote(columns[0]),
@@ -146,7 +148,7 @@ public class OprSubmissionLogsParser extends PlainTextDataFileParser<List<OprSub
 
     private Coordinate parseSuggestedLocation(final String column) {
         final String tmp = escapeQuote(column);
-        if (isEmptyString(tmp)) {
+        if (isNullOrEmpty(tmp)) {
             return null;
         }
         return Coordinate.parseCommaSeparatedString(tmp);
@@ -154,7 +156,7 @@ public class OprSubmissionLogsParser extends PlainTextDataFileParser<List<OprSub
 
     private static Integer parseRating(final String column) {
         final String tmp = escapeQuote(column);
-        if (isEmptyString(tmp)) {
+        if (isNullOrEmpty(tmp)) {
             return null;
         }
         return Integer.parseInt(tmp);

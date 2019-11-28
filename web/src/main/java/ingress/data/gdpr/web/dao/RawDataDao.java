@@ -17,7 +17,7 @@
 
 package ingress.data.gdpr.web.dao;
 
-import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import ingress.data.gdpr.models.analyzed.CommMessageInTimeline;
 import ingress.data.gdpr.models.analyzed.CommMessageType;
@@ -27,7 +27,10 @@ import ingress.data.gdpr.models.analyzed.LevelUpEvent;
 import ingress.data.gdpr.models.analyzed.NewBadgeEvent;
 import ingress.data.gdpr.models.records.profile.BadgeLevel;
 import ingress.data.gdpr.parsers.utils.TimeZoneUtil;
+
 import io.sgr.geometry.Coordinate;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -40,6 +43,8 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author SgrAlpha
  */
@@ -48,9 +53,9 @@ public class RawDataDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public RawDataDao(@Qualifier("primaryJdbcTemplate") final JdbcTemplate jdbcTemplate) {
-        notNull(jdbcTemplate, "Missing JDBC template");
-        this.jdbcTemplate = jdbcTemplate;
+    @Autowired
+    public RawDataDao(@Qualifier("primaryJdbcTemplate") @Nonnull final JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = checkNotNull(jdbcTemplate, "Missing JDBC template");
     }
 
     public boolean noGameLogData() {

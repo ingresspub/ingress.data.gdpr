@@ -17,8 +17,9 @@
 
 package ingress.data.gdpr.models.records;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import ingress.data.gdpr.models.utils.JsonUtil;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.ZonedDateTime;
 

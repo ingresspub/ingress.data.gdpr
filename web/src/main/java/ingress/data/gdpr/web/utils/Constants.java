@@ -17,7 +17,7 @@
 
 package ingress.data.gdpr.web.utils;
 
-import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 import java.time.ZoneId;
 import java.util.Arrays;
@@ -37,7 +37,7 @@ public class Constants {
 
     public static final List<Locale> ALL_AVAILABLE_LOCALES = Collections.unmodifiableList(
             Arrays.stream(Locale.getAvailableLocales())
-                    .filter(locale -> Objects.nonNull(locale) && !isEmptyString(locale.getCountry()))
+                    .filter(locale -> Objects.nonNull(locale) && !isNullOrEmpty(locale.getCountry()))
                     .sorted(Comparator.comparing(Locale::getDisplayName))
                     .collect(Collectors.toList())
     );

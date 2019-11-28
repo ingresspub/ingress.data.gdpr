@@ -17,7 +17,8 @@
 
 package ingress.data.gdpr.models.records.mission;
 
-import static ingress.data.gdpr.models.utils.Preconditions.notEmptyString;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -71,7 +72,7 @@ public class MissionDetail {
     }
 
     public void addWayPoints(final String wayPoint) {
-        notEmptyString(wayPoint, "");
+        checkArgument(!isNullOrEmpty(wayPoint), "");
         this.wayPoints.add(wayPoint);
     }
 }

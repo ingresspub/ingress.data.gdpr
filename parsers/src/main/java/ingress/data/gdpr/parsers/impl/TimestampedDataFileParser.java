@@ -17,8 +17,8 @@
 
 package ingress.data.gdpr.parsers.impl;
 
-import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
-import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.NO_DATA;
 
 import ingress.data.gdpr.models.records.TimestampedRecord;
@@ -26,6 +26,7 @@ import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.parsers.PlainTextDataFileParser;
 import ingress.data.gdpr.parsers.utils.SingleLineValueParser;
 import ingress.data.gdpr.parsers.utils.ZonedDateTimeParser;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,21 +48,21 @@ public class TimestampedDataFileParser<T> extends PlainTextDataFileParser<List<T
     private final SingleLineValueParser<T> valueParser;
 
     public TimestampedDataFileParser(final SingleLineValueParser<T> valueParser) {
-        notNull(valueParser, "Missing value parser");
+        checkNotNull(valueParser, "Missing value parser");
         this.valueParser = valueParser;
     }
 
     @Override protected ReportDetails<List<TimestampedRecord<T>>> readLines(final List<String> lines, final Path dataFile) {
-        notNull(lines, "No line to read from");
+        checkNotNull(lines, "No line to read from");
         if (lines.size() < 2) {
             return ReportDetails.error(NO_DATA);
         }
-        notNull(dataFile, "Data file needs to be specified");
+        checkNotNull(dataFile, "Data file needs to be specified");
         try {
             List<TimestampedRecord<T>> data = new LinkedList<>();
             for (int i = 1; i < lines.size(); i++) {    // Skip first line (header)
                 final String line = lines.get(i);
-                if (isEmptyString(line)) {
+                if (isNullOrEmpty(line)) {
                     continue;
                 }
                 final String[] columns = line.split(SEPARATOR_TAB);

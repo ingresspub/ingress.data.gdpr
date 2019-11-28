@@ -17,7 +17,8 @@
 
 package ingress.data.gdpr.web.models;
 
-import ingress.data.gdpr.models.utils.Preconditions;
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,10 +32,10 @@ import javax.validation.ConstraintValidatorContext;
  */
 public class ZoneIdValidator implements ConstraintValidator<ZoneIdConstraint, String> {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(ZoneIdValidator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZoneIdValidator.class);
 
     @Override public boolean isValid(final String value, final ConstraintValidatorContext context) {
-        if (Preconditions.isEmptyString(value)) {
+        if (isNullOrEmpty(value)) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("Missing timezone ID.").addConstraintViolation();
             return false;

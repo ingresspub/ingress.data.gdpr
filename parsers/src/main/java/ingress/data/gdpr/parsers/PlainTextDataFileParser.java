@@ -17,11 +17,12 @@
 
 package ingress.data.gdpr.parsers;
 
-import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.NOT_REGULAR_FILE;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.UNREADABLE_FILE;
 
 import ingress.data.gdpr.models.reports.ReportDetails;
+
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -29,13 +30,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author SgrAlpha
  */
 public abstract class PlainTextDataFileParser<T> implements DataFileParser<T> {
 
-    @Override public ReportDetails<T> parse(final Path dataFile) {
-        notNull(dataFile, "Data file needs to be specified");
+    @Override public ReportDetails<T> parse(@Nonnull final Path dataFile) {
+        checkNotNull(dataFile, "Data file needs to be specified");
         if (!Files.isRegularFile(dataFile)) {
             getLogger().warn("{} is not a regular file", dataFile.getFileName());
             return ReportDetails.error(NOT_REGULAR_FILE);

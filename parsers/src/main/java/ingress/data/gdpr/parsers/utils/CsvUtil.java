@@ -17,7 +17,8 @@
 
 package ingress.data.gdpr.parsers.utils;
 
-import static ingress.data.gdpr.models.utils.Preconditions.notEmptyString;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * @author SgrAlpha
@@ -25,12 +26,12 @@ import static ingress.data.gdpr.models.utils.Preconditions.notEmptyString;
 public class CsvUtil {
 
     public static String[] split(final String line) {
-        notEmptyString(line, "Source line needs to be specified");
+        checkArgument(!isNullOrEmpty(line), "Source line needs to be specified");
         return line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
     }
 
     public static String escapeQuote(final String original) {
-        notEmptyString(original, "Original string needs to be specified");
+        checkArgument(!isNullOrEmpty(original), "Original string needs to be specified");
         return original.substring(1, original.length() - 1);
     }
 

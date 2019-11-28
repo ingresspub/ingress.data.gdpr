@@ -17,9 +17,11 @@
 
 package ingress.data.gdpr.web.dao;
 
-import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import ingress.data.gdpr.web.models.UserPreferences;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -33,6 +35,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author SgrAlpha
  */
@@ -41,9 +45,9 @@ public class UserDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public UserDao(@Qualifier("primaryJdbcTemplate") final JdbcTemplate jdbcTemplate) {
-        notNull(jdbcTemplate, "Missing JDBC template");
-        this.jdbcTemplate = jdbcTemplate;
+    @Autowired
+    public UserDao(@Qualifier("primaryJdbcTemplate") @Nonnull final JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = checkNotNull(jdbcTemplate, "Missing JDBC template");
     }
 
     public UserPreferences getUserPreferences() {
@@ -63,7 +67,7 @@ public class UserDao {
     }
 
     public void saveUserService(final UserPreferences userPreferences) {
-        notNull(userPreferences, "Missing user preferences to save!");
+        checkNotNull(userPreferences, "Missing user preferences to save!");
         final String sql = "INSERT INTO gdpr_user_preferences(`KEY`, `VALUE`) VALUES (?,?) ON DUPLICATE KEY UPDATE `VALUE` = VALUES(`VALUE`)";
         final List<Map.Entry<String, String>> entries = new ArrayList<>(userPreferences.toMap().entrySet());
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {

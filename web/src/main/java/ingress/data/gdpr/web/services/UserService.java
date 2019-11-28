@@ -19,6 +19,7 @@ package ingress.data.gdpr.web.services;
 
 import ingress.data.gdpr.web.dao.UserDao;
 import ingress.data.gdpr.web.models.UserPreferences;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

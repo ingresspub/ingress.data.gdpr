@@ -21,7 +21,9 @@ import ingress.data.gdpr.models.analyzed.Circle;
 import ingress.data.gdpr.models.analyzed.Event;
 import ingress.data.gdpr.web.models.CacheableData;
 import ingress.data.gdpr.web.services.PlayerService;
+
 import io.sgr.geometry.Coordinate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;

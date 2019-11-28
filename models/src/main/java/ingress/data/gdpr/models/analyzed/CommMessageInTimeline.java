@@ -19,8 +19,6 @@ package ingress.data.gdpr.models.analyzed;
 
 import io.sgr.geometry.Coordinate;
 
-import java.util.Optional;
-
 /**
  * @author SgrAlpha
  */

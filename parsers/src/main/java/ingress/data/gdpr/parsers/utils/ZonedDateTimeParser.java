@@ -17,8 +17,9 @@
 
 package ingress.data.gdpr.parsers.utils;
 
-import static ingress.data.gdpr.models.utils.Preconditions.notEmptyString;
-import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,13 +42,11 @@ public class ZonedDateTimeParser implements SingleLineValueParser<ZonedDateTime>
     }
 
     @Override public ZonedDateTime parse(final String... columns) {
-        notNull(columns, "No columns to parse from");
-        if (columns.length != 1) {
-            throw new IllegalArgumentException(String.format("Expecting only one column, but got %d", columns.length));
-        }
-        final String time = columns[0];
-        notEmptyString(time, "Missing time info to parse from");
-        return ZonedDateTime.parse(time, DateTimeFormatter.ofPattern(GDPR_TIME_PATTERN, Locale.ENGLISH));
+        checkNotNull(columns, "No columns to parse from");
+        checkArgument(columns.length == 1, String.format("Expecting only one column, but got %d", columns.length));
+        final String value = columns[0];
+        checkArgument(!isNullOrEmpty(value), "Missing value to parse from");
+        return ZonedDateTime.parse(value, DateTimeFormatter.ofPattern(GDPR_TIME_PATTERN, Locale.ENGLISH));
     }
 
 }

@@ -53,7 +53,7 @@ public class JsonUtil {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        return "{}"; //$NON-NLS-1$
+        return "{}";
     }
 
     /**
@@ -66,7 +66,7 @@ public class JsonUtil {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        return "{}"; //$NON-NLS-1$
+        return "{}";
     }
 
 }

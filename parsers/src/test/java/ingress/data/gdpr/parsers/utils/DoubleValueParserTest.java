@@ -19,7 +19,6 @@ package ingress.data.gdpr.parsers.utils;
 
 import static org.junit.Assert.assertEquals;
 
-import ingress.data.gdpr.parsers.utils.DoubleValueParser;
 import org.junit.Test;
 
 /**

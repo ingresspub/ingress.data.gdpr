@@ -17,8 +17,8 @@
 
 package ingress.data.gdpr.parsers.impl;
 
-import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
-import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.NO_DATA;
 
 import ingress.data.gdpr.models.records.profile.AgentProfile;
@@ -31,7 +31,9 @@ import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.parsers.PlainTextDataFileParser;
 import ingress.data.gdpr.parsers.exceptions.MalformattedRecordException;
 import ingress.data.gdpr.parsers.utils.DefaultPacificDateTimeParser;
+
 import io.sgr.geometry.Coordinate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,11 +64,11 @@ public class AgentProfileParser extends PlainTextDataFileParser<AgentProfile> {
     }
 
     @Override protected ReportDetails<AgentProfile> readLines(final List<String> lines, final Path dataFile) {
-        notNull(lines, "No line to read from");
+        checkNotNull(lines, "No line to read from");
         if (lines.isEmpty()) {
             return ReportDetails.error(NO_DATA);
         }
-        notNull(dataFile, "Data file needs to be specified");
+        checkNotNull(dataFile, "Data file needs to be specified");
 
         Map<String, Object> data = new HashMap<>();
         Map<String, Map<String, String>> subDataSet = new HashMap<>();
@@ -75,7 +77,7 @@ public class AgentProfileParser extends PlainTextDataFileParser<AgentProfile> {
         LineType lastLineType = null;
         for (int i = 0; i < lines.size(); i++) {
             line = lines.get(i);
-            if (isEmptyString(line)) {
+            if (isNullOrEmpty(line)) {
                 continue;
             }
             if (line.startsWith(SEPARATOR_TAB)) {
@@ -85,7 +87,7 @@ public class AgentProfileParser extends PlainTextDataFileParser<AgentProfile> {
                     lastLineType = LineType.DATA;
                 } else if (LineType.KEY == lastLineType || LineType.SUB_DATA == lastLineType) {
                     String lastKey = keys.peek();
-                    if (isEmptyString(lastKey)) {
+                    if (isNullOrEmpty(lastKey)) {
                         return ReportDetails.error(String.format("Unable to parse agent profile data at line %d because unable to locate parent node: %s", i, line));
                     }
                     Map<String, String> subData = subDataSet.get(lastKey);

@@ -17,13 +17,14 @@
 
 package ingress.data.gdpr.parsers.impl;
 
-import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
-import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.NO_DATA;
 
 import ingress.data.gdpr.models.records.UsedDevice;
 import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.parsers.PlainTextDataFileParser;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,14 +49,14 @@ public class DeviceRecordsParser extends PlainTextDataFileParser<List<UsedDevice
     }
 
     @Override protected ReportDetails<List<UsedDevice>> readLines(final List<String> lines, final Path dataFile) {
-        notNull(lines, "No line to read from");
+        checkNotNull(lines, "No line to read from");
         if (lines.isEmpty()) {
             return ReportDetails.error(NO_DATA);
         }
-        notNull(dataFile, "Data file needs to be specified");
+        checkNotNull(dataFile, "Data file needs to be specified");
         try {
             final List<UsedDevice> records = lines.stream()
-                    .filter(line -> !isEmptyString(line))
+                    .filter(line -> !isNullOrEmpty(line))
                     .map(UsedDevice::new)
                     .collect(Collectors.toList());
             LOGGER.info("Parsed {} used devices in {}", records.size(), dataFile.getFileName());

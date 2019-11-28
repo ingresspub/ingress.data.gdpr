@@ -22,7 +22,9 @@ import ingress.data.gdpr.models.analyzed.Event;
 import ingress.data.gdpr.models.analyzed.Feed;
 import ingress.data.gdpr.web.dao.RawDataDao;
 import ingress.data.gdpr.web.models.UserPreferences;
+
 import io.sgr.geometry.Coordinate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

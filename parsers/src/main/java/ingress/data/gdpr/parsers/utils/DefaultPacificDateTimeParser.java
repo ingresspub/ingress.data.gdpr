@@ -17,8 +17,9 @@
 
 package ingress.data.gdpr.parsers.utils;
 
-import static ingress.data.gdpr.models.utils.Preconditions.notEmptyString;
-import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -38,12 +39,10 @@ public class DefaultPacificDateTimeParser implements SingleLineValueParser<Zoned
     }
 
     @Override public ZonedDateTime parse(final String... columns) {
-        notNull(columns, "No columns to parse from");
-        if (columns.length != 1) {
-            throw new IllegalArgumentException(String.format("Expecting only one column, but got %d", columns.length));
-        }
+        checkNotNull(columns, "No columns to parse from");
+        checkArgument(columns.length == 1, String.format("Expecting only one column, but got %d", columns.length));
         final String time = columns[0];
-        notEmptyString(time, "Missing time info to parse from");
+        checkArgument(!isNullOrEmpty(time), "Missing time info to parse from");
         LocalDateTime localDateTime = LocalDateTime.parse(time, DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH));
         return ZonedDateTime.of(localDateTime, ZoneId.of("America/Los_Angeles"));
     }

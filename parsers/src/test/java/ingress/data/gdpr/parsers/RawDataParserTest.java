@@ -17,7 +17,7 @@
 
 package ingress.data.gdpr.parsers;
 
-import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -36,6 +36,7 @@ import ingress.data.gdpr.models.records.opr.OprSubmissionLogItem;
 import ingress.data.gdpr.models.records.profile.AgentProfile;
 import ingress.data.gdpr.models.reports.RawDataReport;
 import ingress.data.gdpr.models.reports.ReportDetails;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +58,7 @@ public class RawDataParserTest {
     @Test
     public void test() throws IOException {
         final String basePath = System.getenv("DATA_DIR");
-        if (isEmptyString(basePath)) {
+        if (isNullOrEmpty(basePath)) {
             LOGGER.warn("To run this test, you need to set a system variable named DATA_DIR to the dir contains the data files.");
             return;
         }

@@ -17,17 +17,16 @@
 
 package ingress.data.gdpr.parsers.impl;
 
-import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static ingress.data.gdpr.parsers.utils.DataFileNames.COMM_MENTIONS_TSV;
-import static ingress.data.gdpr.parsers.utils.DataFileNames.MISSIONS_TSV;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import ingress.data.gdpr.models.records.CommMention;
-import ingress.data.gdpr.models.records.mission.Mission;
 import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.models.utils.JsonUtil;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +48,7 @@ public class CommMentionParserTest {
     @Test
     public void test() throws IOException {
         final String basePath = System.getenv("DATA_DIR");
-        if (isEmptyString(basePath)) {
+        if (isNullOrEmpty(basePath)) {
             LOGGER.warn("To run this test, you need to set a system variable named DATA_DIR to the dir contains the data files.");
             return;
         }

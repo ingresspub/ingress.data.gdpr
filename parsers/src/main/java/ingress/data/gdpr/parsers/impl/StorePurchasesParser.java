@@ -17,14 +17,15 @@
 
 package ingress.data.gdpr.parsers.impl;
 
-import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
-import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.NO_DATA;
 
 import ingress.data.gdpr.models.records.StorePurchase;
 import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.parsers.PlainTextDataFileParser;
 import ingress.data.gdpr.parsers.utils.DefaultPacificDateTimeParser;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,16 +53,16 @@ public class StorePurchasesParser extends PlainTextDataFileParser<List<StorePurc
     }
 
     @Override protected ReportDetails<List<StorePurchase>> readLines(final List<String> lines, final Path dataFile) {
-        notNull(lines, "No line to read from");
+        checkNotNull(lines, "No line to read from");
         if (lines.size() < 2) {
             return ReportDetails.error(NO_DATA);
         }
-        notNull(dataFile, "Data file needs to be specified");
+        checkNotNull(dataFile, "Data file needs to be specified");
         try {
             List<StorePurchase> data = new LinkedList<>();
             for (int i = 1; i < lines.size(); i++) {    // Skip first line (header)
                 final String line = lines.get(i);
-                if (isEmptyString(line)) {
+                if (isNullOrEmpty(line)) {
                     continue;
                 }
                 final String[] columns = line.split(SEPARATOR_TAB, 5);
@@ -72,7 +73,7 @@ public class StorePurchasesParser extends PlainTextDataFileParser<List<StorePurc
                     return ReportDetails.error(String.format("Expecting a valid timestamp (%s) at the beginning of line %d, but got %s", StorePurchase.TIME_PATTERN, i, columns[0]));
                 }
                 final String balanceStr = columns[3];
-                Integer balance = isEmptyString(balanceStr) ? null : Integer.parseInt(balanceStr);
+                Integer balance = isNullOrEmpty(balanceStr) ? null : Integer.parseInt(balanceStr);
                 data.add(new StorePurchase(time, columns[1], columns[2], balance, columns[4]));
             }
             if (data.size() > 1) {

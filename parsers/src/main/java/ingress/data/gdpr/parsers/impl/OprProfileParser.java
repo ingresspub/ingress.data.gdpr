@@ -17,8 +17,8 @@
 
 package ingress.data.gdpr.parsers.impl;
 
-import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
-import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static ingress.data.gdpr.parsers.utils.CsvUtil.escapeQuote;
 import static ingress.data.gdpr.parsers.utils.CsvUtil.split;
 import static ingress.data.gdpr.parsers.utils.ErrorConstants.NO_DATA;
@@ -28,7 +28,9 @@ import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.parsers.PlainTextDataFileParser;
 import ingress.data.gdpr.parsers.exceptions.MalformattedRecordException;
 import ingress.data.gdpr.parsers.utils.ZonedDateTimeParser;
+
 import io.sgr.geometry.Coordinate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,11 +56,11 @@ public class OprProfileParser extends PlainTextDataFileParser<OprProfile> {
     }
 
     @Override protected ReportDetails<OprProfile> readLines(final List<String> lines, final Path dataFile) {
-        notNull(lines, "No line to read from");
+        checkNotNull(lines, "No line to read from");
         if (lines.size() < 2) {
             return ReportDetails.error(NO_DATA);
         }
-        notNull(dataFile, "Data file needs to be specified");
+        checkNotNull(dataFile, "Data file needs to be specified");
 
         ReportDetails<OprProfile> details;
         try {
@@ -81,7 +83,7 @@ public class OprProfileParser extends PlainTextDataFileParser<OprProfile> {
     }
 
     private OprProfile parse(final String... columns) throws MalformattedRecordException {
-        notNull(columns, "Missing columns to parse from");
+        checkNotNull(columns, "Missing columns to parse from");
         try {
             String quizTakenTime = escapeQuote(columns[15]);
             return new OprProfile(
@@ -93,14 +95,14 @@ public class OprProfileParser extends PlainTextDataFileParser<OprProfile> {
                     Integer.parseInt(escapeQuote(columns[5])),
                     Integer.parseInt(escapeQuote(columns[6])),
                     Integer.parseInt(escapeQuote(columns[7])),
-                    isEmptyString(escapeQuote(columns[8])) ? null : TIME_PARSER.parse(escapeQuote(columns[8])),
+                    isNullOrEmpty(escapeQuote(columns[8])) ? null : TIME_PARSER.parse(escapeQuote(columns[8])),
                     Coordinate.parseCommaSeparatedString(escapeQuote(columns[9])),
                     Coordinate.parseCommaSeparatedString(escapeQuote(columns[10])),
                     escapeQuote(columns[11]),
                     TIME_PARSER.parse(escapeQuote(columns[12])),
                     escapeQuote(columns[13]),
                     escapeQuote(columns[14]),
-                    isEmptyString(quizTakenTime) ? null : TIME_PARSER.parse(quizTakenTime),
+                    isNullOrEmpty(quizTakenTime) ? null : TIME_PARSER.parse(quizTakenTime),
                     TIME_PARSER.parse(escapeQuote(columns[16]))
             );
         } catch (Exception e) {

@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 
 import ingress.data.gdpr.models.records.GameLog;
 import ingress.data.gdpr.models.records.ZendeskTicket;
+
 import org.junit.Test;
 
 import java.time.Month;

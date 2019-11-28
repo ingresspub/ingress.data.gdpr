@@ -17,10 +17,11 @@
 
 package ingress.data.gdpr.web.controllers;
 
-import static ingress.data.gdpr.models.utils.Preconditions.isEmptyString;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 import ingress.data.gdpr.web.services.PlayerService;
 import ingress.data.gdpr.web.services.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -69,7 +70,7 @@ public class PlayerUiController {
             return "redirect:/upload";
         }
         final String googleApiKey = userService.getUserPreferences().getGoogleApiKey();
-        if (!isEmptyString(googleApiKey)) {
+        if (!isNullOrEmpty(googleApiKey)) {
             map.addAttribute("googleApiKey", userService.getUserPreferences().getGoogleApiKey());
         }
         return "player/maps/upc";
@@ -81,7 +82,7 @@ public class PlayerUiController {
             return "redirect:/upload";
         }
         final String googleApiKey = userService.getUserPreferences().getGoogleApiKey();
-        if (!isEmptyString(googleApiKey)) {
+        if (!isNullOrEmpty(googleApiKey)) {
             map.addAttribute("googleApiKey", googleApiKey);
         }
         return "player/maps/upv";
@@ -93,7 +94,7 @@ public class PlayerUiController {
             return "redirect:/upload";
         }
         final String googleApiKey = userService.getUserPreferences().getGoogleApiKey();
-        if (!isEmptyString(googleApiKey)) {
+        if (!isNullOrEmpty(googleApiKey)) {
             map.addAttribute("googleApiKey", googleApiKey);
         }
         return "player/maps/level_up";

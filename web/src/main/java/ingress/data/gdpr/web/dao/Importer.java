@@ -17,10 +17,8 @@
 
 package ingress.data.gdpr.web.dao;
 
-import static ingress.data.gdpr.models.utils.Preconditions.notNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import ingress.data.gdpr.models.records.CommMention;
 import ingress.data.gdpr.models.records.GameLog;
 import ingress.data.gdpr.models.records.StorePurchase;
@@ -40,9 +38,14 @@ import ingress.data.gdpr.models.records.profile.TutorialState;
 import ingress.data.gdpr.models.reports.RawDataReport;
 import ingress.data.gdpr.models.reports.ReportDetails;
 import ingress.data.gdpr.parsers.RawDataParser;
+
 import io.sgr.geometry.Coordinate;
+
+import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -65,6 +68,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
 /**
@@ -81,12 +85,13 @@ public class Importer {
 
     private final Executor executor;
 
+    @Autowired
     public Importer(
-            @Qualifier("primaryDataSource") final DataSource primaryDataSource,
-            @Qualifier("primaryJdbcTemplate") final JdbcTemplate jdbcTemplate) {
-        notNull(primaryDataSource, "Missing DataSource");
+            @Qualifier("primaryDataSource") @Nonnull final DataSource primaryDataSource,
+            @Qualifier("primaryJdbcTemplate") @Nonnull final JdbcTemplate jdbcTemplate) {
+        checkNotNull(primaryDataSource, "Missing DataSource");
         this.primaryDataSource = primaryDataSource;
-        notNull(jdbcTemplate, "Missing JDBC template");
+        checkNotNull(jdbcTemplate, "Missing JDBC template");
         this.jdbcTemplate = jdbcTemplate;
         final int cores = Runtime.getRuntime().availableProcessors();
         executor = new ThreadPoolExecutor(
