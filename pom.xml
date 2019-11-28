@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.basepom</groupId>
         <artifactId>basepom-minimal</artifactId>
-        <version>26</version>
+        <version>28</version>
     </parent>
 
     <groupId>ingress.data.gdpr</groupId>
