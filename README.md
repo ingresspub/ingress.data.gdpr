@@ -91,7 +91,7 @@ It's in a [H2 database](http://www.h2database.com) under ```~/.h2/ingress_gdpr``
     Ingress Data Explorer is a simple toolkit allows you to view Ingress
     gaming data exported by Niantic labs as part of their GDPR compliance.
 
-    Copyright (C) 2014-2018  SgrAlpha
+    Copyright (C) 2014-2020  SgrAlpha
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
