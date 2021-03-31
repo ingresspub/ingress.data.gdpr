@@ -51,7 +51,7 @@
         <!-- Regular dependencies -->
         <dep.io.sgr.geometry.version>1.0.1</dep.io.sgr.geometry.version>
         <dep.zip4j.version>1.3.2</dep.zip4j.version>
-        <dep.guava.version>28.2-jre</dep.guava.version>
+        <dep.guava.version>29.0-jre</dep.guava.version>
         <dep.jackson.version>2.9.8</dep.jackson.version>
         <dep.h2db.version>1.4.197</dep.h2db.version>
         <dep.slf4j.version>1.7.28</dep.slf4j.version>
